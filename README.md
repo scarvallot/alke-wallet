@@ -41,6 +41,10 @@ El propósito del desafío es entregar una vista **funcional, segura y fácil de
 - Demostración funcional.
 - Explicación del código en un informe breve.
 
+## Acceso de prueba
+
+Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles en la pantalla de login: `admin` como usuario y `12345` como contraseña. Una vez autenticado, podrás navegar por el menú principal y probar los módulos de depósito, envío de dinero y transacciones.
+
 ---
 
 ## Stack
