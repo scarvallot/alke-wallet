@@ -1,6 +1,6 @@
 # Alke Wallet: Aplicación de billetera digital.
 
-[![In Progress](<https://img.shields.io/badge/In Progress-magenta>)](https://github.com/scarvallot/taskflow.git)
+[![In Progress](<https://img.shields.io/badge/In Progress-magenta>)](https://github.com/scarvallot/alke-wallet.git)
 
 ---
 
