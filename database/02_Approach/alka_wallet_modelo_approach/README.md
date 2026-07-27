@@ -83,7 +83,7 @@ alka_wallet_modelo_approach/
 
 ---
 
-## 📊 Diagrama Entidad‑Relación (resumen)
+## Diagrama Entidad‑Relación (resumen)
 
 ```mermaid
 erDiagram
