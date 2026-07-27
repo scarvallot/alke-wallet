@@ -143,3 +143,4 @@ vite.config.ts.timestamp-*
 .vite/
 # Documentación local
 # docs/
+.code-workspace

@@ -77,8 +77,7 @@ alka_wallet_modelo_scalable/
 │   └── alke_wallet_modelo_scalable.mwb.bak
 └── tests/
     └── validaciones.sql
-
-````
+```
 
 ---
 
