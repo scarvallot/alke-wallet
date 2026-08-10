@@ -1,0 +1,7 @@
+-- =====================================================
+-- Migraciones — AlkeWallet Modelo Received
+-- =====================================================
+-- El modelo Received es el baseline entregado sin cambios estructurales.
+-- No aplica ningún ALTER TABLE aquí; las mejoras están en 02_Approach y 03_Scalable.
+--
+-- USE `AlkeWallet`;

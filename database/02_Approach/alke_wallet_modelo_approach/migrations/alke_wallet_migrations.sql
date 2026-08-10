@@ -1,0 +1,4 @@
+-- =====================================================
+-- Migraciones — AlkeWallet Modelo Approach
+-- Vacío: las mejoras están integradas en schema/01_alke_wallet_schema.sql
+-- =====================================================

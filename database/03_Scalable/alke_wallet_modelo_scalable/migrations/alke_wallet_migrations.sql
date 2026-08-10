@@ -1,0 +1,4 @@
+-- =====================================================
+-- Migraciones — AlkeWallet Modelo Scalable
+-- Vacío: CHECK y restricciones están en schema/01_alke_wallet_schema.sql
+-- =====================================================
