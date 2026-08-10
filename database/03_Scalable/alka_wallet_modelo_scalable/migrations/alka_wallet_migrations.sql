@@ -1,4 +1,0 @@
--- =====================================================
--- Migraciones — AlkaWallet Modelo Scalable
--- Vacío: CHECK y restricciones están en schema/01_alka_wallet_schema.sql
--- =====================================================
