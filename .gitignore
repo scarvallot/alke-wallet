@@ -144,3 +144,11 @@ vite.config.ts.timestamp-*
 # Documentación local
 # docs/
 .code-workspace
+
+# Documentación local
+AlkeWallet_Documentacion_Completa.docx
+AlkeWallet_Entregable.docx
+README.md
+
+# Archivos temporales de Office
+~$*
