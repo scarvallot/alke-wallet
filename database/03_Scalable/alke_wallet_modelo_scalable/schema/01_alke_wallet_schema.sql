@@ -120,7 +120,11 @@ CHECK (`importe` > 0);
 ALTER TABLE `AlkeWallet`.`Transaction`
 ADD CONSTRAINT `chk_transaction_accounts_different`
 CHECK (`sender_account_id` <> `receive_account_id`);
-    
+
+-- Modificar la tabla usuario para añadir la fecha de creación usando ALTER TABLE
+ALTER TABLE `User`
+ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
