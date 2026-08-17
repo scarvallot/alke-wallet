@@ -147,7 +147,10 @@ vite.config.ts.timestamp-*
 
 # Documentación local
 AlkeWallet_Documentacion_Completa.docx
+AlkeWallet_Documentacion_Completa.pdf
 AlkeWallet_Entregable.docx
+database- alkewallet.txt
+
 README.md
 
 # Archivos temporales de Office
