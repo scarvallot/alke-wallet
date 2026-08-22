@@ -1,6 +1,6 @@
 ```mermaid
 erDiagram
-    User {
+    Users {
         int user_id PK
         varchar username
         varchar email
@@ -8,13 +8,13 @@ erDiagram
         decimal current_balance
     }
 
-    Currency {
+    Currencies {
         int currency_id PK
         varchar currency_name
         varchar currency_symbol
     }
 
-    Transaction {
+    Transactions {
         int transaction_id PK
         decimal importe
         datetime transaction_date
@@ -23,7 +23,7 @@ erDiagram
         int currency_id FK
     }
 
-    User ||--o{ Transaction : "envía (sender)"
-    User ||--o{ Transaction : "recibe (receiver)"
-    Currency ||--o{ Transaction : "usada en"
+    Users ||--o{ Transactions : "envía (sender)"
+    Users ||--o{ Transactions : "recibe (receiver)"
+    Currencies ||--o{ Transactions : "usada en"
 ```

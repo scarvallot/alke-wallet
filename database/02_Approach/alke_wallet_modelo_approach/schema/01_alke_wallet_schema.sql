@@ -19,11 +19,11 @@ CREATE SCHEMA IF NOT EXISTS `AlkeWallet` DEFAULT CHARACTER SET utf8 COLLATE utf8
 USE `AlkeWallet` ;
 
 -- -----------------------------------------------------
--- Table `AlkeWallet`.`User`
+-- Table `AlkeWallet`.`Users`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `AlkeWallet`.`User` ;
+DROP TABLE IF EXISTS `AlkeWallet`.`Users` ;
 
-CREATE TABLE IF NOT EXISTS `AlkeWallet`.`User` (
+CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(150) NOT NULL,
   `email` VARCHAR(150) NOT NULL,
@@ -35,11 +35,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `AlkeWallet`.`Currency`
+-- Table `AlkeWallet`.`Currencies`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `AlkeWallet`.`Currency` ;
+DROP TABLE IF EXISTS `AlkeWallet`.`Currencies` ;
 
-CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Currency` (
+CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Currencies` (
   `currency_id` INT NOT NULL AUTO_INCREMENT,
   `currency_name` VARCHAR(50) NOT NULL,
   `currency_symbol` VARCHAR(5) NOT NULL,
@@ -50,11 +50,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `AlkeWallet`.`Transaction`
+-- Table `AlkeWallet`.`Transactions`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `AlkeWallet`.`Transaction` ;
+DROP TABLE IF EXISTS `AlkeWallet`.`Transactions` ;
 
-CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Transaction` (
+CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Transactions` (
   `transaction_id` INT NOT NULL AUTO_INCREMENT,
   `importe` DECIMAL(15,2) NOT NULL,
   `transaction_date` DATETIME NOT NULL,
@@ -67,17 +67,17 @@ CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Transaction` (
   INDEX `idx_currency_id` (`currency_id` ASC) VISIBLE,
   CONSTRAINT `fk_transaction_receiver_user_id`
     FOREIGN KEY (`receiver_user_id`)
-    REFERENCES `AlkeWallet`.`User` (`user_id`)
+    REFERENCES `AlkeWallet`.`Users` (`user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_transaction_sender_user_id`
     FOREIGN KEY (`sender_user_id`)
-    REFERENCES `AlkeWallet`.`User` (`user_id`)
+    REFERENCES `AlkeWallet`.`Users` (`user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_transaction_currency_id`
     FOREIGN KEY (`currency_id`)
-    REFERENCES `AlkeWallet`.`Currency` (`currency_id`)
+    REFERENCES `AlkeWallet`.`Currencies` (`currency_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;

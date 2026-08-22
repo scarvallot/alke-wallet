@@ -1,4 +1,4 @@
-# Modelo Conceptual — AlkeWallet Approach
+﻿# Modelo Conceptual — AlkeWallet Approach
 
 ## 1. Propósito del modelo
 
@@ -39,9 +39,9 @@ Registra cada transferencia de dinero entre usuarios.
 | `transaction_id`   | `INT`           | **PK**, `AUTO_INCREMENT`                        | Identificador único de la transacción.   |
 | `importe`          | `DECIMAL(15,2)` | `NOT NULL`                                            | Monto transferido (con centavos).          |
 | `transaction_date` | `DATETIME`      | `NOT NULL`, `DEFAULT CURRENT_TIMESTAMP`             | Fecha y hora exacta de la operación.      |
-| `sender_user_id`   | `INT`           | `NOT NULL`, **FK** → `User(user_id)`         | Usuario que envía el dinero.              |
-| `receiver_user_id` | `INT`           | `NOT NULL`, **FK** → `User(user_id)`         | Usuario que recibe el dinero.              |
-| `currency_id`      | `INT`           | `NOT NULL`, **FK** → `Currency(currency_id)` | Moneda en que se realizó la transacción. |
+| `sender_user_id`   | `INT`           | `NOT NULL`, **FK** → `Users(user_id)`         | Usuario que envía el dinero.              |
+| `receiver_user_id` | `INT`           | `NOT NULL`, **FK** → `Users(user_id)`         | Usuario que recibe el dinero.              |
+| `currency_id`      | `INT`           | `NOT NULL`, **FK** → `Currencies(currency_id)` | Moneda en que se realizó la transacción. |
 
 ---
 
@@ -61,7 +61,7 @@ El siguiente diagrama representa visualmente las tres entidades y sus relaciones
 
 ```mermaid
 erDiagram
-    User {
+    Users {
         int user_id PK
         string username
         string email UK
@@ -69,13 +69,13 @@ erDiagram
         decimal current_balance
     }
 
-    Currency {
+    Currencies {
         int currency_id PK
         string currency_name UK
         string currency_symbol UK
     }
 
-    Transaction {
+    Transactions {
         int transaction_id PK
         decimal importe
         datetime transaction_date
@@ -84,9 +84,9 @@ erDiagram
         int currency_id FK
     }
 
-    User ||--o{ Transaction : "envía (sender)"
-    User ||--o{ Transaction : "recibe (receiver)"
-    Currency ||--o{ Transaction : "se usa en"
+    Users ||--o{ Transactions : "envía (sender)"
+    Users ||--o{ Transactions : "recibe (receiver)"
+    Currencies ||--o{ Transactions : "se usa en"
 ```
 
 ---
@@ -102,7 +102,7 @@ La siguiente tabla compara el modelo Approach con el modelo inicial (Received), 
 | **Campos obligatorios**     | `NULL` permitido        | `NOT NULL` en todos los campos                                                           | Garantiza integridad mínima de los datos.              |
 | **Correo único**           | Sin restricción          | `UNIQUE(email)`                                                                          | Evita duplicados de correo electrónico.                |
 | **Moneda única**           | Sin restricción          | `UNIQUE(currency_name)`, `UNIQUE(currency_symbol)`                                     | Previene nombres o símbolos duplicados.                |
-| **Relación con moneda**    | `Currency` aislada      | `currency_id` (FK) en `Transaction`                                                    | Asocia cada transacción a su divisa.                   |
+| **Relación con moneda**    | `Currencies` aislada      | `currency_id` (FK) en `Transactions`                                                    | Asocia cada transacción a su divisa.                   |
 | **Fecha de transacción**   | `DATE` (solo día)      | `DATETIME` (día + hora)                                                                 | Permite auditoría precisa y ordenamiento cronológico. |
 | **Índices de rendimiento** | Solo PK implícitas       | Índices en`sender_user_id`, `receiver_user_id`, `currency_id`, `transaction_date` | Acelera consultas frecuentes.                           |
 | **Acción referencial**     | `ON DELETE NO ACTION`   | `ON DELETE CASCADE` / `ON UPDATE CASCADE`                                              | Mantiene consistencia al eliminar usuarios.             |
@@ -115,7 +115,7 @@ A pesar de las mejoras, este modelo aún no aborda los siguientes aspectos, que 
 
 | Limitación                       | Impacto                                                                              | Solución en Scalable                                              |
 | :-------------------------------- | :----------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| **Soporte multi-divisa**    | El usuario solo tiene un saldo global (no puede tener saldos en diferentes monedas). | Extraer`current_balance` a una tabla `Account` (UserCurrency). |
+| **Soporte multi-divisa**    | El usuario solo tiene un saldo global (no puede tener saldos en diferentes monedas). | Extraer`current_balance` a una tabla `Accounts` (UserCurrency). |
 | **Validaciones de negocio** | No se valida que`importe > 0` ni que `balance >= 0`.                             | Agregar`CHECK` constraints en la base de datos.                  |
 | **CASCADE en producción**  | `ON DELETE CASCADE` puede borrar datos históricos accidentalmente.                | Cambiar a`ON DELETE RESTRICT` o usar borrado lógico.            |
 

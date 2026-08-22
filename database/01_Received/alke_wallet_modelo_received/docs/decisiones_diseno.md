@@ -6,13 +6,13 @@ Este documento describe el modelo de datos **recibido inicialmente** para el sis
 
 ## 1. Características del modelo original
 
-El modelo fue diseñado con tres tablas principales: `Usuario`, `Moneda` y `Transaccion`. A continuación, se resume su estructura:
+El modelo fue diseñado con tres tablas principales: `Usuarios`, `Monedas` y `Transacciones`. A continuación, se resume su estructura:
 
 ## Esquema Relacional
 
 ```mermaid
 erDiagram
-    USUARIO {
+    USUARIOS {
         int user_id PK
         varchar nombre
         varchar correo_electronico
@@ -20,13 +20,13 @@ erDiagram
         int saldo
     }
 
-    MONEDA {
+    MONEDAS {
         int currency_id PK
         varchar currency_name
         varchar currency_symbol
     }
 
-    TRANSACCION {
+    TRANSACCIONES {
         int transaction_id PK
         int importe
         date transaction_date
@@ -34,8 +34,8 @@ erDiagram
         int sender_user_id FK
     }
 
-    USUARIO ||--o{ TRANSACCION : "envía (sender)"
-    USUARIO ||--o{ TRANSACCION : "recibe (receiver)"
+    USUARIOS ||--o{ TRANSACCIONES : "envía (sender)"
+    USUARIOS ||--o{ TRANSACCIONES : "recibe (receiver)"
 ```
 
 ## Modelo Entidad-Relación — AlkeWallet (Versión Recibida)
@@ -43,8 +43,8 @@ erDiagram
 ### ERD
 
 ```sql
--- Tabla Usuario
-CREATE TABLE Usuario (
+-- Tabla Usuarios
+CREATE TABLE Usuarios (
     user_id INT NOT NULL,
     nombre VARCHAR(150) NULL,
     correo_electronico VARCHAR(150) NULL,
@@ -53,16 +53,16 @@ CREATE TABLE Usuario (
     PRIMARY KEY (user_id)
 );
 
--- Tabla Moneda
-CREATE TABLE Moneda (
+-- Tabla Monedas
+CREATE TABLE Monedas (
     currency_id INT NOT NULL,
     currency_name VARCHAR(50) NULL,
     currency_symbol VARCHAR(50) NULL,
     PRIMARY KEY (currency_id)
 );
 
--- Tabla Transaccion
-CREATE TABLE Transaccion (
+-- Tabla Transacciones
+CREATE TABLE Transacciones (
     transaction_id INT NOT NULL,
     importe INT NULL,
     transaction_date DATE NULL,
@@ -70,9 +70,9 @@ CREATE TABLE Transaccion (
     sender_user_id INT NULL,
     PRIMARY KEY (transaction_id),
     CONSTRAINT fk_transaction_receiver_user_id
-        FOREIGN KEY (receiver_user_id) REFERENCES Usuario(user_id),
+        FOREIGN KEY (receiver_user_id) REFERENCES Usuarios(user_id),
     CONSTRAINT fk_transaction_sender_user_id
-        FOREIGN KEY (sender_user_id) REFERENCES Usuario(user_id)
+        FOREIGN KEY (sender_user_id) REFERENCES Usuarios(user_id)
 );
 ```
 
@@ -86,7 +86,7 @@ A continuación, se listan las principales deficiencias del modelo original, agr
 
 | N.º | Aspecto                        | Decisión original                                                                                                          | Limitación                                                                                                                                           |
 | :--: | :----------------------------- | :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  1  | **Relación con moneda** | La tabla`Moneda` existe pero no tiene ninguna FK hacia `Usuario` o `Transaccion`.                                     | No es posible determinar en qué moneda opera un usuario ni en qué divisa se realizó una transacción. La moneda queda como un catálogo aislado.   |
+|  1  | **Relación con moneda** | La tabla`Monedas` existe pero no tiene ninguna FK hacia `Usuarios` o `Transacciones`.                                 | No es posible determinar en qué moneda opera un usuario ni en qué divisa se realizó una transacción. La moneda queda como un catálogo aislado.   |
 |  2  | **Saldo e importe**      | Campos`saldo` e `importe` definidos como `INT`.                                                                       | No permiten valores decimales, lo que es inadecuado para operaciones monetarias con centavos (ej:`12.50`).                                          |
 |  3  | **Campos nulos**         | Casi todos los campos permiten`NULL` (excepto las PK).                                                                    | No se garantiza integridad mínima: un usuario podría registrarse sin nombre, correo o saldo, y una transacción podría quedar sin importe o fecha. |
 |  4  | **Claves primarias**     | Las PK (`user_id`, `currency_id`, `transaction_id`) son `INT NOT NULL` pero **no** tienen `AUTO_INCREMENT`. | Obliga a asignar manualmente los identificadores al insertar registros, aumentando el riesgo de duplicados y errores.                                 |
@@ -101,7 +101,7 @@ A continuación, se listan las principales deficiencias del modelo original, agr
 
 | N.º | Aspecto                        | Decisión original                                | Limitación                                                                                                                                                                                            |
 | :--: | :----------------------------- | :------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  6  | **Índices adicionales** | Solo se crean los índices implícitos de las PK. | Las consultas frecuentes por`sender_user_id` o `receiver_user_id` en la tabla `Transaccion` carecen de índices dedicados, lo que degrada el rendimiento a medida que crece el volumen de datos. |
+|  6  | **Índices adicionales** | Solo se crean los índices implícitos de las PK. | Las consultas frecuentes por`sender_user_id` o `receiver_user_id` en la tabla `Transacciones` carecen de índices dedicados, lo que degrada el rendimiento a medida que crece el volumen de datos. |
 
 ---
 
@@ -114,11 +114,11 @@ Para superar estas limitaciones, se han diseñado dos evoluciones del modelo:
   - Se añaden `AUTO_INCREMENT` a las PK.
   - Se ajustan tipos de datos (`DECIMAL` para montos, `VARCHAR` con tamaños adecuados).
   - Se establecen restricciones `NOT NULL` y `UNIQUE`.
-  - Se agrega `currency_id` en `Transaccion` para asociar cada movimiento con su moneda.
+  - Se agrega `currency_id` en `Transacciones` para asociar cada movimiento con su moneda.
   - Se incorporan índices para las FKs.
 - **[03_Scalable](./03_Scalable.md)** — Evolución completa (normalización 3FN):
 
-  - Se extrae el atributo `saldo` y la moneda por defecto de `Usuario` a una nueva tabla `Cuenta` (o `UserCurrency`), permitiendo que un usuario tenga múltiples saldos en distintas divisas.
+  - Se extrae el atributo `saldo` y la moneda por defecto de `Usuarios` a una nueva tabla `Cuentas` (o `UserCurrency`), permitiendo que un usuario tenga múltiples saldos en distintas divisas.
   - Se añade un flag `is_default` para identificar la moneda preferida del usuario, respondiendo directamente a la consulta: *"Obtener el nombre de la moneda elegida por un usuario específico"*.
   - Se incluyen restricciones `CHECK` para garantizar valores positivos y coherencia de negocio.
 

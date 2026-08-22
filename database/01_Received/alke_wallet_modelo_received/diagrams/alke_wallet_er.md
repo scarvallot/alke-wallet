@@ -2,7 +2,7 @@
 
 ```mermaid
 erDiagram
-    USUARIO {
+    USUARIOS {
         int user_id PK
         varchar nombre
         varchar correo_electronico
@@ -10,13 +10,13 @@ erDiagram
         int saldo
     }
 
-    MONEDA {
+    MONEDAS {
         int currency_id PK
         varchar currency_name
         varchar currency_symbol
     }
 
-    TRANSACCION {
+    TRANSACCIONES {
         int transaction_id PK
         int importe
         date transaction_date
@@ -24,6 +24,6 @@ erDiagram
         int sender_user_id FK
     }
 
-    USUARIO ||--o{ TRANSACCION : "envía (sender)"
-    USUARIO ||--o{ TRANSACCION : "recibe (receiver)"
+    USUARIOS ||--o{ TRANSACCIONES : "envía (sender)"
+    USUARIOS ||--o{ TRANSACCIONES : "recibe (receiver)"
 ```

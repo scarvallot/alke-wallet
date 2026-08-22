@@ -1,19 +1,19 @@
-```mermaid
+﻿```mermaid
 erDiagram
-    User {
+    Users {
         int user_id PK
         varchar user_name
         varchar email UK
         varchar password
     }
 
-    Currency {
+    Currencies {
         int currency_id PK
         varchar currency_name UK
         varchar currency_symbol UK
     }
 
-    Account {
+    Accounts {
         int account_id PK
         int user_id FK
         int currency_id FK
@@ -21,7 +21,7 @@ erDiagram
         boolean is_default
     }
 
-    Transaction {
+    Transactions {
         int transaction_id PK
         decimal importe
         datetime transaction_date
@@ -29,8 +29,8 @@ erDiagram
         int receive_account_id FK
     }
 
-    User ||--o{ Account : "posee"
-    Currency ||--o{ Account : "denomina"
-    Account ||--o{ Transaction : "envía"
-    Account ||--o{ Transaction : "recibe"
+    Users ||--o{ Accounts : "posee"
+    Currencies ||--o{ Accounts : "denomina"
+    Accounts ||--o{ Transactions : "envía"
+    Accounts ||--o{ Transactions : "recibe"
 ```

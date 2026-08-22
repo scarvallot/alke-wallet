@@ -1,15 +1,15 @@
 USE `AlkeWallet`;
 
--- Poblar tabla Moneda (5 registros) — sin FK desde Usuario/Transaccion en este modelo
-INSERT INTO `Moneda` (`currency_id`, `currency_name`, `currency_symbol`) VALUES
+-- Poblar tabla Monedas (5 registros) — sin FK desde Usuarios/Transacciones en este modelo
+INSERT INTO `Monedas` (`currency_id`, `currency_name`, `currency_symbol`) VALUES
 (1, 'Peso Chileno', '$'),
 (2, 'Dólar', '$'),
 (3, 'Euro', '€'),
 (4, 'Libra Esterlina', '£'),
 (5, 'Yen', '¥');
 
--- Poblar tabla Usuario (20 registros)
-INSERT INTO `Usuario` (`user_id`, `nombre`, `correo_electronico`, `contraseña`, `saldo`) VALUES
+-- Poblar tabla Usuarios (20 registros)
+INSERT INTO `Usuarios` (`user_id`, `nombre`, `correo_electronico`, `contraseña`, `saldo`) VALUES
 (1, 'Jorge Pérez', 'jorge.pérez1@mail.com', 'pass1001', 388786),
 (2, 'Sofía Contreras', 'sofía.contreras2@mail.com', 'pass1002', 117026),
 (3, 'Camila Muñoz', 'camila.muñoz3@mail.com', 'pass1003', 354785),
@@ -31,8 +31,8 @@ INSERT INTO `Usuario` (`user_id`, `nombre`, `correo_electronico`, `contraseña`,
 (19, 'Sebastián Torres', 'sebastián.torres19@mail.com', 'pass1019', 434846),
 (20, 'Pablo Vargas', 'pablo.vargas20@mail.com', 'pass1020', 302698);
 
--- Poblar tabla Transaccion (100 registros)
-INSERT INTO `Transaccion` (`transaction_id`, `sender_user_id`, `receiver_user_id`, `importe`, `transaction_date`) VALUES
+-- Poblar tabla Transacciones (100 registros)
+INSERT INTO `Transacciones` (`transaction_id`, `sender_user_id`, `receiver_user_id`, `importe`, `transaction_date`) VALUES
 (1, 7, 3, 13012, '2026-06-19'),
 (2, 8, 10, 21916, '2026-03-01'),
 (3, 4, 13, 73869, '2026-04-27'),

@@ -1,4 +1,4 @@
--- =====================================================
+﻿-- =====================================================
 -- Seeds — AlkeWallet Modelo Scalable
 -- Sin datos de prueba aún
 -- =====================================================
@@ -13,7 +13,7 @@ USE `AlkeWallet`;
 -- -----------------------------------------------------
 -- 1. Poblar tabla Currency (5 monedas)
 -- -----------------------------------------------------
-INSERT INTO `Currency` (`currency_id`, `currency_name`, `currency_symbol`) VALUES
+INSERT INTO `Currencies` (`currency_id`, `currency_name`, `currency_symbol`) VALUES
 (1, 'Peso Chileno', '$'),
 (2, 'Dólar Americano', 'US$'),
 (3, 'Euro', '€'),
@@ -23,7 +23,7 @@ INSERT INTO `Currency` (`currency_id`, `currency_name`, `currency_symbol`) VALUE
 -- -----------------------------------------------------
 -- 2. Poblar tabla User (20 usuarios — sin saldo)
 -- -----------------------------------------------------
-INSERT INTO `User` (`user_id`, `user_name`, `email`, `password`) VALUES
+INSERT INTO `Users` (`user_id`, `user_name`, `email`, `password`) VALUES
 (1, 'Jorge Pérez', 'jorge.perez1@mail.com', 'pass1001'),
 (2, 'Sofía Contreras', 'sofia.contreras2@mail.com', 'pass1002'),
 (3, 'Camila Muñoz', 'camila.munoz3@mail.com', 'pass1003'),
@@ -53,7 +53,7 @@ INSERT INTO `User` (`user_id`, `user_name`, `email`, `password`) VALUES
 -- -----------------------------------------------------
 
 -- 3.1 Cuentas principales (CLP) — una por usuario (account_id = user_id)
-INSERT INTO `Account` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
+INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
 (1, 1, 1, 388786.00, 1),
 (2, 2, 1, 117026.00, 1),
 (3, 3, 1, 354785.00, 1),
@@ -77,7 +77,7 @@ INSERT INTO `Account` (`account_id`, `user_id`, `currency_id`, `current_balance`
 
 -- 3.2 Cuentas secundarias (USD y EUR) para algunos usuarios
 -- account_id continuará desde 21 en adelante
-INSERT INTO `Account` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
+INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
 (21, 2, 2, 5000.00, 0),    -- Sofía (USD)
 (22, 5, 2, 1200.00, 0),    -- Nicolás (USD)
 (23, 8, 2, 7800.00, 0),    -- Sebastián Fuentes (USD)
@@ -97,7 +97,7 @@ INSERT INTO `Account` (`account_id`, `user_id`, `currency_id`, `current_balance`
 --      Corresponden a las 100 transacciones originales de Approach,
 --      pero ahora usando sender_account_id = sender_user_id 
 --      y receive_account_id = receiver_user_id.
-INSERT INTO `Transaction` (
+INSERT INTO `Transactions` (
     `transaction_id`,
     `sender_account_id`,
     `receive_account_id`,
@@ -207,7 +207,7 @@ INSERT INTO `Transaction` (
 
 -- 4.2 Transacciones adicionales en USD y EUR (usando cuentas secundarias)
 --      account_id 21,22,23 son USD; 24,25,26 son EUR; 27 es USD
-INSERT INTO `Transaction` (`sender_account_id`, `receive_account_id`, `importe`, `transaction_date`) VALUES
+INSERT INTO `Transactions` (`sender_account_id`, `receive_account_id`, `importe`, `transaction_date`) VALUES
 -- Transferencias en USD (cuentas 21,22,23,27)
 (21, 22, 250.00, '2026-07-20 09:30:00'),   -- Sofía → Nicolás
 (23, 27, 120.00, '2026-07-21 14:15:00'),   -- Sebastián F. → Pablo
