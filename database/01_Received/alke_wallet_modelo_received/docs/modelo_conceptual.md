@@ -12,7 +12,7 @@ El modelo busca representar un sistema de wallet digital donde los usuarios pued
 
 ## 2. Entidades y atributos
 
-### 2.1. Usuario
+### 2.1. Usuarios
 
 Representa a cada usuario registrado en el sistema.
 
@@ -26,7 +26,7 @@ Representa a cada usuario registrado en el sistema.
 
 **Nota**: Todos los atributos excepto `user_id` permiten valores `NULL` en el modelo original.
 
-### 2.2. Moneda
+### 2.2. Monedas
 
 Representa las divisas disponibles en el monedero virtual.
 
@@ -36,9 +36,9 @@ Representa las divisas disponibles en el monedero virtual.
 | `currency_name` | `VARCHAR(50)` | Nombre de la moneda (ej. "Dólar Americano"). |
 | `currency_symbol` | `VARCHAR(50)` | Símbolo monetario (ej. "$", "€"). |
 
-**Nota**: La tabla `Moneda` no tiene ninguna relación con `Usuario` ni `Transacción` en este modelo inicial.
+**Nota**: La tabla `Monedas` no tiene ninguna relación con `Usuarios` ni `Transacciones` en este modelo inicial.
 
-### 2.3. Transacción
+### 2.3. Transacciones
 
 Registra las transferencias de dinero entre usuarios.
 
@@ -47,8 +47,8 @@ Registra las transferencias de dinero entre usuarios.
 | `transaction_id` | `INT` | Identificador único de la transacción (**PK**). |
 | `importe` | `INT` | Monto transferido (en la moneda base del sistema). |
 | `transaction_date` | `DATE` | Fecha en que se realizó la operación. |
-| `receiver_user_id` | `INT` | Identificador del usuario receptor (**FK** → `Usuario.user_id`). |
-| `sender_user_id` | `INT` | Identificador del usuario emisor (**FK** → `Usuario.user_id`). |
+| `receiver_user_id` | `INT` | Identificador del usuario receptor (**FK** → `Usuarios.user_id`). |
+| `sender_user_id` | `INT` | Identificador del usuario emisor (**FK** → `Usuarios.user_id`). |
 
 ---
 
@@ -58,9 +58,9 @@ La siguiente tabla resume las relaciones identificadas en el modelo original:
 
 | Relación | Cardinalidad | PK/FK | Descripción |
 | :--- | :--- | :--- | :--- |
-| **Usuario → Transacción (sender)** | 1 : N | `sender_user_id` → `user_id` | Un usuario puede enviar **muchas** transacciones. Cada transacción tiene un **único** emisor. |
-| **Usuario → Transacción (receiver)** | 1 : N | `receiver_user_id` → `user_id` | Un usuario puede recibir **muchas** transacciones. Cada transacción tiene un **único** receptor. |
-| **Moneda → (ninguna)** | — | — | La entidad `Moneda` está desconectada: no se relaciona con `Usuario` ni `Transacción`. |
+| **Usuarios → Transacciones (sender)** | 1 : N | `sender_user_id` → `user_id` | Un usuario puede enviar **muchas** transacciones. Cada transacción tiene un **único** emisor. |
+| **Usuarios → Transacciones (receiver)** | 1 : N | `receiver_user_id` → `user_id` | Un usuario puede recibir **muchas** transacciones. Cada transacción tiene un **único** receptor. |
+| **Monedas → (ninguna)** | — | — | La entidad `Monedas` está desconectada: no se relaciona con `Usuarios` ni `Transacciones`. |
 
 ---
 
@@ -82,7 +82,7 @@ A continuación, se enumeran las principales decisiones de diseño adoptadas en 
 
 | Decisión | Implicación / Limitación |
 | :--- | :--- |
-| **Moneda como tabla aislada** | No es posible asociar una transacción a una divisa concreta, ni conocer la moneda preferida de un usuario. |
+| **Monedas como tabla aislada** | No es posible asociar una transacción a una divisa concreta, ni conocer la moneda preferida de un usuario. |
 | **Saldo e importe como `INT`** | No se admiten valores decimales (centavos), lo que impide representar montos como $12.50 o $0.99. |
 | **Campos `NULL`** | Permite la creación de registros incompletos (ej. un usuario sin nombre). |
 | **Sin `AUTO_INCREMENT` en PKs** | Los identificadores deben asignarse manualmente al insertar datos, aumentando el riesgo de errores. |

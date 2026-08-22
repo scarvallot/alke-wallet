@@ -1,4 +1,4 @@
-¡Excelente! Ahora vamos a aplicar la misma mejora estructural al **Modelo Lógico de Approach**, siguiendo el estándar profesional que hemos establecido para los documentos de AlkeWallet.
+﻿¡Excelente! Ahora vamos a aplicar la misma mejora estructural al **Modelo Lógico de Approach**, siguiendo el estándar profesional que hemos establecido para los documentos de AlkeWallet.
 
 Aquí tienes la versión mejorada, con tablas claras, un diagrama Mermaid que refleja el esquema lógico, y una comparativa directa con el modelo Received.
 
@@ -18,7 +18,7 @@ El siguiente diagrama Mermaid representa visualmente la estructura de las tablas
 
 ```mermaid
 erDiagram
-    User {
+    Users {
         int user_id PK
         varchar username
         varchar email
@@ -26,13 +26,13 @@ erDiagram
         decimal current_balance
     }
 
-    Currency {
+    Currencies {
         int currency_id PK
         varchar currency_name
         varchar currency_symbol
     }
 
-    Transaction {
+    Transactions {
         int transaction_id PK
         decimal importe
         datetime transaction_date
@@ -41,16 +41,16 @@ erDiagram
         int currency_id FK
     }
 
-    User ||--o{ Transaction : "envía (sender)"
-    User ||--o{ Transaction : "recibe (receiver)"
-    Currency ||--o{ Transaction : "usada en"
+    Users ||--o{ Transactions : "envía (sender)"
+    Users ||--o{ Transactions : "recibe (receiver)"
+    Currencies ||--o{ Transactions : "usada en"
 ```
 
 ---
 
 ## 3. Tablas y atributos
 
-### 3.1. `User` (Usuario)
+### 3.1. `Users` (Usuario)
 
 Almacena la información de los usuarios registrados.
 
@@ -62,7 +62,7 @@ Almacena la información de los usuarios registrados.
 | `password`        | `VARCHAR(255)`  | `NOT NULL`                     | Hash de la contraseña.                         |
 | `current_balance` | `DECIMAL(15,2)` | `NOT NULL`, `DEFAULT 0`      | Saldo disponible en la moneda base del sistema. |
 
-### 3.2. `Currency` (Moneda)
+### 3.2. `Currencies` (Moneda)
 
 Catálogo de divisas admitidas.
 
@@ -72,7 +72,7 @@ Catálogo de divisas admitidas.
 | `currency_name`   | `VARCHAR(50)` | `NOT NULL`, `UNIQUE`         | Nombre de la moneda (ej. "Peso Chileno"). |
 | `currency_symbol` | `VARCHAR(5)`  | `NOT NULL`, `UNIQUE`         | Símbolo monetario (ej. "$", "€").       |
 
-### 3.3. `Transaction` (Transacción)
+### 3.3. `Transactions` (Transacción)
 
 Registra cada transferencia entre usuarios.
 
@@ -81,9 +81,9 @@ Registra cada transferencia entre usuarios.
 | `transaction_id`   | `INT`           | **PK**, `AUTO_INCREMENT`                        | Identificador único de la transacción.   |
 | `importe`          | `DECIMAL(15,2)` | `NOT NULL`                                            | Monto transferido (con centavos).          |
 | `transaction_date` | `DATETIME`      | `NOT NULL`, `DEFAULT CURRENT_TIMESTAMP`             | Fecha y hora exacta de la operación.      |
-| `sender_user_id`   | `INT`           | `NOT NULL`, **FK** → `User(user_id)`         | Usuario que envía el dinero.              |
-| `receiver_user_id` | `INT`           | `NOT NULL`, **FK** → `User(user_id)`         | Usuario que recibe el dinero.              |
-| `currency_id`      | `INT`           | `NOT NULL`, **FK** → `Currency(currency_id)` | Moneda en que se realizó la transacción. |
+| `sender_user_id`   | `INT`           | `NOT NULL`, **FK** → `Users(user_id)`         | Usuario que envía el dinero.              |
+| `receiver_user_id` | `INT`           | `NOT NULL`, **FK** → `Users(user_id)`         | Usuario que recibe el dinero.              |
+| `currency_id`      | `INT`           | `NOT NULL`, **FK** → `Currencies(currency_id)` | Moneda en que se realizó la transacción. |
 
 ---
 
@@ -91,9 +91,9 @@ Registra cada transferencia entre usuarios.
 
 | Nombre de la FK             | Tabla origen    | Columna              | Tabla destino | Columna ref.    | `ON DELETE` | `ON UPDATE` |
 | :-------------------------- | :-------------- | :------------------- | :------------ | :-------------- | :------------ | :------------ |
-| `fk_transaction_sender`   | `Transaction` | `sender_user_id`   | `User`      | `user_id`     | `CASCADE`   | `CASCADE`   |
-| `fk_transaction_receiver` | `Transaction` | `receiver_user_id` | `User`      | `user_id`     | `CASCADE`   | `CASCADE`   |
-| `fk_transaction_currency` | `Transaction` | `currency_id`      | `Currency`  | `currency_id` | `CASCADE`   | `CASCADE`   |
+| `fk_transaction_sender`   | `Transactions` | `sender_user_id`   | `Users`      | `user_id`     | `CASCADE`   | `CASCADE`   |
+| `fk_transaction_receiver` | `Transactions` | `receiver_user_id` | `Users`      | `user_id`     | `CASCADE`   | `CASCADE`   |
+| `fk_transaction_currency` | `Transactions` | `currency_id`      | `Currencies`  | `currency_id` | `CASCADE`   | `CASCADE`   |
 
 > **Trade-off**: `ON DELETE CASCADE` asegura que al eliminar un usuario, sus transacciones se borren automáticamente (evitando huérfanos). Sin embargo, en entornos productivos, se recomienda evaluar el uso de `RESTRICT` para evitar pérdidas accidentales de datos históricos (ver modelo `03_Scalable`).
 
@@ -103,16 +103,16 @@ Registra cada transferencia entre usuarios.
 
 | Nombre                       | Tabla           | Columna(s)           | Tipo            | Propósito                                   |
 | :--------------------------- | :-------------- | :------------------- | :-------------- | :------------------------------------------- |
-| `pk_user`                  | `User`        | `user_id`          | `PRIMARY KEY` | Identificación única.                      |
-| `uq_user_email`            | `User`        | `email`            | `UNIQUE`      | Evita correos duplicados.                    |
-| `pk_currency`              | `Currency`    | `currency_id`      | `PRIMARY KEY` | Identificación única.                      |
-| `uq_currency_name`         | `Currency`    | `currency_name`    | `UNIQUE`      | Evita nombres de moneda duplicados.          |
-| `uq_currency_symbol`       | `Currency`    | `currency_symbol`  | `UNIQUE`      | Evita símbolos de moneda duplicados.        |
-| `pk_transaction`           | `Transaction` | `transaction_id`   | `PRIMARY KEY` | Identificación única.                      |
-| `idx_transaction_sender`   | `Transaction` | `sender_user_id`   | `INDEX`       | Acelera consultas de historial de envíos.   |
-| `idx_transaction_receiver` | `Transaction` | `receiver_user_id` | `INDEX`       | Acelera consultas de historial de recibidos. |
-| `idx_transaction_currency` | `Transaction` | `currency_id`      | `INDEX`       | Acelera consultas por moneda.                |
-| `idx_transaction_date`     | `Transaction` | `transaction_date` | `INDEX`       | Acelera consultas por rango de fechas.       |
+| `pk_user`                  | `Users`        | `user_id`          | `PRIMARY KEY` | Identificación única.                      |
+| `uq_user_email`            | `Users`        | `email`            | `UNIQUE`      | Evita correos duplicados.                    |
+| `pk_currency`              | `Currencies`    | `currency_id`      | `PRIMARY KEY` | Identificación única.                      |
+| `uq_currency_name`         | `Currencies`    | `currency_name`    | `UNIQUE`      | Evita nombres de moneda duplicados.          |
+| `uq_currency_symbol`       | `Currencies`    | `currency_symbol`  | `UNIQUE`      | Evita símbolos de moneda duplicados.        |
+| `pk_transaction`           | `Transactions` | `transaction_id`   | `PRIMARY KEY` | Identificación única.                      |
+| `idx_transaction_sender`   | `Transactions` | `sender_user_id`   | `INDEX`       | Acelera consultas de historial de envíos.   |
+| `idx_transaction_receiver` | `Transactions` | `receiver_user_id` | `INDEX`       | Acelera consultas de historial de recibidos. |
+| `idx_transaction_currency` | `Transactions` | `currency_id`      | `INDEX`       | Acelera consultas por moneda.                |
+| `idx_transaction_date`     | `Transactions` | `transaction_date` | `INDEX`       | Acelera consultas por rango de fechas.       |
 
 ---
 
@@ -136,7 +136,7 @@ Este modelo lógico incorpora las siguientes mejoras en la capa de implementaci�
 | **Montos y saldos**      | `INT` (sin decimales)                   | `DECIMAL(15,2)`                                               | Permite centavos y precisión financiera real.                              |
 | **Campos obligatorios**  | `NULL` permitido en casi todo           | `NOT NULL` en todas las columnas                              | Garantiza integridad mínima de los datos.                                  |
 | **Unicidad**             | Sin restricciones                         | `UNIQUE` en `email`, `currency_name`, `currency_symbol` | Previene duplicados lógicos.                                               |
-| **Relación con moneda** | `Currency` aislada                      | `currency_id` (FK) en `Transaction`                         | Cada transacción queda asociada a su divisa.                               |
+| **Relación con moneda** | `Currencies` aislada                      | `currency_id` (FK) en `Transactions`                         | Cada transacción queda asociada a su divisa.                               |
 | **Fecha**                | `DATE` (solo día)                      | `DATETIME` (día + hora)                                      | Permite auditoría precisa y ordenamiento cronológico exacto.              |
 | **Índices**             | Solo PK implícitas                       | Índices explícitos en todas las FK y`transaction_date`      | Acelera consultas frecuentes.                                               |
 | **Acción referencial**  | `ON DELETE NO ACTION`                   | `ON DELETE CASCADE` / `ON UPDATE CASCADE`                   | Elimina automáticamente transacciones al borrar un usuario (consistencia). |

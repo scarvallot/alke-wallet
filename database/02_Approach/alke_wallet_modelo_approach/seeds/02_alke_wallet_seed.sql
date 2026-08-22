@@ -6,9 +6,9 @@
 USE `AlkeWallet`;
 
 -- -----------------------------------------------------
--- 1. Poblar tabla Currency (5 monedas)
+-- 1. Poblar tabla Currencies (5 monedas)
 -- -----------------------------------------------------
-INSERT INTO `Currency` (`currency_id`, `currency_name`, `currency_symbol`) VALUES
+INSERT INTO `Currencies` (`currency_id`, `currency_name`, `currency_symbol`) VALUES
 (1, 'Peso Chileno', '$'),
 (2, 'Dólar Americano', 'US$'),
 (3, 'Euro', '€'),
@@ -16,9 +16,9 @@ INSERT INTO `Currency` (`currency_id`, `currency_name`, `currency_symbol`) VALUE
 (5, 'Yen Japonés', '¥');
 
 -- -----------------------------------------------------
--- 2. Poblar tabla User (20 usuarios)
+-- 2. Poblar tabla Users (20 usuarios)
 -- -----------------------------------------------------
-INSERT INTO `User` (`user_id`, `username`, `email`, `password`, `current_balance`) VALUES
+INSERT INTO `Users` (`user_id`, `username`, `email`, `password`, `current_balance`) VALUES
 (1, 'Jorge Pérez', 'jorge.perez1@mail.com', 'pass1001', 388786.00),
 (2, 'Sofía Contreras', 'sofia.contreras2@mail.com', 'pass1002', 117026.00),
 (3, 'Camila Muñoz', 'camila.munoz3@mail.com', 'pass1003', 354785.00),
@@ -41,10 +41,10 @@ INSERT INTO `User` (`user_id`, `username`, `email`, `password`, `current_balance
 (20, 'Pablo Vargas', 'pablo.vargas20@mail.com', 'pass1020', 302698.00);
 
 -- -----------------------------------------------------
--- 3. Poblar tabla Transaction (100 transacciones con currency_id)
+-- 3. Poblar tabla Transactions (100 transacciones con currency_id)
 -- Nota: currency_id se asigna cíclicamente (1 a 5) usando MOD(transaction_id, 5) + 1
 -- -----------------------------------------------------
-INSERT INTO `Transaction` (
+INSERT INTO `Transactions` (
     `transaction_id`,
     `sender_user_id`,
     `receiver_user_id`,

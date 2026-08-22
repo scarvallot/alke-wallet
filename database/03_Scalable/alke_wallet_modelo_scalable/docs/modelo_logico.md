@@ -1,8 +1,8 @@
-# Modelo Lógico — AlkeWallet Scalable
+﻿# Modelo Lógico — AlkeWallet Scalable
 
 ## 1. Propósito del modelo lógico
 
-El modelo lógico **Scalable** describe la implementación concreta del esquema que incorpora la tabla `Account` para soportar múltiples monedas por usuario. Este documento detalla las tablas, columnas, tipos de datos, restricciones (`NOT NULL`, `UNIQUE`, `CHECK`), claves foráneas, índices y acciones referenciales. Su objetivo es traducir el [modelo conceptual](../01_Received/README.md) a una estructura ejecutable en MySQL, alcanzando la **Tercera Forma Normal (3FN)** y proporcionando una base sólida para un sistema financiero real.
+El modelo lógico **Scalable** describe la implementación concreta del esquema que incorpora la tabla `Accounts` para soportar múltiples monedas por usuario. Este documento detalla las tablas, columnas, tipos de datos, restricciones (`NOT NULL`, `UNIQUE`, `CHECK`), claves foráneas, índices y acciones referenciales. Su objetivo es traducir el [modelo conceptual](../01_Received/README.md) a una estructura ejecutable en MySQL, alcanzando la **Tercera Forma Normal (3FN)** y proporcionando una base sólida para un sistema financiero real.
 
 ---
 
@@ -12,20 +12,20 @@ El siguiente diagrama Mermaid representa visualmente la estructura de las cuatro
 
 ```mermaid
 erDiagram
-    User {
+    Users {
         int user_id PK
         varchar user_name
         varchar email UK
         varchar password
     }
 
-    Currency {
+    Currencies {
         int currency_id PK
         varchar currency_name UK
         varchar currency_symbol UK
     }
 
-    Account {
+    Accounts {
         int account_id PK
         int user_id FK
         int currency_id FK
@@ -33,7 +33,7 @@ erDiagram
         boolean is_default
     }
 
-    Transaction {
+    Transactions {
         int transaction_id PK
         decimal importe
         datetime transaction_date
@@ -41,17 +41,17 @@ erDiagram
         int receive_account_id FK
     }
 
-    User ||--o{ Account : "posee"
-    Currency ||--o{ Account : "denomina"
-    Account ||--o{ Transaction : "envía"
-    Account ||--o{ Transaction : "recibe"
+    Users ||--o{ Accounts : "posee"
+    Currencies ||--o{ Accounts : "denomina"
+    Accounts ||--o{ Transactions : "envía"
+    Accounts ||--o{ Transactions : "recibe"
 ```
 
 ---
 
 ## 3. Tablas y atributos
 
-### 3.1. `User` (Usuario)
+### 3.1. `Users` (Usuario)
 
 Almacena la información de los usuarios registrados. **Ya no contiene saldo**.
 
@@ -62,7 +62,7 @@ Almacena la información de los usuarios registrados. **Ya no contiene saldo**.
 | `email`     | `VARCHAR(150)` | `NOT NULL`, `UNIQUE`         | Correo electrónico único.       |
 | `password`  | `VARCHAR(255)` | `NOT NULL`                     | Hash de la contraseña.           |
 
-### 3.2. `Currency` (Moneda)
+### 3.2. `Currencies` (Moneda)
 
 Catálogo de divisas admitidas.
 
@@ -72,15 +72,15 @@ Catálogo de divisas admitidas.
 | `currency_name`   | `VARCHAR(50)` | `NOT NULL`, `UNIQUE`         | Nombre de la moneda (ej. "Peso Chileno"). |
 | `currency_symbol` | `VARCHAR(5)`  | `NOT NULL`, `UNIQUE`         | Símbolo monetario (ej. "$", "€").       |
 
-### 3.3. `Account` (Cuenta) — **Nueva entidad**
+### 3.3. `Accounts` (Cuenta) — **Nueva entidad**
 
 Representa una cuenta de un usuario en una moneda específica. Es la tabla que permite multi‑moneda.
 
 | Columna             | Tipo              | Restricciones                                           | Descripción                                 |
 | :------------------ | :---------------- | :------------------------------------------------------ | :------------------------------------------- |
 | `account_id`      | `INT`           | **PK**, `AUTO_INCREMENT`                        | Identificador único de la cuenta.           |
-| `user_id`         | `INT`           | `NOT NULL`, **FK** → `User(user_id)`         | Usuario propietario.                         |
-| `currency_id`     | `INT`           | `NOT NULL`, **FK** → `Currency(currency_id)` | Moneda de la cuenta.                         |
+| `user_id`         | `INT`           | `NOT NULL`, **FK** → `Users(user_id)`         | Usuario propietario.                         |
+| `currency_id`     | `INT`           | `NOT NULL`, **FK** → `Currencies(currency_id)` | Moneda de la cuenta.                         |
 | `current_balance` | `DECIMAL(15,2)` | `NOT NULL`, `DEFAULT 0`, `CHECK (balance >= 0)`   | Saldo actual (no negativo).                  |
 | `is_default`      | `TINYINT(1)`    | `NOT NULL`, `DEFAULT 0`                             | `1` si es la cuenta principal del usuario. |
 
@@ -89,7 +89,7 @@ Representa una cuenta de un usuario en una moneda específica. Es la tabla que p
 - `UNIQUE (user_id, currency_id)` → Evita que un usuario tenga dos cuentas con la misma moneda.
 - Solo una cuenta por usuario puede tener `is_default = 1` (controlado por lógica de aplicación o índice condicional).
 
-### 3.4. `Transaction` (Transacción)
+### 3.4. `Transactions` (Transacción)
 
 Registra transferencias de dinero **entre cuentas**.
 
@@ -98,8 +98,8 @@ Registra transferencias de dinero **entre cuentas**.
 | `transaction_id`     | `INT`           | **PK**, `AUTO_INCREMENT`                      | Identificador único de la transacción. |
 | `importe`            | `DECIMAL(15,2)` | `NOT NULL`, `CHECK (importe > 0)`                 | Monto transferido (mayor que cero).      |
 | `transaction_date`   | `DATETIME`      | `NOT NULL`, `DEFAULT CURRENT_TIMESTAMP`           | Fecha y hora exacta de la operación.    |
-| `sender_account_id`  | `INT`           | `NOT NULL`, **FK** → `Account(account_id)` | Cuenta que envía el dinero.             |
-| `receive_account_id` | `INT`           | `NOT NULL`, **FK** → `Account(account_id)` | Cuenta que recibe el dinero.             |
+| `sender_account_id`  | `INT`           | `NOT NULL`, **FK** → `Accounts(account_id)` | Cuenta que envía el dinero.             |
+| `receive_account_id` | `INT`           | `NOT NULL`, **FK** → `Accounts(account_id)` | Cuenta que recibe el dinero.             |
 
 **Restricciones adicionales**:
 
@@ -112,9 +112,9 @@ Registra transferencias de dinero **entre cuentas**.
 
 | Tabla           | Restricción                                        | Propósito                                       |
 | :-------------- | :-------------------------------------------------- | :----------------------------------------------- |
-| `Account`     | `CHECK (current_balance >= 0)`                    | Evita saldos negativos.                          |
-| `Transaction` | `CHECK (importe > 0)`                             | El monto debe ser positivo.                      |
-| `Transaction` | `CHECK (sender_account_id <> receive_account_id)` | Impide que una cuenta se transfiera a sí misma. |
+| `Accounts`     | `CHECK (current_balance >= 0)`                    | Evita saldos negativos.                          |
+| `Transactions` | `CHECK (importe > 0)`                             | El monto debe ser positivo.                      |
+| `Transactions` | `CHECK (sender_account_id <> receive_account_id)` | Impide que una cuenta se transfiera a sí misma. |
 
 > **Nota**: MySQL 8.0+ soporta `CHECK` y los aplica. En versiones anteriores, se definen pero se ignoran; se recomienda validación en la aplicación.
 
@@ -124,10 +124,10 @@ Registra transferencias de dinero **entre cuentas**.
 
 | Nombre de la FK             | Tabla origen    | Columna                | Tabla destino | Columna ref.    | `ON DELETE` | `ON UPDATE` |
 | :-------------------------- | :-------------- | :--------------------- | :------------ | :-------------- | :------------ | :------------ |
-| `fk_account_user`         | `Account`     | `user_id`            | `User`      | `user_id`     | `RESTRICT`  | `RESTRICT`  |
-| `fk_account_currency`     | `Account`     | `currency_id`        | `Currency`  | `currency_id` | `RESTRICT`  | `RESTRICT`  |
-| `fk_transaction_sender`   | `Transaction` | `sender_account_id`  | `Account`   | `account_id`  | `RESTRICT`  | `RESTRICT`  |
-| `fk_transaction_receiver` | `Transaction` | `receive_account_id` | `Account`   | `account_id`  | `RESTRICT`  | `RESTRICT`  |
+| `fk_account_user`         | `Accounts`     | `user_id`            | `Users`      | `user_id`     | `RESTRICT`  | `RESTRICT`  |
+| `fk_account_currency`     | `Accounts`     | `currency_id`        | `Currencies`  | `currency_id` | `RESTRICT`  | `RESTRICT`  |
+| `fk_transaction_sender`   | `Transactions` | `sender_account_id`  | `Accounts`   | `account_id`  | `RESTRICT`  | `RESTRICT`  |
+| `fk_transaction_receiver` | `Transactions` | `receive_account_id` | `Accounts`   | `account_id`  | `RESTRICT`  | `RESTRICT`  |
 
 > **Justificación**: `RESTRICT` impide eliminar un registro padre si existen hijos referenciados, protegiendo el historial financiero de borrados accidentales. En producción se recomienda usar **borrado lógico** (ej. columna `is_active`) en lugar de `DELETE` físico.
 
@@ -137,19 +137,19 @@ Registra transferencias de dinero **entre cuentas**.
 
 | Nombre                       | Tabla           | Columna(s)                 | Tipo            | Propósito                                   |
 | :--------------------------- | :-------------- | :------------------------- | :-------------- | :------------------------------------------- |
-| `pk_user`                  | `User`        | `user_id`                | `PRIMARY KEY` | Identificación única.                      |
-| `uq_user_email`            | `User`        | `email`                  | `UNIQUE`      | Evita correos duplicados.                    |
-| `pk_currency`              | `Currency`    | `currency_id`            | `PRIMARY KEY` | Identificación única.                      |
-| `uq_currency_name`         | `Currency`    | `currency_name`          | `UNIQUE`      | Evita nombres de moneda duplicados.          |
-| `uq_currency_symbol`       | `Currency`    | `currency_symbol`        | `UNIQUE`      | Evita símbolos duplicados.                  |
-| `pk_account`               | `Account`     | `account_id`             | `PRIMARY KEY` | Identificación única.                      |
-| `uq_account_user_currency` | `Account`     | `(user_id, currency_id)` | `UNIQUE`      | Evita cuentas duplicadas por usuario/moneda. |
-| `idx_account_user`         | `Account`     | `user_id`                | `INDEX`       | Acelera consultas por usuario.               |
-| `idx_account_currency`     | `Account`     | `currency_id`            | `INDEX`       | Acelera consultas por moneda.                |
-| `pk_transaction`           | `Transaction` | `transaction_id`         | `PRIMARY KEY` | Identificación única.                      |
-| `idx_transaction_sender`   | `Transaction` | `sender_account_id`      | `INDEX`       | Acelera consultas de envíos.                |
-| `idx_transaction_receiver` | `Transaction` | `receive_account_id`     | `INDEX`       | Acelera consultas de recibidos.              |
-| `idx_transaction_date`     | `Transaction` | `transaction_date`       | `INDEX`       | Acelera consultas por rango de fechas.       |
+| `pk_user`                  | `Users`        | `user_id`                | `PRIMARY KEY` | Identificación única.                      |
+| `uq_user_email`            | `Users`        | `email`                  | `UNIQUE`      | Evita correos duplicados.                    |
+| `pk_currency`              | `Currencies`    | `currency_id`            | `PRIMARY KEY` | Identificación única.                      |
+| `uq_currency_name`         | `Currencies`    | `currency_name`          | `UNIQUE`      | Evita nombres de moneda duplicados.          |
+| `uq_currency_symbol`       | `Currencies`    | `currency_symbol`        | `UNIQUE`      | Evita símbolos duplicados.                  |
+| `pk_account`               | `Accounts`     | `account_id`             | `PRIMARY KEY` | Identificación única.                      |
+| `uq_account_user_currency` | `Accounts`     | `(user_id, currency_id)` | `UNIQUE`      | Evita cuentas duplicadas por usuario/moneda. |
+| `idx_account_user`         | `Accounts`     | `user_id`                | `INDEX`       | Acelera consultas por usuario.               |
+| `idx_account_currency`     | `Accounts`     | `currency_id`            | `INDEX`       | Acelera consultas por moneda.                |
+| `pk_transaction`           | `Transactions` | `transaction_id`         | `PRIMARY KEY` | Identificación única.                      |
+| `idx_transaction_sender`   | `Transactions` | `sender_account_id`      | `INDEX`       | Acelera consultas de envíos.                |
+| `idx_transaction_receiver` | `Transactions` | `receive_account_id`     | `INDEX`       | Acelera consultas de recibidos.              |
+| `idx_transaction_date`     | `Transactions` | `transaction_date`       | `INDEX`       | Acelera consultas por rango de fechas.       |
 
 ---
 
@@ -169,11 +169,11 @@ Registra transferencias de dinero **entre cuentas**.
 | Aspecto                              | Modelo Approach                                           | Modelo Scalable                                                                   | Beneficio                                                   |
 | :----------------------------------- | :-------------------------------------------------------- | :-------------------------------------------------------------------------------- | :---------------------------------------------------------- |
 | **Saldo del usuario**          | En`User.current_balance` (único)                       | En`Account.current_balance` (uno por moneda)                                    | Permite múltiples divisas por usuario.                     |
-| **Relación User ↔ Currency** | Indirecta (vía`Transaction`)                           | Directa (vía`Account`)                                                         | Asociación explícita y normalizada.                       |
+| **Relación User ↔ Currency** | Indirecta (vía`Transactions`)                           | Directa (vía`Accounts`)                                                         | Asociación explícita y normalizada.                       |
 | **Transacciones**              | Entre usuarios (`sender_user_id`, `receiver_user_id`) | Entre cuentas (`sender_account_id`, `receive_account_id`)                     | La moneda se deduce de la cuenta, simplificando la lógica. |
 | **Acción referencial**        | `ON DELETE CASCADE`                                     | `ON DELETE RESTRICT`                                                            | Evita borrar accidentalmente el historial financiero.       |
 | **Validaciones de negocio**    | Sin`CHECK`                                              | `CHECK (balance >= 0)`, `CHECK (importe > 0)`, `CHECK (sender <> receiver)` | Garantiza reglas financieras básicas a nivel de BD.        |
-| **Cuenta predeterminada**      | No existía                                               | `is_default` en `Account`                                                     | Permite identificar la cuenta principal del usuario.        |
+| **Cuenta predeterminada**      | No existía                                               | `is_default` en `Accounts`                                                     | Permite identificar la cuenta principal del usuario.        |
 | **Normalización**             | 2FN                                                       | **3FN**                                                                     | Elimina dependencias funcionales, reduce redundancia.       |
 
 ---
@@ -183,7 +183,7 @@ Registra transferencias de dinero **entre cuentas**.
 - **Motor de almacenamiento**: `InnoDB` (soporta transacciones ACID, claves foráneas y bloqueo a nivel de fila).
 - **Character set**: `utf8` (suficiente para caracteres latinos y símbolos monetarios).
 - **Collation**: `utf8_bin` (distingue mayúsculas/minúsculas en comparaciones, útil para contraseñas y correos).
-- **Migraciones**: El archivo `migrations/alke_wallet_migrations.sql` está **vacío** porque todas las mejoras (incluyendo `CHECK` y la tabla `Account`) ya están integradas en el script DDL base.
+- **Migraciones**: El archivo `migrations/alke_wallet_migrations.sql` está **vacío** porque todas las mejoras (incluyendo `CHECK` y la tabla `Accounts`) ya están integradas en el script DDL base.
 
 ---
 
