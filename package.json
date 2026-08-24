@@ -1,0 +1,21 @@
+{
+  "name": "alke-wallet",
+  "version": "1.0.0",
+  "description": "[![In Progress](<https://img.shields.io/badge/In Progress-magenta>)](https://github.com/scarvallot/alke-wallet.git)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "se.carvallo",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
