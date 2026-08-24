@@ -34,9 +34,9 @@ $(document).ready(function () {
     // Validar credenciales
     if (username === "admin" && password === "12345") {
       mostrarAlerta("Sesión iniciada. Redirigiendo...", "success");
-      // Redirigir al menú principal con jQuery
+      // Redirigir al menú principal con ruta absoluta para evitar conflictos con Express
       setTimeout(function () {
-        window.location.href = "../../menu/menu.html";
+        window.location.href = "/menu/menu.html";
       }, 2000);
     } else {
       mostrarAlerta(
