@@ -56,31 +56,19 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 ## Arquitectura de la Aplicación
 
 ```markdown
-  alke-wallet/
-  ├── auth/
-  │   └── login/
-  │       ├── login.css
-  │       ├── login.html
-  │       └── login.js
-  ├── deposit/
-  │   ├── deposit.css
-  │   ├── deposit.html
-  │   └── deposit.js
-  ├── menu/
-  │   ├── menu.css
-  │   ├── menu.html
-  │   └── menu.js
-  ├── sendmoney/
-  │   ├── sendmoney.css
-  │   ├── sendmoney.html
-  │   └── sendmoney.js
-  ├── transaction/
-  │   ├── transaction.css
-  │   ├── transaction.html
-  │   └── transaction.js
-  ├── .gitignore
-  ├── LICENSE
-  └── README.md
+alke-wallet/
+├── data/                       # Almacenamiento simple de datos (Sistema de archivos)
+├── public/                     # Contenido estático
+├── src/                        # Código del servidor (Node.js/Express)
+│   ├── controllers/          
+│   ├── models/                 # Lógica para leer/escribir usando módulo 'fs' de Node
+│   ├── routes/               
+│   ├── views/                  # Plantillas dinámicas EJS      
+│   └── app.js                
+├── database/                   # Modelos de base de datos (Diseño y Scripts)
+├── package.json              
+├── server.js                 
+└── README.md
 ```
 
 ---
