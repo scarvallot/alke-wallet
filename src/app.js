@@ -2,18 +2,23 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
+// Configuración del motor de plantillas EJS
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 // Middleware para procesar JSON
 app.use(express.json());
 
-// middleware express.static()
-// Contenido estático desde /public
+// Middleware para servir archivos estáticos (CSS y JS)
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Rutas públicas (/ y /status)
+// Ruta que renderiza la vista dinámica
 app.get("/", (req, res) => {
-  // Devuelve el archivo HTML estático del login
-  const rutaHtml = path.join(__dirname, "../public/auth/login/login.html");
-  res.sendFile(rutaHtml);
+  res.render("login", {
+    tituloPagina: "Login - Mi Wallet",
+    nombreApp: "Mi Wallet",
+    tagline: "Tu billetera digital segura",
+  });
 });
 
 // Respuesta en JSON
