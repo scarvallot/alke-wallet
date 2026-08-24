@@ -106,12 +106,13 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 
 ```markdown
 alke-wallet/
-├── data/                       # Almacenamiento simple de datos (Sistema de archivos)
-├── public/                     # Contenido estático
+├── data/                       # Almacenamiento simple de datos (Sistema de archivos y logs)
+├── public/                     # Contenido estático servido por Express
 ├── src/                        # Código del servidor (Node.js/Express)
-│   ├── controllers/
+│   ├── controllers/            # Controladores de la lógica de negocio (próxima etapa)
+│   ├── middlewares/            # Middlewares personalizados (ej. logger de visitas y errores)
 │   ├── models/                 # Lógica para leer/escribir usando módulo 'fs' de Node
-│   ├── routes/
+│   ├── routes/                 # Enrutadores (ej. router.js)
 │   ├── views/                  # Plantillas dinámicas EJS
 │   └── app.js                  # Configuración de la aplicación Express (middlewares, rutas, vistas)
 ├── database/                   # Modelos de base de datos (Diseño y Scripts) — próxima etapa
