@@ -1,0 +1,4 @@
+2026-08-24 | 18:10:38 | Ruta accedida: /
+2026-08-24 | 18:11:05 | Ruta accedida: /
+2026-08-24 | 18:11:05 | Ruta accedida: /status
+2026-08-24 | 18:11:06 | Ruta accedida: /
