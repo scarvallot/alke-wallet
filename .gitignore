@@ -146,6 +146,7 @@ vite.config.ts.timestamp-*
 .code-workspace
 
 # Documentación local
+Docs
 AlkeWallet_Documentacion_Completa.docx
 AlkeWallet_Documentacion_Completa.pdf
 AlkeWallet_Entregable.docx
