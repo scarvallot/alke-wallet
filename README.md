@@ -127,6 +127,10 @@ alke-wallet/
 
 **Persistencia en archivos planos (`data/`):** en esta etapa la persistencia se resuelve con el módulo `fs` de Node.js sobre archivos en `data/`, ya que aún no se integra una base de datos real. Esta capa vive en `src/models/`, de modo que al migrar a base de datos (carpeta `database/`) solo sea necesario reemplazar la implementación interna de los modelos, sin tocar controladores ni rutas.
 
+**Uso de Motor de Plantillas (EJS):** Se optó por implementar EJS en lugar de servir archivos HTML puramente estáticos para las vistas principales. Esta decisión responde a dos motivos: primero, permite inyectar datos dinámicos desde el servidor (como títulos y variables de configuración); segundo, habilita el uso de *partials* (fragmentos modulares como el `<head>` o el footer). Esto evita la duplicación de código y facilitará la renderización de información específica del usuario directamente desde el backend.
+
+**Proyección futura (Diseño MVC):** La estructura actual de directorios (`/routes`, `/controllers`, `/models`) sienta las bases de un patrón de arquitectura MVC (Modelo-Vista-Controlador) escalable. La decisión de aislar la persistencia actual basada en `fs` dentro de `/models` asegura que, durante la próxima etapa del proyecto, la integración de una base de datos real se realizará sin afectar ni modificar las rutas ni la lógica de las vistas.
+
 ## Servidor y Contenido Estático
 
 El servidor utiliza el middleware `express.static()` apuntando al directorio `/public`. Se eligió esta arquitectura porque permite entregar los recursos del frontend (HTML, CSS, JS, imágenes) directamente al navegador de la forma más optimizada posible sin sobrecargar las rutas del backend. Las rutas API separadas (`/status`) se encargan de la transferencia de datos en formato JSON.
