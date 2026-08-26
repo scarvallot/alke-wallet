@@ -1,17 +1,23 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const indexRouter = require("./routes/router");
+
 const app = express();
 
 // Configuración del motor de plantillas EJS
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Middleware para procesar JSON
+// Middleware para procesar JSON (debe ir antes de las rutas para que req.body exista)
 app.use(express.json());
 
 // Middleware para servir archivos estáticos (CSS y JS)
 app.use(express.static(path.join(__dirname, "../public")));
+
+// 3. RUTAS (Endpoints)
+// Conectar las rutas a la aplicación (se evalúan al final)
+app.use("/", indexRouter);
 
 const registrarVisita = (req, res, next) => {
   const fechaActual = new Date();
@@ -32,23 +38,5 @@ const registrarVisita = (req, res, next) => {
 };
 
 app.use(registrarVisita);
-
-// Ruta que renderiza la vista dinámica
-app.get("/", (req, res) => {
-  res.render("login", {
-    tituloPagina: "Login - Mi Wallet",
-    nombreApp: "Mi Wallet",
-    tagline: "Tu billetera digital segura",
-  });
-});
-
-// Respuesta en JSON
-app.get("/status", (req, res) => {
-  res.status(200).json({
-    estado: "activo",
-    mensaje: "Servidor funcionando correctamente",
-    fecha: new Date().toISOString(),
-  });
-});
 
 module.exports = app;
