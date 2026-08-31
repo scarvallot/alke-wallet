@@ -16,6 +16,9 @@ const testConnection = async () => {
     connection.release();
   } catch (error) {
     console.error("Error al conectar con la base de datos.", error.message);
+  } finally {
+    await pool.end(); // Cierra el pool de conexiones al finalizar la prueba
+    console.log("Pool de conexiones cerrado.");
   }
 };
 
