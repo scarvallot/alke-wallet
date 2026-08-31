@@ -5,6 +5,8 @@ require("dotenv").config();
 const pool = mysql.createPool({
   uri: process.env.DATABASE_URL,
   connectionLimit: 10,
+  connectTimeout: 30000, // Tiempo de espera para establecer la conexión en milisegundos
+  idleTimeout: 30000, // Tiempo de espera para liberar conexiones inactivas en milisegundos
   waitForConnections: true,
 });
 

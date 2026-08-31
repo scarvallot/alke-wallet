@@ -9,7 +9,7 @@ const obtenerUsuarios = async (req, res) => {
     const offset = (page - 1) * limit; // Registros a omitir
 
     // 2. Construir la consulta base y la consulta de conteo
-    let query = "SELECT * FROM Users";
+    let query = "SELECT * FROM alkewallet.users";
     let countQuery = "SELECT COUNT(*) as total FROM alkewallet.users;";
     const queryParams = [];
 
