@@ -5,6 +5,8 @@ require("dotenv").config();
 const pool = mysql.createPool({
   uri: process.env.DATABASE_URL,
   connectionLimit: 10,
+  idleTimeout: 30000, // Tiempo de inactividad 30 segundos (por defecto 60000 ms)
+  connectTimeout: 2000, // Tiempo máximo para adquirir conexión 2 segundos (por defecto 10000 ms)
   waitForConnections: true,
 });
 
@@ -19,7 +21,7 @@ const testConnection = async () => {
     console.error("Error al conectar con la base de datos.", error.message);
   } finally {
     if (connection) connection.release(); // Asegura que la conexión se libere en caso de error
-    console.log("Conexión liberada al poil.");
+    console.log("Conexión liberada al poll.");
     // await pool.end(); // Cierra el pool de conexiones al finalizar la prueba
     // console.log("Pool de conexiones cerrado.");
   }
