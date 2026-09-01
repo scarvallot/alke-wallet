@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Mantenemos el head para que cargue Bootstrap y tus estilos globales -->
+    <%- include('../partials/layouts/head') %>
+</head>
+
+<body class="d-flex align-items-center min-vh-100 bg-light">
+    <!-- Usamos un fondo claro y centrado vertical (align-items-center) -->
+    <main class="container w-100">
+        <!-- Contenedor para alertas globales (ej: "Contraseña incorrecta") -->
+        <%- include('../partials/components/alerts') %>
+            <!-- AQUÍ SE INYECTARÁ TU VISTA DE LOGIN -->
+            <%- body %>
+    </main>
+    <!-- Mantenemos los scripts básicos para que los formularios y alertas funcionen -->
+    <%- include('../partials/layouts/scripts') %>
+</body>
+
+</html>

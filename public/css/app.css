@@ -1,0 +1,397 @@
+/* =====================================================
+   1. Reset y Estilos Globales
+   ===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5f5f5;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+/* =====================================================
+   2. Iconos y Colores (Dashboard / Acciones)
+   ===================================================== */
+/* Iconos de los botones de navegación (Depositar, Enviar Dinero, Movimientos) */
+.icon-circle,
+.card-body .icon-circle.icon-deposit,
+.card-body .icon-circle.icon-send,
+.card-body .icon-circle.icon-movements {
+  font-size: 40px !important;
+}
+
+.icon-circle i,
+.card-body .icon-circle.icon-deposit i,
+.card-body .icon-circle.icon-send i,
+.card-body .icon-circle.icon-movements i {
+  font-size: 40px !important;
+}
+
+/* Colores para cada tipo de botón */
+.icon-deposit i {
+  color: #28a745;
+}
+
+.icon-send i {
+  color: #007bff;
+}
+
+.icon-movements i {
+  color: #6f42c1;
+}
+
+/* Color morado genérico */
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
+
+/* =====================================================
+   3. Autenticación / Login
+   ===================================================== */
+.login-card {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-tagline {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+#loginBtn {
+  min-width: 200px;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-login {
+  border-radius: 4px;
+  padding: 10px 0;
+  font-weight: 600;
+}
+
+/* Responsive móvil para el login */
+@media (max-width: 576px) {
+  .login-card {
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+  }
+}
+
+/* =====================================================
+   4. Botones Globales
+   ===================================================== */
+/* Botón Cerrar Sesión */
+#btnCerrarSesion {
+  min-width: 200px;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+#btnCerrarSesion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Botón Confirmar Depósito */
+#depositBtn {
+  min-width: 200px;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* =====================================================
+   5. Alertas
+   ===================================================== */
+.alert {
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+/* =====================================================
+   6. Movimientos / Transacciones
+   ===================================================== */
+/* Iconos pequeños para cada transacción de la lista */
+.transaction-item .icon-circle {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px;
+  border-radius: 50% !important;
+  font-size: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.transaction-item .icon-circle i {
+  font-size: 1rem !important;
+  line-height: 1;
+}
+
+/* Badge de tipo de transacción dentro de cada card */
+.transaction-item .badge-light {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border: 1px solid #dee2e6;
+  border-radius: 3px;
+}
+
+/* Botón Toggle Últimos Movimientos */
+.btn-toggle-movimientos {
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  padding: 12px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.btn-toggle-movimientos:hover {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+}
+
+.btn-toggle-movimientos .collapse-icon-mov {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+
+.btn-toggle-movimientos[aria-expanded="true"] .collapse-icon-mov {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Animación de la lista de transacciones */
+#transactionListCollapse .transaction-item {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+#transactionListCollapse.show .transaction-item {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Filtro Select de Tipo de Movimiento */
+.filter-select-wrapper {
+  width: 33.333%;
+}
+
+.filter-select-wrapper .custom-select {
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid #ced4da;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filter-select-wrapper .custom-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+}
+
+/* =====================================================
+   7. Enviar Dinero / Contactos
+   ===================================================== */
+/* Botón de despliegue "Mis Contactos" */
+#btnMisContactos {
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+
+#btnMisContactos:hover {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+}
+
+#btnMisContactos .collapse-icon {
+  position: absolute;
+  right: 1rem;
+  transition: transform 0.3s ease;
+}
+
+#btnMisContactos[aria-expanded="true"] .collapse-icon {
+  transform: rotate(180deg);
+}
+
+/* Lista de contactos */
+.contact-list {
+  max-height: 210px;
+  overflow-y: auto;
+  padding-bottom: 0.5rem;
+}
+
+.contact-item {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  cursor: pointer;
+}
+
+.contact-item:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.contact-item.selected {
+  border-color: #007bff;
+  background: #e7f1ff;
+}
+
+/* Textos del contacto */
+.contact-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #212529;
+}
+
+.contact-alias {
+  font-size: 0.8rem;
+  color: #007bff;
+  font-weight: 600;
+}
+
+.contact-cbu {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-family: monospace;
+}
+
+/* Estado vacío de contactos */
+.empty-contacts {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  color: #6c757d;
+}
+
+.empty-contacts i {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: #adb5bd;
+}
+
+/* Avatares de contactos */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.av-0 {
+  background: #007bff;
+}
+.av-1 {
+  background: #17a2b8;
+}
+.av-2 {
+  background: #fd7e14;
+}
+.av-3 {
+  background: #dc3545;
+}
+.av-4 {
+  background: #28a745;
+}
+
+/* Check de selección de contacto */
+.contact-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-item.selected .contact-check {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+.contact-check svg {
+  width: 12px;
+  height: 12px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.5;
+  opacity: 0;
+}
+
+.contact-item.selected .contact-check svg {
+  opacity: 1;
+}
+
+/* Botón de envío dentro de contacto */
+.contact-actions .btn-enviar {
+  border-radius: 4px;
+}
+
+/* Modal Enviar Dinero */
+#sendMoneyModal .modal-title {
+  font-size: 1.1rem;
+}
+
+#btnConfirmarEnvio {
+  transition: all 0.2s ease;
+}
+
+#btnConfirmarEnvio:hover {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+}
+/* Footer personalizado */
+.footer {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 1px solid #dee2e6;
+}
+
+.footer a {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  color: #0d6efd;
+  text-decoration: underline;
+}

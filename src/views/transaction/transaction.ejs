@@ -1,0 +1,46 @@
+<div class="transaction-container">
+  <!-- Encabezado de la página -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="mb-0">Movimientos</h1>
+      <p class="text-muted mt-2">
+        Revisa el historial y filtra tus transacciones.
+      </p>
+    </div>
+  </div>
+
+  <!-- 1. Inyectamos el componente de la tarjeta de saldo -->
+  <%- include('../partials/components/balanceCard') %>
+
+    <!-- Botón Toggle Últimos Movimientos -->
+    <button class="btn btn-primary btn-block btn-toggle-movimientos position-relative shadow-sm" id="btnToggleMovimientos" type="button" data-toggle="collapse" data-target="#transactionListCollapse" aria-expanded="false" aria-controls="transactionListCollapse">
+      <i class="fas fa-exchange-alt mr-2"></i>Últimos Movimientos
+      <i class="fas fa-chevron-down collapse-icon-mov"></i>
+    </button>
+
+    <!-- Contenedor colapsable de transacciones -->
+    <div class="collapse" id="transactionListCollapse">
+      <!-- Filtro por tipo de movimiento -->
+      <div class="d-flex justify-content-end mt-3">
+        <div class="filter-select-wrapper">
+          <select class="custom-select custom-select-sm shadow-sm" id="filtroTipo">
+            <option value="todos" selected>Todos</option>
+            <option value="compra">Compra</option>
+            <option value="deposito">Depósito</option>
+            <option value="transferencia_recibida">Transferencia recibida</option>
+            <option value="transferencia_enviada">Transferencia enviada</option>
+            <option value="pago_servicios">Pago de servicios</option>
+            <option value="suscripcion">Suscripción</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Contenedor donde transaction.js renderizará la lista -->
+      <div id="transactionList" class="mt-3"></div>
+    </div>
+
+    <!-- 2. Inyectamos el componente de botones de navegación inferior -->
+    <%- include('../partials/components/bottomNav') %>
+      <!-- Botón Cerrar Sesión -->
+      <%- include('../partials/components/logoutBtn') %>
+</div>

@@ -107,18 +107,21 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 ```markdown
 alke-wallet/
 ├── data/                       # Almacenamiento simple de datos (Sistema de archivos y logs)
+├── database/                   # Scripts SQL para creación de tablas (ej. schema.sql)
 ├── public/                     # Contenido estático servido por Express
 ├── src/                        # Código del servidor (Node.js/Express)
-│   ├── controllers/            # Controladores de la lógica de negocio (próxima etapa)
-│   ├── middlewares/            # Middlewares personalizados (ej. logger de visitas y errores)
-│   ├── models/                 # Lógica para leer/escribir usando módulo 'fs' de Node
+│   ├── config/                 # Configuración de entorno y conexión a BD (ej. db.js)
+│   ├── controllers/            # Controladores de la lógica de negocio
+│   ├── middlewares/            # Middlewares personalizados (ej. logger)
+│   ├── models/                 # Lógica de acceso a datos (migrando a MySQL)
 │   ├── routes/                 # Enrutadores (ej. router.js)
 │   ├── views/                  # Plantillas dinámicas EJS
-│   └── app.js                  # Configuración de la aplicación Express (middlewares, rutas, vistas)
-├── database/                   # Modelos de base de datos (Diseño y Scripts) — próxima etapa
-├── package.json
-├── server.js                   # Punto de entrada: levanta el servidor HTTP
-└── README.md
+│   └── app.js                  # Configuración de la aplicación Express
+├── .env                        # Variables de entorno (credenciales BD, puerto) - NO se sube a Git
+├── .gitignore                  # Archivos y carpetas ignorados por Git
+├── package.json                # Dependencias y scripts de ejecución
+├── server.js                   # Punto de entrada: levanta servidor HTTP e inicializa BD
+└── README.md                   # Documentación principal del proyecto
 ```
 
 ## Decisiones técnicas

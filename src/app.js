@@ -1,18 +1,43 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const session = require("express-session");
+const expressLayouts = require("express-ejs-layouts");
+const indexRouter = require("./routes/router");
+
 const app = express();
 
-// Configuración del motor de plantillas EJS
+// 1. CONFIGURACIÓN DEL MOTOR DE PLANTILLAS (EJS + Layouts)
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use(expressLayouts);
+app.set("layout", "layouts/main"); // Define el esqueleto base
 
-// Middleware para procesar JSON
-app.use(express.json());
+// 2. MIDDLEWARES BÁSICOS Y DE FORMULARIOS
+app.use(express.urlencoded({ extended: true })); // VITAL para leer datos de formularios (ej. Login)
+app.use(express.json()); // Para procesar JSON
+app.use(express.static(path.join(__dirname, "../public"))); // Archivos estáticos
 
-// Middleware para servir archivos estáticos (CSS y JS)
-app.use(express.static(path.join(__dirname, "../public")));
+// 3. CONFIGURACIÓN DE SESIONES
+app.use(
+  session({
+    secret: "mi-secreto-super-seguro", // Cámbialo en producción o usa variables de entorno
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
 
+// 4. MIDDLEWARE PARA VARIABLES GLOBALES (Evita errores "is not defined" en EJS)
+app.use((req, res, next) => {
+  res.locals.usuario =
+    req.session && req.session.usuario ? req.session.usuario : null;
+  res.locals.tituloPagina = "Mi Wallet";
+  res.locals.cssFile = null;
+  res.locals.jsFile = null;
+  next();
+});
+
+// 5. MIDDLEWARE DE REGISTRO DE VISITAS (Debe ir ANTES de las rutas)
 const registrarVisita = (req, res, next) => {
   const fechaActual = new Date();
   const fecha = fechaActual.toISOString().split("T")[0];
@@ -20,7 +45,6 @@ const registrarVisita = (req, res, next) => {
   const ruta = req.originalUrl;
   const textoRegistro = `${fecha} | ${hora} | Ruta accedida: ${ruta}\n`;
 
-  // Ruta correcta para el archivo de log
   const rutaLog = path.join(__dirname, "../data/log.txt");
 
   fs.appendFile(rutaLog, textoRegistro, "utf8", (err) => {
@@ -28,27 +52,14 @@ const registrarVisita = (req, res, next) => {
       console.error("Error al escribir en log.txt:", err);
     }
   });
+
+  // next() es crucial para que la petición continúe hacia indexRouter
   next();
 };
 
 app.use(registrarVisita);
 
-// Ruta que renderiza la vista dinámica
-app.get("/", (req, res) => {
-  res.render("login", {
-    tituloPagina: "Login - Mi Wallet",
-    nombreApp: "Mi Wallet",
-    tagline: "Tu billetera digital segura",
-  });
-});
-
-// Respuesta en JSON
-app.get("/status", (req, res) => {
-  res.status(200).json({
-    estado: "activo",
-    mensaje: "Servidor funcionando correctamente",
-    fecha: new Date().toISOString(),
-  });
-});
+// 6. RUTAS (Endpoints) - Se evalúan al final
+app.use("/", indexRouter);
 
 module.exports = app;
