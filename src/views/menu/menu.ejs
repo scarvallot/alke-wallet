@@ -1,70 +1,13 @@
 <div class="menu-container">
-  <!-- Encabezado de la página -->
   <div class="row mb-4">
     <div class="col-12">
       <h1 class="mb-0">Menú Principal</h1>
-      <p class="text-muted mt-2">
-        Selecciona la operación que deseas realizar.
-      </p>
+      <p class="text-muted mt-2">Selecciona la operación que deseas realizar.</p>
     </div>
   </div>
-
-  <!-- Tarjeta de saldo -->
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-body text-center py-4">
-      <h5 class="card-title text-muted font-weight-normal">
-        Saldo Disponible
-      </h5>
-      <!-- El ID se mantiene para que menu.js inyecte el valor -->
-      <h1 class="display-4 font-weight-bold text-dark" id="balance">$0</h1>
-      <small class="text-muted">Actualizado en tiempo real</small>
-    </div>
-  </div>
-
-  <!-- Tarjeta con botones de navegación (Usando <a> para enrutamiento Express) -->
-  <div class="card border-0 shadow-sm mb-3">
-    <div class="card-body p-2">
-      <div class="row no-gutters text-center">
-
-        <!-- Botón Depositar -->
-        <div class="col-4 pr-1">
-          <a href="/deposit" class="btn btn-light w-100 d-flex flex-column align-items-center py-3 text-decoration-none">
-            <span class="icon-circle icon-deposit mb-2">
-              <i class="fa-solid fa-money-bill-1-wave text-success"></i>
-            </span>
-            <span class="small font-weight-bold text-dark">Depositar</span>
-          </a>
-        </div>
-
-        <!-- Botón Enviar Dinero -->
-        <div class="col-4 px-1">
-          <a href="/sendmoney" class="btn btn-light w-100 d-flex flex-column align-items-center py-3 text-decoration-none">
-            <span class="icon-circle icon-send mb-2">
-              <i class="fa-solid fa-money-bill-transfer text-primary"></i>
-            </span>
-            <span class="small font-weight-bold text-dark">Enviar</span>
-          </a>
-        </div>
-
-        <!-- Botón Últimos Movimientos -->
-        <div class="col-4 pl-1">
-          <a href="/transaction" class="btn btn-light w-100 d-flex flex-column align-items-center py-3 text-decoration-none">
-            <span class="icon-circle icon-movements mb-2">
-              <i class="fa-solid fa-calendar-days text-info"></i>
-            </span>
-            <span class="small font-weight-bold text-dark">Movimientos</span>
-          </a>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Botón Cerrar Sesión (Apunta al endpoint del backend) -->
-  <div class="text-center mt-5">
-    <a href="/logout" class="btn btn-danger px-5 py-3 shadow-sm rounded-pill" id="btnCerrarSesion">
-      <i class="fa-solid fa-right-from-bracket mr-2"></i>
-      <span class="font-weight-bold">Cerrar Sesión</span>
-    </a>
-  </div>
+  <!-- 1. Inyectamos la tarjeta de saldo -->
+  <%- include('../partials/balanceCard') %>
+    <!-- 2. Inyectamos los botones de navegación -->
+    <%- include('../partials/bottomNav') %>
+      <%- include('../partials/logoutBtn') %>
 </div>
