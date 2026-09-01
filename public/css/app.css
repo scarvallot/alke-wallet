@@ -379,3 +379,19 @@ body {
 #btnConfirmarEnvio:hover {
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
 }
+/* Footer personalizado */
+.footer {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 1px solid #dee2e6;
+}
+
+.footer a {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  color: #0d6efd;
+  text-decoration: underline;
+}
