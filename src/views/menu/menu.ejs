@@ -1,0 +1,17 @@
+<div class="menu-container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="mb-0">Menú Principal</h1>
+      <p class="text-muted mt-2">Selecciona la operación que deseas realizar.</p>
+    </div>
+  </div>
+
+  <!-- 1. Inyectamos la tarjeta de saldo -->
+  <%- include('../partials/components/balanceCard') %>
+
+    <!-- 2. Inyectamos los botones de navegación -->
+    <%- include('../partials/components/bottomNav') %>
+
+      <!-- 3. Inyectamos el botón de cerrar sesión -->
+      <%- include('../partials/components/logoutBtn') %>
+</div>

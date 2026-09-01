@@ -1,0 +1,41 @@
+<div class="dashboard-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-0">Dashboard</h1>
+            <p class="text-muted mt-2">
+                Bienvenido de vuelta, <strong>
+                    <%= locals.usuario ? locals.usuario.nombre : 'Invitado' %>
+                </strong>.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-left-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary font-weight-bold">Saldo Total</h5>
+                    <p class="card-text display-4 text-dark">$0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-left-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-success font-weight-bold">Transacciones</h5>
+                    <p class="card-text display-4 text-dark">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-left-info h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-info font-weight-bold">Cuentas Activas</h5>
+                    <p class="card-text display-4 text-dark">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

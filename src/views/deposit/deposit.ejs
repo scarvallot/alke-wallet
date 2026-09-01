@@ -1,0 +1,41 @@
+<div class="deposit-container">
+  <!-- Encabezado de la página -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="mb-0">Depositar Dinero</h1>
+      <p class="text-muted mt-2">
+        Ingresa fondos a tu billetera virtual de forma segura.
+      </p>
+    </div>
+  </div>
+
+  <!-- 1. Inyectamos el componente de la tarjeta de saldo -->
+  <%- include('../partials/components/balanceCard') %>
+
+    <!-- Formulario de depósito -->
+    <form id="depositForm" class="mb-4">
+      <div class="form-group">
+        <label for="depositAmount" class="font-weight-bold">Monto a depositar:</label>
+        <div class="input-group mb-2">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-white">$</span>
+          </div>
+          <input type="number" class="form-control form-control-lg" id="depositAmount" placeholder="0" min="1000" required />
+        </div>
+        <small class="form-text text-muted">Monto mínimo: $1.000.- CLP</small>
+      </div>
+
+      <!-- Botón Confirmar Depósito -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-5 py-3 w-100 shadow-sm" id="depositBtn">
+          <i class="fa-solid fa-circle-check mr-2"></i>
+          <span class="font-weight-bold">Confirmar Depósito</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- 2. Inyectamos el componente de botones de navegación inferior -->
+    <%- include('../partials/components/bottomNav') %>
+      <!-- Botón Cerrar Sesión (Apunta al endpoint del backend) -->
+      <%- include('../partials/components/logoutBtn') %>
+</div>
