@@ -3,10 +3,10 @@ const router = express.Router();
 const { obtenerUsuarios } = require("../controllers/usersController");
 
 router.get("/", (req, res) => {
-  res.render("login", {
-    tituloPagina: "Login - Mi Wallet",
-    nombreApp: "Mi Wallet",
-    tagline: "Tu billetera digital segura",
+  res.render("auth/login", {
+    tituloPagina: "Iniciar Sesión - Mi Wallet",
+    tagline: "Bienvenido a tu billetera virtual",
+    layout: "layouts/auth",
   });
 });
 
