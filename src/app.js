@@ -14,8 +14,8 @@ app.use(expressLayouts);
 app.set("layout", "layouts/main"); // Define el esqueleto base
 
 // 2. MIDDLEWARES BÁSICOS Y DE FORMULARIOS
-app.use(express.json()); // Para procesar JSON
 app.use(express.urlencoded({ extended: true })); // VITAL para leer datos de formularios (ej. Login)
+app.use(express.json()); // Para procesar JSON
 app.use(express.static(path.join(__dirname, "../public"))); // Archivos estáticos
 
 // 3. CONFIGURACIÓN DE SESIONES

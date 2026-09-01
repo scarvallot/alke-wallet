@@ -27,7 +27,31 @@ router.get("/login", (req, res) => {
     layout: "layouts/auth",
   });
 });
+// Procesar el formulario de inicio de sesión
+router.post("/login", (req, res) => {
+  // Capturamos los datos enviados desde el formulario HTML (gracias al atributo "name")
+  const { username, password } = req.body;
 
+  // Validación estática basada en tus credenciales de prueba
+  if (username === "admin" && password === "12345") {
+    // 1. Crear la sesión del usuario
+    req.session.usuario = {
+      id: 1,
+      username: username,
+      nombre: "Usuario Administrador",
+    };
+
+    // 2. Redirigir al área privada
+    return res.redirect("/menu");
+  } else {
+    // Si las credenciales fallan, recargamos la vista de login inyectando un mensaje de error
+    return res.render("auth/login", {
+      tituloPagina: "Error - Mi Wallet",
+      tagline: "Credenciales incorrectas. Por favor, intenta de nuevo.",
+      layout: "layouts/auth",
+    });
+  }
+});
 // 3. RUTAS PRIVADAS (Usan el middleware)
 // Nota cómo inyectamos "protegerRuta" como segundo parámetro
 router.get("/menu", protegerRuta, (req, res) => {
@@ -38,21 +62,21 @@ router.get("/menu", protegerRuta, (req, res) => {
 });
 
 router.get("/deposit", protegerRuta, (req, res) => {
-  res.render("deposit/index", {
+  res.render("deposit/deposit", {
     tituloPagina: "Depositar Dinero - Mi Wallet",
     jsFile: "/js/deposit.js",
   });
 });
 
 router.get("/sendmoney", protegerRuta, (req, res) => {
-  res.render("sendmoney/index", {
+  res.render("sendmoney/sendmoney", {
     tituloPagina: "Enviar Dinero - Mi Wallet",
     jsFile: "/js/sendmoney.js",
   });
 });
 
 router.get("/transaction", protegerRuta, (req, res) => {
-  res.render("transaction/index", {
+  res.render("transaction/transaction", {
     tituloPagina: "Historial de Transacciones - Mi Wallet",
     jsFile: "/js/transaction.js",
   });
