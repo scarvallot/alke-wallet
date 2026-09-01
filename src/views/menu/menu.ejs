@@ -5,9 +5,13 @@
       <p class="text-muted mt-2">Selecciona la operación que deseas realizar.</p>
     </div>
   </div>
+
   <!-- 1. Inyectamos la tarjeta de saldo -->
-  <%- include('../partials/balanceCard') %>
+  <%- include('../partials/components/balanceCard') %>
+
     <!-- 2. Inyectamos los botones de navegación -->
-    <%- include('../partials/bottomNav') %>
-      <%- include('../partials/logoutBtn') %>
+    <%- include('../partials/components/bottomNav') %>
+
+      <!-- 3. Inyectamos el botón de cerrar sesión -->
+      <%- include('../partials/components/logoutBtn') %>
 </div>

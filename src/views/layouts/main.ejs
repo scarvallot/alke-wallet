@@ -2,19 +2,19 @@
 <html lang="es">
 
 <head>
-    <%- include('../partials/head') %>
+    <%- include('../partials/layouts/head') %>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <%- include('../partials/header') %>
+    <%- include('../partials/layouts/header') %>
 
         <main class="container my-4 flex-grow-1">
-            <%- include('../partials/alerts') %>
+            <%- include('../partials/components/alerts') %>
                 <%- body %>
         </main>
 
-        <%- include('../partials/footer') %>
-            <%- include('../partials/scripts') %>
+        <%- include('../partials/layouts/footer') %>
+            <%- include('../partials/layouts/scripts') %>
 </body>
 
 </html>

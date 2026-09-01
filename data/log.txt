@@ -8,3 +8,17 @@
 2026-08-26 | 16:37:56 | Ruta accedida: /usuarios
 2026-08-26 | 16:38:06 | Ruta accedida: /usuarios
 2026-08-26 | 16:38:08 | Ruta accedida: /usuarios
+2026-09-01 | 00:21:24 | Ruta accedida: /menu
+2026-09-01 | 00:21:24 | Ruta accedida: /js/app.js
+2026-09-01 | 00:21:26 | Ruta accedida: /logout
+2026-09-01 | 00:21:26 | Ruta accedida: /login
+2026-09-01 | 00:21:27 | Ruta accedida: /js/app.js
+2026-09-01 | 00:21:34 | Ruta accedida: /login
+2026-09-01 | 00:21:34 | Ruta accedida: /menu
+2026-09-01 | 00:21:35 | Ruta accedida: /js/app.js
+2026-09-01 | 00:21:36 | Ruta accedida: /deposit
+2026-09-01 | 00:21:36 | Ruta accedida: /js/app.js
+2026-09-01 | 00:21:38 | Ruta accedida: /sendmoney
+2026-09-01 | 00:21:38 | Ruta accedida: /js/app.js
+2026-09-01 | 00:21:39 | Ruta accedida: /transaction
+2026-09-01 | 00:21:39 | Ruta accedida: /js/app.js

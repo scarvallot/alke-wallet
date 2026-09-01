@@ -10,7 +10,7 @@
   </div>
 
   <!-- 1. Inyectamos el componente de la tarjeta de saldo -->
-  <%- include('../partials/balanceCard') %>
+  <%- include('../partials/components/balanceCard') %>
 
     <!-- Botón Toggle Últimos Movimientos -->
     <button class="btn btn-primary btn-block btn-toggle-movimientos position-relative shadow-sm" id="btnToggleMovimientos" type="button" data-toggle="collapse" data-target="#transactionListCollapse" aria-expanded="false" aria-controls="transactionListCollapse">
@@ -40,7 +40,7 @@
     </div>
 
     <!-- 2. Inyectamos el componente de botones de navegación inferior -->
-    <%- include('../partials/bottomNav') %>
+    <%- include('../partials/components/bottomNav') %>
       <!-- Botón Cerrar Sesión -->
-      <%- include('../partials/logoutBtn') %>
+      <%- include('../partials/components/logoutBtn') %>
 </div>
