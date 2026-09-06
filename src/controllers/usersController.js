@@ -10,7 +10,7 @@ const obtenerUsuarios = async (req, res) => {
 
     // 2. Construir la consulta base y la consulta de conteo
     let query = "SELECT * FROM alkewallet.users";
-    let countQuery = "SELECT COUNT(*) as total FROM alkewallet.users;";
+    let countQuery = "SELECT COUNT(*) as total FROM alkewallet.users";
     const queryParams = [];
 
     // 3. Aplicar filtro dinámico si el parámetro 'nombre' existe
