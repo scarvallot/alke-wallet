@@ -1,67 +1,5 @@
 $(document).ready(function () {
-  // Mostrar saldo desde localStorage
-  var saldo = parseInt(localStorage.getItem("walletBalance")) || 0;
-  $("#balance").text("$" + saldo.toLocaleString("es-CL"));
-
-  // Lista de contactos (cargada desde localStorage o con ejemplo inicial)
-  var contactos = JSON.parse(localStorage.getItem("contacts")) || [
-    {
-      nombre: "Sergio Carvallo",
-      alias: "se.carvallo",
-      cbu: "12312312312312312312",
-    },
-  ];
-
-  // Renderizar lista de contactos
-  function renderizarContactos(filtro) {
-    var lista = contactos;
-
-    // Filtrar si hay término de búsqueda
-    if (filtro && filtro.trim() !== "") {
-      var termino = filtro.toLowerCase();
-      lista = contactos.filter(function (c) {
-        return (
-          c.nombre.toLowerCase().includes(termino) ||
-          c.alias.toLowerCase().includes(termino)
-        );
-      });
-    }
-
-    if (lista.length === 0) {
-      $("#contactList").html(
-        '<p class="text-muted text-center">No se encontraron contactos.</p>',
-      );
-      return;
-    }
-
-    var html = "";
-    lista.forEach(function (c) {
-      html +=
-        '<div class="contact-item d-flex justify-content-between align-items-center p-3 border rounded mb-2">' +
-        "<div>" +
-        "<strong>" +
-        c.nombre +
-        "</strong><br>" +
-        '<small class="text-primary">' +
-        c.alias +
-        "</small><br>" +
-        '<small class="text-muted">' +
-        c.cbu +
-        "</small>" +
-        "</div>" +
-        '<button class="btn btn-sm btn-primary btn-enviar" data-nombre="' +
-        c.nombre +
-        '">' +
-        '<i class="fas fa-paper-plane mr-1"></i>Enviar dinero' +
-        "</button>" +
-        "</div>";
-    });
-    $("#contactList").html(html);
-  }
-
-  renderizarContactos();
-
-  // Mostrar / ocultar formulario de nuevo contacto
+  // Mostrar / ocultar formulario de nuevo contacto con animación
   $("#btnAgregarContacto").click(function () {
     $("#addContactFormContainer").slideToggle();
   });
@@ -72,16 +10,13 @@ $(document).ready(function () {
     $("#errNombre, #errCbu, #errAlias").text("");
   });
 
-  // Validar y guardar nuevo contacto
+  // Validar formulario ANTES de enviarlo al servidor Node.js
   $("#addContactForm").submit(function (event) {
-    event.preventDefault();
-
     var nombre = $("#contactName").val().trim();
     var cbu = $("#contactCbu").val().trim();
     var alias = $("#contactAlias").val().trim();
     var valido = true;
 
-    // Validaciones básicas
     if (nombre.length < 3) {
       $("#errNombre").text("El nombre debe tener al menos 3 caracteres.");
       valido = false;
@@ -103,63 +38,25 @@ $(document).ready(function () {
       $("#errAlias").text("");
     }
 
-    if (!valido) return;
-
-    // Agregar contacto y guardar en localStorage
-    contactos.push({ nombre: nombre, cbu: cbu, alias: alias });
-    localStorage.setItem("contacts", JSON.stringify(contactos));
-
-    $("#addContactForm")[0].reset();
-    $("#addContactFormContainer").slideUp();
-    renderizarContactos();
-
-    $("#alertContainer").html(
-      '<div class="alert alert-success">Contacto <strong>' +
-        nombre +
-        "</strong> agregado exitosamente.</div>",
-    );
+    // Si hay errores, frenamos el POST al servidor
+    if (!valido) {
+      event.preventDefault();
+    }
+    // Si es válido, NO usamos preventDefault(). El formulario hará el POST
+    // a tu ruta Express, guardará en MySQL y recargará la página.
   });
 
-  // Búsqueda en agenda al escribir
+  // Búsqueda visual en tiempo real sobre los contactos renderizados por EJS
   $("#searchContact").on("keyup", function () {
-    renderizarContactos($(this).val());
+    var termino = $(this).val().toLowerCase();
+    // EJS debe generar cada contacto con la clase "contact-item"
+    $(".contact-item").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(termino) > -1);
+    });
   });
 
-  // Búsqueda al enviar el formulario
-  $("#searchForm").submit(function (event) {
-    event.preventDefault();
-    renderizarContactos($("#searchContact").val());
-  });
-
-  // Enviar dinero al hacer clic en el botón del contacto
-  $(document).on("click", ".btn-enviar", function () {
-    var nombre = $(this).data("nombre");
-    $("#alertContainer").html(
-      '<div class="alert alert-success">' +
-        '<i class="fas fa-check-circle mr-2"></i>' +
-        "Dinero enviado a <strong>" +
-        nombre +
-        "</strong> con éxito." +
-        "</div>",
-    );
-    // Scroll al mensaje
-    $("html, body").animate(
-      { scrollTop: $("#alertContainer").offset().top - 20 },
-      400,
-    );
-  });
-
-  // --- Botones de navegación (Rutas de Express) ---
-  $("#depositBtn").click(function () {
-    window.location.href = "/deposit";
-  });
-  $("#transactionBtn").click(function () {
-    window.location.href = "/transaction";
-  });
-  $("#menuBtn").click(function () {
-    window.location.href = "/menu";
-  });
-  $("#btnCerrarSesion").click(function () {
-    window.location.href = "/logout"; // Destruye la sesión en el backend
-  });
+  // Auto-ocultar alertas de éxito/error provenientes del servidor (Flash messages)
+  setTimeout(function () {
+    $(".alert").slideUp();
+  }, 4000);
 });

@@ -9,6 +9,27 @@ function protegerRuta(req, res, next) {
   next();
 }
 
+// Proteger rutas de administración
+const requerirAdmin = (req, res, next) => {
+  const usuario = req.session?.usuario;
+  // 1. Verificar si existe una sesión activa primero
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+  // 2. Validación de privilegios (Se omite requerimiento de rol temporalmente)
+  const esAdmin =
+    // usuario.role === "admin" ||
+    usuario.user_name === "admin" || usuario.email === "admin@alkewallet.com";
+  // 3. Bloquear el paso si no coincide con las credenciales maestras
+  if (!esAdmin) {
+    return res
+      .status(403)
+      .send("Acceso denegado. Se requiere cuenta de administrador.");
+  }
+  // 4. Continuar hacia la ruta solicitada si todo está en orden
+  next();
+};
+
 //  Registra cada petición en un archivo de log.
 const registrarVisita = (req, res, next) => {
   const fechaActual = new Date();
@@ -52,4 +73,5 @@ module.exports = {
   registrarVisita,
   validarCredenciales,
   variablesGlobales,
+  requerirAdmin,
 };

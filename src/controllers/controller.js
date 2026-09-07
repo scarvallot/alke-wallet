@@ -2,6 +2,7 @@ const {
   obtenerUsuarios: obtenerUsuariosService,
   validarCredenciales,
   obtenerSaldoUsuario,
+  eliminarUsuarioAdmin,
 } = require("../services/services");
 
 // Obtiene usuarios aplicando filtros y paginación.
@@ -67,6 +68,43 @@ const consultarSaldo = async (req, res) => {
   }
 };
 
+// Renderizar la tabla de administración con soporte para filtros
+const mostrarDashboardAdmin = async (req, res) => {
+  try {
+    // 1. Capturamos el parámetro 'nombre' desde la URL (ej: ?nombre=texto)
+    const filtroNombre = req.query.nombre || "";
+
+    // 2. Pasamos el filtro al servicio de búsqueda/paginación
+    const resultado = await obtenerUsuariosService({
+      page: 1,
+      limit: 10,
+      nombre: filtroNombre, // Enviamos el filtro a la lógica de base de datos
+    });
+
+    // 3. Renderizamos la vista enviando los datos y el valor del filtro actual
+    res.render("dashboard/dashboard", {
+      tituloPagina: "Panel de Administración",
+      usuarios: resultado.data,
+      jsFile: "/js/dashboard.js",
+      nombreFiltro: filtroNombre, // mantener el texto escrito en tu input de búsqueda
+    });
+  } catch (error) {
+    console.error("Error al cargar el panel de administración:", error);
+    res.status(500).send("Error al cargar el panel.");
+  }
+};
+
+// Procesar el borrado lógico
+const desactivarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await eliminarUsuarioAdmin(id);
+    res.redirect("/admin/usuarios");
+  } catch (error) {
+    res.status(500).send("Error al desactivar el usuario.");
+  }
+};
+
 // Destruye la sesión actual y redirige al inicio.
 const cerrarSesion = (req, res) => {
   req.session.destroy(() => {
@@ -79,5 +117,7 @@ module.exports = {
   mostrarLogin,
   procesarLogin,
   consultarSaldo,
+  mostrarDashboardAdmin,
+  desactivarUsuario,
   cerrarSesion,
 };

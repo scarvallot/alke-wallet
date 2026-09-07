@@ -106,22 +106,49 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 
 ```markdown
 alke-wallet/
-├── data/                       # Almacenamiento simple de datos (Sistema de archivos y logs)
-├── database/                   # Scripts SQL para creación de tablas (ej. schema.sql)
-├── public/                     # Contenido estático servido por Express
-├── src/                        # Código del servidor (Node.js/Express)
-│   ├── config/                 # Configuración de entorno y conexión a BD (ej. db.js)
-│   ├── controllers/            # Controladores de la lógica de negocio
-│   ├── middlewares/            # Middlewares personalizados (ej. logger)
-│   ├── models/                 # Lógica de acceso a datos (migrando a MySQL)
-│   ├── routes/                 # Enrutadores (ej. router.js)
-│   ├── views/                  # Plantillas dinámicas EJS
-│   └── app.js                  # Configuración de la aplicación Express
-├── .env                        # Variables de entorno (credenciales BD, puerto) - NO se sube a Git
-├── .gitignore                  # Archivos y carpetas ignorados por Git
-├── package.json                # Dependencias y scripts de ejecución
-├── server.js                   # Punto de entrada: levanta servidor HTTP e inicializa BD
-└── README.md                   # Documentación principal del proyecto
+├── data/                         # Persistencia en archivos y registro de errores
+│   └── log.txt                   # Log de rutas no encontradas (404)
+├── database/                     # Evolución de los modelos y scripts de base de datos
+│   ├── 01_Received/              # Modelo inicial recibido
+│   ├── 02_Approach/              # Modelo con mejoras incrementales
+│   ├── 03_Scalable/              # Modelo normalizado y escalable
+│   └── README.md                 # Documentación de la estrategia de datos
+├── public/                       # Recursos estáticos servidos por Express
+│   ├── css/
+│   │   └── app.css               # Estilos de la aplicación
+│   └── js/                       # Lógica de interacción del cliente
+│       ├── deposit.js
+│       ├── login.js
+│       ├── menu.js
+│       ├── sendmoney.js
+│       └── transaction.js
+├── src/                          # Código de la aplicación Node.js/Express
+│   ├── app.js                    # Configuración de Express, EJS y middlewares
+│   ├── config/
+│   │   └── db.js                 # Pool de conexiones MySQL
+│   ├── controllers/
+│   │   └── controller.js         # Controladores de la aplicación
+│   ├── middlewares/
+│   │   └── middlewares.js       # Middlewares personalizados
+│   ├── models/                   # Acceso y persistencia de datos
+│   ├── routes/
+│   │   └── routes.js             # Definición de rutas
+│   ├── services/
+│   │   └── services.js           # Servicios y reglas de negocio
+│   └── views/                    # Plantillas dinámicas EJS
+│       ├── auth/
+│       ├── dashboard/
+│       ├── deposit/
+│       ├── layouts/
+│       ├── menu/
+│       ├── partials/
+│       ├── sendmoney/
+│       └── transaction/
+├── .env                          # Variables de entorno (no se sube a Git)
+├── .gitignore                    # Archivos y carpetas ignorados por Git
+├── package.json                  # Dependencias y scripts de ejecución
+├── server.js                     # Punto de entrada del servidor HTTP
+└── README.md                     # Documentación principal del proyecto
 ```
 
 ## Decisiones técnicas
@@ -148,6 +175,19 @@ Se decidió registrar el evento de **"acceso a rutas"** (HTTP requests) para tod
 
 **Justificación del evento registrado (Manejo de Errores - 404):**
 Para el sistema de logs (`log.txt`), se eligió registrar el evento de **errores de acceso (rutas no encontradas / 404)**. Desde la perspectiva de la arquitectura y seguridad del backend, registrar los intentos de acceso a endpoints inexistentes aporta mayor valor operativo que registrar simples visitas exitosas. Esto permite identificar rápidamente enlaces rotos en la aplicación, comportamientos inusuales o posibles escaneos de vulnerabilidades. 
+
+---
+
+## Módulo 7
+
+### Acceso a Datos (Lección 1 - Conexión a Base de Datos)
+
+Se implementó la conexión entre el servidor Node.js y la base de datos relacional cumpliendo con los estándares de seguridad:
+
+1. **Base de datos y tablas:** Se utilizó el script SQL oficial para generar el esquema `AlkeWallet` y la tabla principal `Users`.
+2. **Conexión segura y modular:** Se utilizó el paquete `mysql2/promise` para establecer un Pool de conexiones asíncrono en el archivo `src/config/db.js`.
+3. **Variables de entorno:** Todas las credenciales sensibles (host, usuario, contraseña, base de datos) fueron extraídas a un archivo `.env`, protegiendo el acceso al servidor.
+4. **Verificación de estado:** Se implementó una promesa al inicializar el Pool que verifica la disponibilidad del motor MySQL, emitiendo un log de éxito (`console.log`) en la terminal o capturando posibles errores de conexión.
 
 ---
 
