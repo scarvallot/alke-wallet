@@ -52,13 +52,21 @@ const obtenerUsuarios = async ({ nombre, page, limit }) => {
   };
 };
 
-// Valida credenciales de usuario contra valores fijos (mock).
-function validarCredenciales(username, password) {
-  if (username === "admin" && password === "12345") {
-    return { id: 1, username, nombre: "Usuario Administrador" };
+// Validar credenciales contra la base de datos real
+const validarCredenciales = async (username, password) => {
+  // Nota: Buscamos por user_name, pero también podrías usar email
+  const query =
+    "SELECT user_id, user_name, email FROM alkewallet.users WHERE user_name = ? AND password = ?";
+
+  // Ejecutamos la consulta pasándole los datos del formulario
+  const [rows] = await pool.query(query, [username, password]);
+
+  // Si encuentra una coincidencia, devuelve el usuario (sin el password). Si no, null.
+  if (rows.length > 0) {
+    return rows[0];
   }
   return null;
-}
+};
 
 module.exports = {
   obtenerUsuarios,
