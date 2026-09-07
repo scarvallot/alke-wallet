@@ -35,9 +35,10 @@ const mostrarLogin = (req, res) => {
 };
 
 // Valida las credenciales e inicia la sesión.
-const procesarLogin = (req, res) => {
+const procesarLogin = async (req, res) => {
   const { username, password } = req.body;
-  const usuario = validarCredenciales(username, password);
+
+  const usuario = await validarCredenciales(username, password);
   if (!usuario) {
     return res.render("auth/login", {
       tituloPagina: "Error - Mi Wallet",
@@ -45,6 +46,8 @@ const procesarLogin = (req, res) => {
       layout: "layouts/auth",
     });
   }
+
+  // Si todo está bien, guardamos el usuario real de la BD en la sesión
   req.session.usuario = usuario;
   res.redirect("/menu");
 };
