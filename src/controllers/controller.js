@@ -3,6 +3,7 @@ const {
   validarCredenciales,
 } = require("../services/services");
 
+// Obtiene usuarios aplicando filtros y paginación.
 const obtenerUsuarios = async (req, res) => {
   try {
     const { nombre, page, limit } = req.query;
@@ -23,6 +24,7 @@ const obtenerUsuarios = async (req, res) => {
   }
 };
 
+// Muestra la pantalla de inicio de sesión.
 const mostrarLogin = (req, res) => {
   if (req.session.usuario) return res.redirect("/menu");
   res.render("auth/login", {
@@ -32,6 +34,7 @@ const mostrarLogin = (req, res) => {
   });
 };
 
+// Valida las credenciales e inicia la sesión.
 const procesarLogin = (req, res) => {
   const { username, password } = req.body;
   const usuario = validarCredenciales(username, password);
@@ -46,6 +49,7 @@ const procesarLogin = (req, res) => {
   res.redirect("/menu");
 };
 
+// Destruye la sesión actual y redirige al inicio.
 const cerrarSesion = (req, res) => {
   req.session.destroy(() => {
     res.redirect("/login");
