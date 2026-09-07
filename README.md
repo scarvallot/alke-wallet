@@ -189,6 +189,14 @@ Se implementó la conexión entre el servidor Node.js y la base de datos relacio
 3. **Variables de entorno:** Todas las credenciales sensibles (host, usuario, contraseña, base de datos) fueron extraídas a un archivo `.env`, protegiendo el acceso al servidor.
 4. **Verificación de estado:** Se implementó una promesa al inicializar el Pool que verifica la disponibilidad del motor MySQL, emitiendo un log de éxito (`console.log`) en la terminal o capturando posibles errores de conexión.
 
+### Acceso a Datos (Lección 2 - Obtención de Información y Paginación)
+
+Se integró la capa de servicios y controladores con la base de datos relacional para la gestión y exposición de los datos de usuarios:
+
+1. **Consulta optimizada y segura:** Se implementó la ruta `GET /usuarios` conectada al controlador para extraer los registros de la base de datos MySQL, excluyendo de manera estricta el campo `password` para salvaguardar la información sensible de los usuarios.
+2. **Manejo de Errores:** Se integraron bloques `try/catch` para capturar fallos de conectividad o de sintaxis en el servidor, retornando respuestas HTTP informativas y ordenadas en formato JSON.
+3. **Tarea PLUS (Filtros y Paginación):** Se desarrolló soporte dinámico mediante parámetros en la URL (`query params`) permitiendo filtrar registros por nombre u alias, además de estructurar un sistema de paginación con límites y offsets escalables.
+
 ---
 
 <br>
