@@ -15,20 +15,20 @@ $(document).ready(function () {
     }, 1500);
   }
 
-  // Eventos de los botones de navegación
+  // --- Eventos de los botones de navegación (Rutas de Express) ---
   $("#depositBtn").click(function () {
-    redirigir("Depósito", "../deposit/deposit.html");
+    redirigir("Depósito", "/deposit");
   });
 
   $("#sendMoneyBtn").click(function () {
-    redirigir("Envío de Dinero", "../sendmoney/sendmoney.html");
+    redirigir("Envío de Dinero", "/sendmoney");
   });
 
   $("#transactionBtn").click(function () {
-    redirigir("Últimos Movimientos", "../transaction/transaction.html");
+    redirigir("Últimos Movimientos", "/transaction");
   });
 
   $("#btnCerrarSesion").click(function () {
-    window.location.href = "../auth/login/login.html";
+    window.location.href = "/logout"; // Destruye la sesión en el backend
   });
 });
