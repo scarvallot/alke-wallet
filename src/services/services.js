@@ -102,8 +102,7 @@ const eliminarUsuarioAdmin = async (id) => {
   await pool.query(querySoft, [id]);
 };
 
-// Exportar la nueva función
-// No olvides exportarla al final
+
 module.exports = {
   obtenerUsuarios,
   validarCredenciales,
