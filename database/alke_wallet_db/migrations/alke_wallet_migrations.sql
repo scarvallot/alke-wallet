@@ -1,0 +1,4 @@
+-- =====================================================
+-- Migraciones — alke_wallet_db
+-- Vacío: CHECK y restricciones están en schema/01_alke_wallet_schema.sql
+-- =====================================================
