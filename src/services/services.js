@@ -85,9 +85,28 @@ const obtenerSaldoUsuario = async (userId) => {
   return { current_balance: 0, currency_symbol: "$" }; // Fallback si no tiene cuenta
 };
 
+// Borrado de usuario desde el panel admin
+const eliminarUsuarioAdmin = async (id) => {
+  /*
+   * HARD DELETE (Comentado por seguridad)
+   * Elimina físicamente el registro. En una billetera, esto daría error de
+   * llave foránea (Foreign Key) si el usuario ya tiene cuentas o transacciones.
+   *
+   * const queryHard = "DELETE FROM AlkeWallet.Users WHERE user_id = ?";
+   * await pool.query(queryHard, [id]);
+   */
+  // SOFT DELETE
+  // Mantiene la integridad referencial, solo oculta al usuario desactivándolo.
+  const querySoft =
+    "UPDATE AlkeWallet.Users SET is_active = 0 WHERE user_id = ?";
+  await pool.query(querySoft, [id]);
+};
+
+// Exportar la nueva función
 // No olvides exportarla al final
 module.exports = {
   obtenerUsuarios,
   validarCredenciales,
   obtenerSaldoUsuario,
+  eliminarUsuarioAdmin,
 };

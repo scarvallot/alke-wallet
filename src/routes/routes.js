@@ -1,16 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { protegerRuta } = require("../middlewares/middlewares");
+const { protegerRuta, requerirAdmin } = require("../middlewares/middlewares");
 const {
   obtenerUsuarios,
   mostrarLogin,
   procesarLogin,
   cerrarSesion,
   consultarSaldo,
+  mostrarDashboardAdmin,
+  desactivarUsuario,
 } = require("../controllers/controller");
 
 // Obtiene la lista de usuarios.
 router.get("/usuarios", obtenerUsuarios);
+
 // Muestra el formulario de inicio de sesión.
 router.get("/login", mostrarLogin);
 // Procesa las credenciales de acceso.
@@ -19,6 +22,15 @@ router.post("/login", procesarLogin);
 router.get("/logout", cerrarSesion);
 // Ruta API para obtener el saldo (protegida)
 router.get("/api/saldo", protegerRuta, consultarSaldo);
+// Ruta para Gestion de usuarios
+router.get("/admin/usuarios", requerirAdmin, mostrarDashboardAdmin);
+
+router.post(
+  "/admin/usuarios/:id/delete",
+  protegerRuta,
+  requerirAdmin,
+  desactivarUsuario,
+);
 
 // Redirige al menú o al inicio de sesión según el estado de la sesión.
 router.get("/", (req, res) => {
