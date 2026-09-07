@@ -1,6 +1,7 @@
 const {
   obtenerUsuarios: obtenerUsuariosService,
   validarCredenciales,
+  obtenerSaldoUsuario,
 } = require("../services/services");
 
 // Obtiene usuarios aplicando filtros y paginación.
@@ -52,6 +53,20 @@ const procesarLogin = async (req, res) => {
   res.redirect("/menu");
 };
 
+// Endpoint API para consultar el saldo
+const consultarSaldo = async (req, res) => {
+  try {
+    // Tomamos el user_id de la sesión protegida
+    const userId = req.session.usuario.user_id;
+    const saldoData = await obtenerSaldoUsuario(userId);
+
+    res.status(200).json(saldoData);
+  } catch (error) {
+    console.error("Error al obtener saldo:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
 // Destruye la sesión actual y redirige al inicio.
 const cerrarSesion = (req, res) => {
   req.session.destroy(() => {
@@ -59,4 +74,10 @@ const cerrarSesion = (req, res) => {
   });
 };
 
-module.exports = { obtenerUsuarios, mostrarLogin, procesarLogin, cerrarSesion };
+module.exports = {
+  obtenerUsuarios,
+  mostrarLogin,
+  procesarLogin,
+  consultarSaldo,
+  cerrarSesion,
+};
