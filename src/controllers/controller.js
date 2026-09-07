@@ -1,6 +1,7 @@
 const {
   obtenerUsuarios: obtenerUsuariosService,
   validarCredenciales,
+  obtenerSaldoUsuario,
 } = require("../services/services");
 
 // Obtiene usuarios aplicando filtros y paginación.
@@ -35,9 +36,10 @@ const mostrarLogin = (req, res) => {
 };
 
 // Valida las credenciales e inicia la sesión.
-const procesarLogin = (req, res) => {
+const procesarLogin = async (req, res) => {
   const { username, password } = req.body;
-  const usuario = validarCredenciales(username, password);
+
+  const usuario = await validarCredenciales(username, password);
   if (!usuario) {
     return res.render("auth/login", {
       tituloPagina: "Error - Mi Wallet",
@@ -45,8 +47,24 @@ const procesarLogin = (req, res) => {
       layout: "layouts/auth",
     });
   }
+
+  // Si todo está bien, guardamos el usuario real de la BD en la sesión
   req.session.usuario = usuario;
   res.redirect("/menu");
+};
+
+// Endpoint API para consultar el saldo
+const consultarSaldo = async (req, res) => {
+  try {
+    // Tomamos el user_id de la sesión protegida
+    const userId = req.session.usuario.user_id;
+    const saldoData = await obtenerSaldoUsuario(userId);
+
+    res.status(200).json(saldoData);
+  } catch (error) {
+    console.error("Error al obtener saldo:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 };
 
 // Destruye la sesión actual y redirige al inicio.
@@ -56,4 +74,10 @@ const cerrarSesion = (req, res) => {
   });
 };
 
-module.exports = { obtenerUsuarios, mostrarLogin, procesarLogin, cerrarSesion };
+module.exports = {
+  obtenerUsuarios,
+  mostrarLogin,
+  procesarLogin,
+  consultarSaldo,
+  cerrarSesion,
+};

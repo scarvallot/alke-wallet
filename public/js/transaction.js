@@ -118,17 +118,17 @@ $(document).ready(function () {
     mostrarUltimosMovimientos($(this).val());
   });
 
-  // Botones de navegación
+  // --- Botones de navegación (Rutas de Express) ---
   $("#depositBtn").click(function () {
-    window.location.href = "../deposit/deposit.html";
+    window.location.href = "/deposit";
   });
   $("#sendMoneyBtn").click(function () {
-    window.location.href = "../sendmoney/sendmoney.html";
+    window.location.href = "/sendmoney";
   });
   $("#menuBtn").click(function () {
-    window.location.href = "../menu/menu.html";
+    window.location.href = "/menu";
   });
   $("#btnCerrarSesion").click(function () {
-    window.location.href = "../auth/login/login.html";
+    window.location.href = "/logout"; // Destruye la sesión en el backend
   });
 });

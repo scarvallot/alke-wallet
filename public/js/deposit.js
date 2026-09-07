@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  // Mostrar saldo actual desde localStorage
   function mostrarSaldo() {
     var saldo = parseInt(localStorage.getItem("walletBalance")) || 0;
     $("#balance").text("$" + saldo.toLocaleString("es-CL"));
@@ -13,7 +12,7 @@ $(document).ready(function () {
 
     var monto = parseInt($("#depositAmount").val());
 
-    // Validar monto
+    // 1. Validaciones frontend
     if (!monto || monto <= 0) {
       $("#alertContainer").html(
         '<div class="alert alert-danger">Por favor, ingresa un monto válido.</div>',
@@ -26,13 +25,12 @@ $(document).ready(function () {
       );
       return;
     }
-
-    // Actualizar saldo en localStorage
+    // Por ahora mantenemos la simulación con localStorage para que no se rompa la UI
     var saldoActual = parseInt(localStorage.getItem("walletBalance")) || 0;
     localStorage.setItem("walletBalance", saldoActual + monto);
     mostrarSaldo();
 
-    // Agregar leyenda con el monto depositado (jQuery)
+    // Feedback visual
     $("#depositAmount").after(
       '<p class="text-success font-weight-bold mt-2">Monto depositado: $' +
         monto.toLocaleString("es-CL") +
@@ -40,28 +38,31 @@ $(document).ready(function () {
     );
     $("#depositAmount").val("").prop("disabled", true);
 
-    // Alerta Bootstrap de éxito
     $("#alertContainer").html(
       '<div class="alert alert-success">¡Depósito realizado con éxito! Redirigiendo al menú...</div>',
     );
 
-    // Redirigir al menú después de 2 segundos
+    // 2. Redirección actualizada al endpoint de Express
     setTimeout(function () {
-      window.location.href = "../menu/menu.html";
+      window.location.href = "/menu";
     }, 2000);
   });
 
-  // Botones de navegación
+  // 3. Botones de navegación actualizados a rutas del Router
   $("#menuBtn").click(function () {
-    window.location.href = "../menu/menu.html";
+    window.location.href = "/menu";
   });
+
   $("#sendMoneyBtn").click(function () {
-    window.location.href = "../sendmoney/sendmoney.html";
+    window.location.href = "/sendmoney";
   });
+
   $("#transactionBtn").click(function () {
-    window.location.href = "../transaction/transaction.html";
+    window.location.href = "/transaction";
   });
+
+  // Redirige a /logout para que Express destruya la sesión correctamente
   $("#btnCerrarSesion").click(function () {
-    window.location.href = "../auth/login/login.html";
+    window.location.href = "/logout";
   });
 });

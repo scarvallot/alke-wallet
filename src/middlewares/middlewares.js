@@ -17,7 +17,7 @@ const registrarVisita = (req, res, next) => {
   const ruta = req.originalUrl;
   const textoRegistro = `${fecha} | ${hora} | Ruta accedida: ${ruta}\n`;
 
-  const rutaLog = path.join(__dirname, "../data/log.txt");
+  const rutaLog = path.join(__dirname, "../../data/log.txt");
 
   fs.appendFile(rutaLog, textoRegistro, "utf8", (err) => {
     if (err) {
