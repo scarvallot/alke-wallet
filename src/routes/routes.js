@@ -6,6 +6,7 @@ const {
   mostrarLogin,
   procesarLogin,
   cerrarSesion,
+  consultarSaldo,
 } = require("../controllers/controller");
 
 // Obtiene la lista de usuarios.
@@ -16,6 +17,8 @@ router.get("/login", mostrarLogin);
 router.post("/login", procesarLogin);
 // Cierra la sesión del usuario.
 router.get("/logout", cerrarSesion);
+// Ruta API para obtener el saldo (protegida)
+router.get("/api/saldo", protegerRuta, consultarSaldo);
 
 // Redirige al menú o al inicio de sesión según el estado de la sesión.
 router.get("/", (req, res) => {
