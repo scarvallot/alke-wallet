@@ -1,21 +1,30 @@
 const express = require("express");
 const router = express.Router();
 const { protegerRuta, requerirAdmin } = require("../middlewares/middlewares");
+// Importaciones modulares desde los nuevos controladores
+// Controlador de autenticación: login, logout y sesión.
 const {
-  obtenerUsuarios,
   mostrarLogin,
   procesarLogin,
   cerrarSesion,
-  consultarSaldo,
+} = require("../controllers/auth.controller");
+// Controlador administrativo: usuarios y panel de administración.
+const {
+  obtenerUsuarios,
   mostrarDashboardAdmin,
   desactivarUsuario,
+} = require("../controllers/admin.controller");
+// Controlador de cartera: consulta del saldo del usuario.
+const { consultarSaldo } = require("../controllers/wallet.controller");
+// Controlador de vistas: redirecciones y render de páginas.
+const {
   redireccionarInicio,
   mostrarMenu,
   mostrarDeposit,
   mostrarSendMoney,
   mostrarTransaction,
   verificarStatus,
-} = require("../controllers/controller");
+} = require("../controllers/views.controller");
 
 // Obtiene la lista de usuarios.
 router.get("/usuarios", obtenerUsuarios);
