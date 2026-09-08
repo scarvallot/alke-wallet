@@ -112,6 +112,55 @@ const cerrarSesion = (req, res) => {
   });
 };
 
+// Redirige al menú o al inicio de sesión según el estado de la sesión.
+const redireccionarInicio = (req, res) => {
+  if (req.session.usuario) {
+    return res.redirect("/menu"); // Si ya inició sesión, va al menú
+  }
+  res.redirect("/login"); // Si no, va al login
+};
+
+// Muestra el menú principal para usuarios autenticados.
+const mostrarMenu = (req, res) => {
+  res.render("menu/menu", {
+    tituloPagina: "Menú Principal - Mi Wallet",
+    jsFile: "/js/menu.js",
+  });
+};
+
+// Muestra la vista para depositar dinero.
+const mostrarDeposit = (req, res) => {
+  res.render("deposit/deposit", {
+    tituloPagina: "Depositar Dinero - Mi Wallet",
+    jsFile: "/js/deposit.js",
+  });
+};
+
+// Muestra la vista para enviar dinero.
+const mostrarSendMoney = (req, res) => {
+  res.render("sendmoney/sendmoney", {
+    tituloPagina: "Enviar Dinero - Mi Wallet",
+    jsFile: "/js/sendmoney.js",
+  });
+};
+
+// Muestra el historial de transacciones.
+const mostrarTransaction = (req, res) => {
+  res.render("transaction/transaction", {
+    tituloPagina: "Historial de Transacciones - Mi Wallet",
+    jsFile: "/js/transaction.js",
+  });
+};
+
+// Verifica que el servidor esté funcionando.
+const verificarStatus = (req, res) => {
+  res.status(200).json({
+    estado: "activo",
+    mensaje: "Servidor funcionando correctamente",
+    fecha: new Date().toISOString(),
+  });
+};
+
 module.exports = {
   obtenerUsuarios,
   mostrarLogin,
@@ -120,4 +169,10 @@ module.exports = {
   mostrarDashboardAdmin,
   desactivarUsuario,
   cerrarSesion,
+  redireccionarInicio,
+  mostrarMenu,
+  mostrarDeposit,
+  mostrarSendMoney,
+  mostrarTransaction,
+  verificarStatus,
 };
