@@ -104,6 +104,29 @@ const actualizarPerfilUsuario = async (
   await pool.query(query, [first_name, last_name, email, userId]);
 };
 
+// Actualiza un usuario identificado por ID con validación previa de existencia.
+const actualizarUsuarioService = async (
+  id,
+  { first_name, last_name, email },
+) => {
+  const [checkRows] = await pool.query(
+    "SELECT user_id FROM AlkeWallet.Users WHERE user_id = ?",
+    [id],
+  );
+
+  if (checkRows.length === 0) {
+    throw new Error("El ID de usuario proporcionado no existe en el sistema.");
+  }
+
+  const query = `
+    UPDATE AlkeWallet.Users
+    SET first_name = ?, last_name = ?, email = ?
+    WHERE user_id = ?
+  `;
+
+  await pool.query(query, [first_name, last_name, email, id]);
+};
+
 // Comprueba la contraseña actual antes de actualizar la nueva.
 const actualizarPasswordUsuario = async (
   userId,
@@ -151,14 +174,6 @@ const validarCredenciales = async (identificador, password) => {
   return null;
 };
 
-// // Eliminación lógica para desactivar al usuario sin borrarlo físicamente.
-// const eliminarUsuarioAdmin = async (id) => {
-//   const querySoft =
-//     "UPDATE AlkeWallet.Users SET is_active = 0 WHERE user_id = ?";
-
-//   await pool.query(querySoft, [id]);
-// };
-
 // Eliminación lógica controlada con validación previa de existencia
 const eliminarUsuarioAdmin = async (id) => {
   // 1. Validar que el ID exista físicamente en la base de datos
@@ -170,6 +185,10 @@ const eliminarUsuarioAdmin = async (id) => {
   if (rows.length === 0) {
     throw new Error("El ID de usuario proporcionado no existe en el sistema.");
   }
+
+  // Opcional: Consulta para eliminación física (hard delete) en caso de requerirse
+  // const queryHard = "DELETE FROM AlkeWallet.Users WHERE user_id = ?";
+
   // 2. Ejecutar la desactivación lógica si el registro existe
   const querySoft =
     "UPDATE AlkeWallet.Users SET is_active = 0 WHERE user_id = ?";
@@ -182,6 +201,7 @@ module.exports = {
   registrarUsuarioService,
   obtenerPerfilUsuario,
   actualizarPerfilUsuario,
+  actualizarUsuarioService,
   actualizarPasswordUsuario,
   validarCredenciales,
   eliminarUsuarioAdmin,
