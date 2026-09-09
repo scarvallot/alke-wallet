@@ -47,27 +47,22 @@ const mostrarDashboardAdmin = async (req, res) => {
 const desactivarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
+    // Llama al servicio que ahora valida la existencia del ID
     await eliminarUsuarioAdmin(id);
 
-    if (req.accepts("json")) {
-      return res.status(200).json({
-        success: true,
-        message: "Usuario desactivado correctamente.",
-      });
-    }
-
-    return res.redirect("/admin/usuarios");
+    return res.status(200).json({
+      success: true,
+      message: "Usuario desactivado correctamente.",
+    });
   } catch (error) {
     console.error("Error al desactivar el usuario:", error);
 
-    if (req.accepts("json")) {
-      return res.status(500).json({
-        success: false,
-        message: "Error al desactivar el usuario.",
-      });
-    }
-
-    return res.status(500).send("Error al desactivar el usuario.");
+    // Si el error proviene de que el usuario no existe, devolvemos 404
+    const statusCode = error.message.includes("no existe") ? 404 : 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Error interno al procesar la desactivación.",
+    });
   }
 };
 
