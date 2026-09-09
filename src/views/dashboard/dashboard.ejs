@@ -53,10 +53,9 @@
                                 </td>
                                 <td>
                                     <div class="dashboard-actions d-flex flex-column flex-sm-row justify-content-center">
-                                        <button class="btn btn-sm btn-outline-primary dashboard-action mb-2 mb-sm-0 mr-sm-1" onclick="editarUsuario('<%= user.user_id %>')">
+                                        <!-- <button class="btn btn-sm btn-outline-primary dashboard-action mb-2 mb-sm-0 mr-sm-1" onclick="editarUsuario('<%= user.user_id %>')">
                                             <i class="fas fa-edit"></i> Editar
-                                        </button>
-
+                                        </button> -->
                                         <form id="form-delete-<%= user.user_id %>" action="/admin/usuarios/<%= user.user_id %>/delete" method="POST" class="d-inline">
                                             <button type="button" class="btn btn-sm btn-outline-danger dashboard-action" data-toggle="modal" data-target="#modalConfirmacion" data-userid="<%= user.user_id %>" <%=!user.is_active ? 'disabled' : '' %>>
                                                 <i class="fas fa-ban"></i> Desactivar
