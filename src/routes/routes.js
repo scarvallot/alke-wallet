@@ -4,8 +4,10 @@ const { protegerRuta, requerirAdmin } = require("../middlewares/middlewares");
 // Importaciones modulares desde los nuevos controladores
 // Controlador de autenticación: login, logout y sesión.
 const {
-  mostrarLogin,
   procesarLogin,
+  registrarUsuario,
+  actualizarPerfil,
+  actualizarPassword,
   cerrarSesion,
 } = require("../controllers/auth.controller");
 // Controlador administrativo: usuarios y panel de administración.
@@ -19,10 +21,13 @@ const { consultarSaldo } = require("../controllers/wallet.controller");
 // Controlador de vistas: redirecciones y render de páginas.
 const {
   redireccionarInicio,
+  mostrarLogin,
+  mostrarRegistro,
   mostrarMenu,
   mostrarDeposit,
   mostrarSendMoney,
   mostrarTransaction,
+  mostrarProfile,
   verificarStatus,
 } = require("../controllers/views.controller");
 
@@ -33,6 +38,13 @@ router.get("/usuarios", obtenerUsuarios);
 router.get("/login", mostrarLogin);
 // Procesa las credenciales de acceso.
 router.post("/login", procesarLogin);
+// Registro asíncrono-compatible.
+router.post("/register", registrarUsuario);
+router.get("/register", mostrarRegistro);
+// Perfil y actualización de datos.
+router.get("/profile", protegerRuta, mostrarProfile);
+router.put("/profile/update", protegerRuta, actualizarPerfil);
+router.put("/profile/password", protegerRuta, actualizarPassword);
 // Cierra la sesión del usuario.
 router.get("/logout", cerrarSesion);
 // Ruta API para obtener el saldo (protegida)
