@@ -7,43 +7,79 @@ $(document).ready(function () {
       </div>`,
     );
   }
+  $("#updateProfileForm").submit(async function (event) {
+    event.preventDefault();
 
-  $("#updatePasswordForm").submit(async function (event) {
-    event.preventDefault(); // Prevenir envío clásico
+    const first_name = $("#firstName").val().trim();
+    const last_name = $("#lastName").val().trim();
+    const email = $("#email").val().trim();
 
-    const current_password = $("#current_password").val().trim();
-    const new_password = $("#new_password").val().trim();
-    const confirm_new_password = $("#confirm_new_password").val().trim();
-
-    // Validaciones iniciales...
-    if (new_password !== confirm_new_password) {
-      mostrarAlerta("Las contraseñas nuevas no coinciden.", "danger");
+    if (!first_name || !last_name || !email) {
+      mostrarAlerta("Todos los campos son obligatorios.", "warning");
       return;
     }
 
-    const payload = {
-      current_password: current_password,
-      new_password: new_password,
-    };
-
     try {
-      const response = await fetch("/profile/password", {
+      const response = await fetch("/profile/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        credentials: "same-origin",
+        body: JSON.stringify({ first_name, last_name, email }),
       });
 
       const data = await response.json();
 
       if (data.success) {
         mostrarAlerta(data.message, "success");
-        // Opcional: Redirigir al menú luego de un tiempo o limpiar el formulario
-        setTimeout(() => (window.location.href = "/menu"), 2000);
+        setTimeout(() => window.location.reload(), 1500);
       } else {
         mostrarAlerta(data.message, "danger");
       }
     } catch (error) {
-      mostrarAlerta("Error al intentar actualizar la contraseña", "danger");
+      console.error("Error al actualizar perfil:", error);
+      mostrarAlerta("Error de conexión al actualizar el perfil.", "danger");
+    }
+  });
+
+  $("#updatePasswordForm").submit(async function (event) {
+    event.preventDefault();
+
+    const current_password = $("#current_password").val().trim();
+    const new_password = $("#new_password").val().trim();
+    const confirm_new_password = $("#confirm_new_password").val().trim();
+
+    if (!current_password || !new_password || !confirm_new_password) {
+      mostrarAlerta(
+        "Por favor, completa todos los campos de contraseña.",
+        "warning",
+      );
+      return;
+    }
+
+    if (new_password !== confirm_new_password) {
+      mostrarAlerta("Las contraseñas nuevas no coinciden.", "danger");
+      return;
+    }
+
+    try {
+      const response = await fetch("/profile/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ current_password, new_password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        mostrarAlerta(data.message, "success");
+        $("#updatePasswordForm")[0].reset();
+      } else {
+        mostrarAlerta(data.message, "danger");
+      }
+    } catch (error) {
+      console.error("Error al actualizar contraseña:", error);
+      mostrarAlerta("Error al intentar actualizar la contraseña.", "danger");
     }
   });
 });
