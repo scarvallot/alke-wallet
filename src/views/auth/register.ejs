@@ -1,0 +1,57 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-10 col-lg-8 col-xl-6">
+        <!-- Contenedor dinámico para las alertas de jQuery -->
+        <div id="alertContainer"></div>
+
+        <!-- Se agregó 'my-4 my-md-5' para dar padding/margen superior e inferior exterior -->
+        <div class="card login-card p-4 p-sm-5 shadow-sm my-4 my-md-5">
+            <div class="card-body text-center">
+                <!-- Ícono cambiado a uno sólido/relleno -->
+                <i class="fas fa-user-circle fa-3x text-primary mb-3"></i>
+                <h1 class="h3 mb-1 login-header">Mi Wallet</h1>
+                <p class="login-tagline mb-4 text-muted">Crea tu cuenta para comenzar a gestionar tu dinero</p>
+
+                <form id="registerForm" action="/register" method="POST" class="text-left">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 form-group mb-3">
+                            <label for="firstName" class="font-weight-bold">Nombre</label>
+                            <input type="text" class="form-control form-control-lg" id="firstName" name="first_name" required>
+                        </div>
+                        <div class="col-12 col-sm-6 form-group mb-3">
+                            <label for="lastName" class="font-weight-bold">Apellido</label>
+                            <input type="text" class="form-control form-control-lg" id="lastName" name="last_name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="username" class="font-weight-bold">Nombre de Usuario (Alias)</label>
+                        <input type="text" class="form-control form-control-lg" id="username" name="user_name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="email" class="font-weight-bold">Correo Electrónico</label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" required>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="form-group mb-3">
+                        <label for="password" class="font-weight-bold">Contraseña</label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="confirm_password" class="font-weight-bold">Repetir Contraseña</label>
+                        <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block btn-lg mt-4 btn-auth-style" id="registerSubmitBtn">
+                        <i class="fas fa-user-plus mr-2"></i>Registrarse
+                    </button>
+                </form>
+
+                <div class="mt-4 pt-3 border-top text-center small text-muted">
+                    ¿Ya tienes cuenta? <a href="/login" class="text-primary font-weight-bold">Inicia sesión aquí</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
