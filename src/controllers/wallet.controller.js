@@ -1,4 +1,4 @@
-const { obtenerSaldoUsuario } = require("../services/services");
+const { obtenerSaldoUsuario } = require("../services/transaction.service");
 
 const consultarSaldo = async (req, res) => {
   try {

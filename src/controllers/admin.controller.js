@@ -1,7 +1,7 @@
 const {
   obtenerUsuarios: obtenerUsuariosService,
   eliminarUsuarioAdmin,
-} = require("../services/services");
+} = require("../services/user.service");
 
 const obtenerUsuarios = async (req, res) => {
   try {
@@ -48,9 +48,26 @@ const desactivarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
     await eliminarUsuarioAdmin(id);
-    res.redirect("/admin/usuarios");
+
+    if (req.accepts("json")) {
+      return res.status(200).json({
+        success: true,
+        message: "Usuario desactivado correctamente.",
+      });
+    }
+
+    return res.redirect("/admin/usuarios");
   } catch (error) {
-    res.status(500).send("Error al desactivar el usuario.");
+    console.error("Error al desactivar el usuario:", error);
+
+    if (req.accepts("json")) {
+      return res.status(500).json({
+        success: false,
+        message: "Error al desactivar el usuario.",
+      });
+    }
+
+    return res.status(500).send("Error al desactivar el usuario.");
   }
 };
 
