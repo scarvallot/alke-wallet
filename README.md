@@ -106,49 +106,75 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 
 ```markdown
 alke-wallet/
-├── data/                         # Persistencia en archivos y registro de errores
-│   └── log.txt                   # Log de rutas no encontradas (404)
-├── database/                     # Evolución de los modelos y scripts de base de datos
-│   ├── 01_Received/              # Modelo inicial recibido
-│   ├── 02_Approach/              # Modelo con mejoras incrementales
-│   ├── 03_Scalable/              # Modelo normalizado y escalable
-│   └── README.md                 # Documentación de la estrategia de datos
-├── public/                       # Recursos estáticos servidos por Express
+├── .gitignore                             # Archivos y carpetas ignorados por Git
+├── .gitattributes                         # Atributos Git del repositorio
+├── .env                                    # Variables de entorno locales no versionadas
+├── alke-wallet.code-workspace              # Configuración del workspace VS Code
+├── LICENSE                                 # Licencia del proyecto
+├── README.md                               # Documentación principal del proyecto
+├── package.json                            # Dependencias y scripts de ejecución
+├── package-lock.json                       # Lockfile de npm
+├── server.js                               # Punto de entrada del servidor HTTP
+├── tareas.md                               # Tareas y entregas del módulo
+├── data/                                   # Persistencia en archivos y registro de errores
+│   └── log.txt                             # Log de rutas no encontradas (404)
+├── database/                               # Modelos de datos, esquema y documentación SQL
+│   ├── README.md                           # Documentación general de base de datos
+│   ├── alke_wallet_db/                     # Proyecto de base de datos principal
+│   │   └── README.md
+│   └── modelos_db/                         # Versiones y modelos alternativos
+│       ├── 01_Received/
+│       ├── 02_Approach/
+│       └── 03_Scalable/
+├── public/                                 # Recursos estáticos servidos por Express
 │   ├── css/
-│   │   └── app.css               # Estilos de la aplicación
-│   └── js/                       # Lógica de interacción del cliente
-│       ├── deposit.js
-│       ├── login.js
-│       ├── menu.js
-│       ├── sendmoney.js
-│       └── transaction.js
-├── src/                          # Código de la aplicación Node.js/Express
-│   ├── app.js                    # Configuración de Express, EJS y middlewares
+│   │   └── app.css                         # Estilos de la aplicación
+│   └── js/                                 # Lógica de interacción del cliente
+│       ├── dashboard.js                   # Panel principal del usuario
+│       ├── deposit.js                     # Formulario y flujo de depósitos
+│       ├── login.js                        # Login en navegador
+│       ├── menu.js                         # Navegación del menú principal
+│       ├── profile.js                      # Edición y visualización del perfil
+│       ├── register.js                     # Registro de nuevos usuarios
+│       ├── sendmoney.js                    # Envío de fondos entre usuarios
+│       └── transaction.js                  # Historial y gestión de transacciones
+├── src/                                    # Código de la aplicación Node.js/Express
+│   ├── app.js                              # Configuración de Express y EJS
 │   ├── config/
-│   │   └── db.js                 # Pool de conexiones MySQL
+│   │   └── db.js                           # Pool de conexiones MySQL
 │   ├── controllers/
-│   │   └── controller.js         # Controladores de la aplicación
+│   │   ├── admin.controller.js             # Administración de usuarios y panel
+│   │   ├── auth.controller.js              # Login, registro y autenticación
+│   │   ├── views.controller.js             # Render de vistas principales
+│   │   └── wallet.controller.js            # Depósitos, retiros y transferencias
 │   ├── middlewares/
-│   │   └── middlewares.js       # Middlewares personalizados
-│   ├── models/                   # Acceso y persistencia de datos
+│   │   └── middlewares.js                  # Middleware de autenticación y helpers
+│   ├── models/                             # Capas de acceso a datos
 │   ├── routes/
-│   │   └── routes.js             # Definición de rutas
+│   │   └── routes.js                       # Definición de rutas HTTP
 │   ├── services/
-│   │   └── services.js           # Servicios y reglas de negocio
-│   └── views/                    # Plantillas dinámicas EJS
+│   │   ├── transaction.service.js          # Reglas y flujo de transacciones
+│   │   └── user.service.js                 # Reglas de negocio de usuarios
+│   └── views/                              # Plantillas dinámicas EJS
 │       ├── auth/
+│       │   ├── login.ejs
+│       │   ├── profile.ejs
+│       │   └── register.ejs
 │       ├── dashboard/
+│       │   └── dashboard.ejs
 │       ├── deposit/
+│       │   └── deposit.ejs
 │       ├── layouts/
+│       │   ├── auth.ejs
+│       │   └── main.ejs
 │       ├── menu/
+│       │   └── menu.ejs
 │       ├── partials/
 │       ├── sendmoney/
+│       │   └── sendmoney.ejs
 │       └── transaction/
-├── .env                          # Variables de entorno (no se sube a Git)
-├── .gitignore                    # Archivos y carpetas ignorados por Git
-├── package.json                  # Dependencias y scripts de ejecución
-├── server.js                     # Punto de entrada del servidor HTTP
-└── README.md                     # Documentación principal del proyecto
+│           └── transaction.ejs
+└── tests/                                  # Pruebas y validaciones del proyecto
 ```
 
 ## Decisiones técnicas
