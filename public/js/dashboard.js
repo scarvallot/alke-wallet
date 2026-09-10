@@ -23,11 +23,11 @@ $(document).ready(function () {
         .html('<i class="fas fa-spinner fa-spin mr-2"></i>Procesando...');
 
       try {
-        // Obtenemos dinámicamente la ruta desde el formulario (ej: /admin/usuarios/5/delete)
+        // Obtenemos dinámicamente la ruta desde el formulario REST de usuarios
         const actionUrl = formularioActivo.getAttribute("action");
 
         const response = await fetch(actionUrl, {
-          method: "POST", // O "DELETE", según como lo configures en tus rutas Express
+          method: "DELETE",
           headers: { "Content-Type": "application/json" },
         });
 
