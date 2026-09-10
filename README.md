@@ -223,6 +223,16 @@ Se integró la capa de servicios y controladores con la base de datos relacional
 2. **Manejo de Errores:** Se integraron bloques `try/catch` para capturar fallos de conectividad o de sintaxis en el servidor, retornando respuestas HTTP informativas y ordenadas en formato JSON.
 3. **Tarea PLUS (Filtros y Paginación):** Se desarrolló soporte dinámico mediante parámetros en la URL (`query params`) permitiendo filtrar registros por nombre u alias, además de estructurar un sistema de paginación con límites y offsets escalables.
 
+### Acceso a Datos (Lección 3 - Modificación de datos en una base de datos)
+
+Se incorporó la capacidad de modificar y eliminar de manera controlada los registros de usuarios existentes en la base de datos relacional.
+
+1. **Ruta de actualización:** se implementó la ruta `PUT /usuarios/:id` con el controlador `actualizarUsuario`, que recibe en el cuerpo del request los campos `user_name`, `first_name`, `last_name` e `email`, y valida que los datos esenciales lleguen completos antes de persistir la modificación.
+2. **Ruta de eliminación controlada:** se implementó la ruta `DELETE /usuarios/:id` con el controlador `eliminarUsuario`, que utiliza el `id` recibido por parámetro y ejecuta una baja lógica sobre el registro mediante el cambio de `is_active` a `0`, en lugar de eliminar físicamente el usuario.
+3. **Validación previa de existencia:** el servicio `actualizarUsuarioService()` y el servicio `eliminarUsuarioAdmin()` verifican que el `user_id` exista en `AlkeWallet.Users` antes de ejecutar la actualización o la desactivación.
+4. **Manejo de errores y mensajes útiles:** cuando el `id` no existe o la solicitud llega incompleta, la API responde con mensajes comprensibles y códigos HTTP adecuados (`400`, `404` o `500`) para orientar al cliente y facilitar el diagnóstico del fallo.
+5. **Confirmación de éxito:** las respuestas exitosas se devuelven con `success: true` y mensajes claros como `Usuario actualizado correctamente.` o `Usuario desactivado correctamente.`, cumpliendo el requisito mínimo de confirmación de ambas operaciones.
+
 ---
 
 <br>
