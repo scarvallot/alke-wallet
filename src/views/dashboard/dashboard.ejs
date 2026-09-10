@@ -1,6 +1,6 @@
 <div class="container dashboard-page mt-3 mt-md-4">
     <h2 class="dashboard-title mb-3 mb-md-4">Gestión de Usuarios</h2>
-    <form action="/admin/usuarios" method="GET" class="dashboard-filter mb-4">
+    <form action="/dashboard" method="GET" class="dashboard-filter mb-4">
         <div class="input-group">
             <input type="text" name="nombre" class="form-control" placeholder="Buscar usuario por nombre..." value="<%= locals.nombreFiltro || '' %>">
             <div class="input-group-append">
@@ -8,7 +8,7 @@
                     <i class="fas fa-search"></i> Filtrar
                 </button>
                 <% if (locals.nombreFiltro) { %>
-                    <a href="/admin/usuarios" class="btn btn-outline-secondary" title="Limpiar filtro">
+                    <a href="/dashboard" class="btn btn-outline-secondary" title="Limpiar filtro">
                         <i class="fas fa-times"></i>
                     </a>
                     <% } %>
@@ -53,10 +53,10 @@
                                 </td>
                                 <td>
                                     <div class="dashboard-actions d-flex flex-column flex-sm-row justify-content-center">
-                                        <!-- <button class="btn btn-sm btn-outline-primary dashboard-action mb-2 mb-sm-0 mr-sm-1" onclick="editarUsuario('<%= user.user_id %>')">
+                                        <button class="btn btn-sm btn-outline-primary dashboard-action mb-2 mb-sm-0 mr-sm-1" onclick="editarUsuario('<%= user.user_id %>')">
                                             <i class="fas fa-edit"></i> Editar
-                                        </button> -->
-                                        <form id="form-delete-<%= user.user_id %>" action="/admin/usuarios/<%= user.user_id %>/delete" method="POST" class="d-inline">
+                                        </button>
+                                        <form id="form-delete-<%= user.user_id %>" action="/usuarios/<%= user.user_id %>" method="POST" class="d-inline">
                                             <button type="button" class="btn btn-sm btn-outline-danger dashboard-action" data-toggle="modal" data-target="#modalConfirmacion" data-userid="<%= user.user_id %>" <%=!user.is_active ? 'disabled' : '' %>>
                                                 <i class="fas fa-ban"></i> Desactivar
                                             </button>
