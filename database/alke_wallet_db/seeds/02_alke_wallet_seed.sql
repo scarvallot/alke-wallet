@@ -1,14 +1,22 @@
 ﻿-- =====================================================
 -- Seeds — AlkeWallet Modelo Scalable
--- Sin datos de prueba aún
 -- =====================================================
 
 USE `AlkeWallet`;
 
--- =====================================================
--- AlkeWallet Scalable — Datos de prueba (Seeds)
--- =====================================================
-USE `AlkeWallet`;
+-- -----------------------------------------------------
+-- Limpieza previa de datos
+-- -----------------------------------------------------
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE `Transactions`;
+TRUNCATE TABLE `Accounts`;
+TRUNCATE TABLE `Users`;
+TRUNCATE TABLE `Currencies`;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- -----------------------------------------------------
+-- Datos de prueba (Seeds)
+-- -----------------------------------------------------
 
 -- -----------------------------------------------------
 -- 1. Poblar tabla Currency (5 monedas)
@@ -23,27 +31,28 @@ INSERT INTO `Currencies` (`currency_id`, `currency_name`, `currency_symbol`) VAL
 -- -----------------------------------------------------
 -- 2. Poblar tabla User (20 usuarios — sin saldo)
 -- -----------------------------------------------------
-INSERT INTO `Users` (`user_id`, `user_name`, `email`, `password`) VALUES
-(1, 'Jorge Pérez', 'jorge.perez1@mail.com', 'pass1001'),
-(2, 'Sofía Contreras', 'sofia.contreras2@mail.com', 'pass1002'),
-(3, 'Camila Muñoz', 'camila.munoz3@mail.com', 'pass1003'),
-(4, 'Sebastián Rodríguez', 'sebastian.rodriguez4@mail.com', 'pass1004'),
-(5, 'Nicolás González', 'nicolas.gonzalez5@mail.com', 'pass1005'),
-(6, 'María Fuentes', 'maria.fuentes6@mail.com', 'pass1006'),
-(7, 'Antonia Bravo', 'antonia.bravo7@mail.com', 'pass1007'),
-(8, 'Sebastián Fuentes', 'sebastian.fuentes8@mail.com', 'pass1008'),
-(9, 'Sebastián Núñez', 'sebastian.nunez9@mail.com', 'pass1009'),
-(10, 'Constanza Espinoza', 'constanza.espinoza10@mail.com', 'pass1010'),
-(11, 'Ana Díaz', 'ana.diaz11@mail.com', 'pass1011'),
-(12, 'Nicolás Reyes', 'nicolas.reyes12@mail.com', 'pass1012'),
-(13, 'Camila Fuentes', 'camila.fuentes13@mail.com', 'pass1013'),
-(14, 'Isidora Muñoz', 'isidora.munoz14@mail.com', 'pass1014'),
-(15, 'Javiera Muñoz', 'javiera.munoz15@mail.com', 'pass1015'),
-(16, 'Matías Bravo', 'matias.bravo16@mail.com', 'pass1016'),
-(17, 'Carlos Soto', 'carlos.soto17@mail.com', 'pass1017'),
-(18, 'Jorge Castillo', 'jorge.castillo18@mail.com', 'pass1018'),
-(19, 'Sebastián Torres', 'sebastian.torres19@mail.com', 'pass1019'),
-(20, 'Pablo Vargas', 'pablo.vargas20@mail.com', 'pass1020');
+INSERT INTO `Users` (`user_id`, `user_name`, `first_name`, `last_name`, `email`, `password`, `is_active`) VALUES
+(1, 'Jorge Pérez', 'Jorge', 'Pérez', 'jorge.perez1@mail.com', 'pass1001', 1),
+(2, 'Sofía Contreras', 'Sofía', 'Contreras', 'sofia.contreras2@mail.com', 'pass1002', 1),
+(3, 'Camila Muñoz', 'Camila', 'Muñoz', 'camila.munoz3@mail.com', 'pass1003', 1),
+(4, 'Sebastián Rodríguez', 'Sebastián', 'Rodríguez', 'sebastian.rodriguez4@mail.com', 'pass1004', 1),
+(5, 'Nicolás González', 'Nicolás', 'González', 'nicolas.gonzalez5@mail.com', 'pass1005', 1),
+(6, 'María Fuentes', 'María', 'Fuentes', 'maria.fuentes6@mail.com', 'pass1006', 1),
+(7, 'Antonia Bravo', 'Antonia', 'Bravo', 'antonia.bravo7@mail.com', 'pass1007', 1),
+(8, 'Sebastián Fuentes', 'Sebastián', 'Fuentes', 'sebastian.fuentes8@mail.com', 'pass1008', 1),
+(9, 'Sebastián Núñez', 'Sebastián', 'Núñez', 'sebastian.nunez9@mail.com', 'pass1009', 1),
+(10, 'Constanza Espinoza', 'Constanza', 'Espinoza', 'constanza.espinoza10@mail.com', 'pass1010', 1),
+(11, 'Ana Díaz', 'Ana', 'Díaz', 'ana.diaz11@mail.com', 'pass1011', 1),
+(12, 'Nicolás Reyes', 'Nicolás', 'Reyes', 'nicolas.reyes12@mail.com', 'pass1012', 1),
+(13, 'Camila Fuentes', 'Camila', 'Fuentes', 'camila.fuentes13@mail.com', 'pass1013', 1),
+(14, 'Isidora Muñoz', 'Isidora', 'Muñoz', 'isidora.munoz14@mail.com', 'pass1014', 1),
+(15, 'Javiera Muñoz', 'Javiera', 'Muñoz', 'javiera.munoz15@mail.com', 'pass1015', 1),
+(16, 'Matías Bravo', 'Matías', 'Bravo', 'matias.bravo16@mail.com', 'pass1016', 1),
+(17, 'Carlos Soto', 'Carlos', 'Soto', 'carlos.soto17@mail.com', 'pass1017', 1),
+(18, 'Jorge Castillo', 'Jorge', 'Castillo', 'jorge.castillo18@mail.com', 'pass1018', 1),
+(19, 'Sebastián Torres', 'Sebastián', 'Torres', 'sebastian.torres19@mail.com', 'pass1019', 1),
+(20, 'Pablo Vargas', 'Pablo', 'Vargas', 'pablo.vargas20@mail.com', 'pass1020', 1),
+(21, 'admin', 'Admin', 'System', 'admin@alkewallet.com', '12345', 1);
 
 -- -----------------------------------------------------
 -- 3. Poblar tabla Account (cuentas principales y secundarias)
