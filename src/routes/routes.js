@@ -1,84 +1,90 @@
 const express = require("express");
 const router = express.Router();
 const { protegerRuta, requerirAdmin } = require("../middlewares/middlewares");
+// Importaciones modulares desde los nuevos controladores
+// Controlador de autenticación: login, logout y sesión.
+const {
+  procesarLogin,
+  registrarUsuario,
+  actualizarPerfil,
+  actualizarPassword,
+  cerrarSesion,
+} = require("../controllers/auth.controller");
+// Controlador administrativo: usuarios y panel de administración.
 const {
   obtenerUsuarios,
-  mostrarLogin,
-  procesarLogin,
-  cerrarSesion,
-  consultarSaldo,
-  mostrarDashboardAdmin,
+  actualizarUsuario,
+  eliminarUsuario,
   desactivarUsuario,
-} = require("../controllers/controller");
+} = require("../controllers/admin.controller");
+// Controlador de cartera: consulta del saldo del usuario.
+const { consultarSaldo } = require("../controllers/wallet.controller");
+// Controlador de vistas: redirecciones y render de páginas.
+const {
+  redireccionarInicio,
+  mostrarLogin,
+  mostrarRegistro,
+  mostrarMenu,
+  mostrarDeposit,
+  mostrarSendMoney,
+  mostrarTransaction,
+  mostrarProfile,
+  mostrarDashboardAdmin,
+  verificarStatus,
+} = require("../controllers/views.controller");
 
-// Obtiene la lista de usuarios.
+//! Rutas de administración de usuarios
+//  Obtiene la lista de usuarios.
 router.get("/usuarios", obtenerUsuarios);
+router.put("/usuarios/:id", actualizarUsuario);
+router.delete("/usuarios/:id", eliminarUsuario);
 
+//! Redirecciones y vistas
 // Muestra el formulario de inicio de sesión.
+router.get("/", redireccionarInicio);
+
+//! Rutas de autenticación y gestión de sesión
+//  Muestra el formulario de inicio de sesión.
 router.get("/login", mostrarLogin);
 // Procesa las credenciales de acceso.
 router.post("/login", procesarLogin);
 // Cierra la sesión del usuario.
 router.get("/logout", cerrarSesion);
-// Ruta API para obtener el saldo (protegida)
-router.get("/api/saldo", protegerRuta, consultarSaldo);
-// Ruta para Gestion de usuarios
-router.get("/admin/usuarios", requerirAdmin, mostrarDashboardAdmin);
 
+//! Rutas de Registro de perfil de usuario
+//  Muestra el formulario de registro de usuario.
+router.get("/register", mostrarRegistro);
+// Registro asíncrono-compatible.
+router.post("/register", registrarUsuario);
+
+//! Rutas de perfil y actualización de datos
+// Perfil y actualización de datos.
+router.get("/profile", protegerRuta, mostrarProfile);
+router.put("/profile/update", protegerRuta, actualizarPerfil);
+router.put("/profile/password", protegerRuta, actualizarPassword);
+
+//! Rutas de operaciones de la cartera y transacciones
+// Muestra el menú principal para usuarios autenticados.
+router.get("/menu", protegerRuta, mostrarMenu);
+// Muestra la vista para depositar dinero.
+router.get("/deposit", protegerRuta, mostrarDeposit);
+// Muestra la vista para enviar dinero.
+router.get("/sendmoney", protegerRuta, mostrarSendMoney);
+// Muestra el historial de transacciones.
+router.get("/transaction", protegerRuta, mostrarTransaction);
+//  Muestra el panel de administración para usuarios con privilegios.
+router.get("/dashboard", protegerRuta, requerirAdmin, mostrarDashboardAdmin);
+// Verifica que el servidor esté funcionando.
+router.get("/status", verificarStatus);
+
+// Ruta para Gestion de usuarios
 router.post(
   "/admin/usuarios/:id/delete",
   protegerRuta,
   requerirAdmin,
   desactivarUsuario,
 );
-
-// Redirige al menú o al inicio de sesión según el estado de la sesión.
-router.get("/", (req, res) => {
-  if (req.session.usuario) {
-    return res.redirect("/menu"); // Si ya inició sesión, va al menú
-  }
-  res.redirect("/login"); // Si no, va al login
-});
-
-// Muestra el menú principal para usuarios autenticados.
-router.get("/menu", protegerRuta, (req, res) => {
-  res.render("menu/menu", {
-    tituloPagina: "Menú Principal - Mi Wallet",
-    jsFile: "/js/menu.js",
-  });
-});
-
-// Muestra la vista para depositar dinero.
-router.get("/deposit", protegerRuta, (req, res) => {
-  res.render("deposit/deposit", {
-    tituloPagina: "Depositar Dinero - Mi Wallet",
-    jsFile: "/js/deposit.js",
-  });
-});
-
-// Muestra la vista para enviar dinero.
-router.get("/sendmoney", protegerRuta, (req, res) => {
-  res.render("sendmoney/sendmoney", {
-    tituloPagina: "Enviar Dinero - Mi Wallet",
-    jsFile: "/js/sendmoney.js",
-  });
-});
-
-// Muestra el historial de transacciones.
-router.get("/transaction", protegerRuta, (req, res) => {
-  res.render("transaction/transaction", {
-    tituloPagina: "Historial de Transacciones - Mi Wallet",
-    jsFile: "/js/transaction.js",
-  });
-});
-
-// Verifica que el servidor esté funcionando.
-router.get("/status", (req, res) => {
-  res.status(200).json({
-    estado: "activo",
-    mensaje: "Servidor funcionando correctamente",
-    fecha: new Date().toISOString(),
-  });
-});
+// Ruta API para obtener el saldo (protegida)
+router.get("/api/saldo", protegerRuta, consultarSaldo);
 
 module.exports = router;

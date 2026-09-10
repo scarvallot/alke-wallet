@@ -8,20 +8,51 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <% if (locals.usuario) { %>
-                <li class="nav-item">
-                    <span class="navbar-text mr-3">
-                        <i class="fas fa-user-circle"></i>
-                        <%= locals.usuario.nombre %>
-                    </span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Cerrar sesión</a>
-                </li>
-                <% } else { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Iniciar sesión</a>
-                    </li>
-                    <% } %>
+
+                <!-- 1. DROPDOWN DE ADMINISTRACIÓN -->
+                <!-- Validación por rol comentada temporalmente: -->
+                <% /* if (locals.usuario.is_admin===1 || locals.usuario.rol==='admin' ) { */ %>
+
+                    <!--  Validación: Muestra el dashboard si el nombre de usuario es 'admin' -->
+                    <% if (locals.usuario.user_name==='admin' || locals.usuario.first_name==='admin' || locals.usuario.nombre==='admin' ) { %>
+                        <li class="nav-item dropdown mr-3 border-right pr-3">
+                            <a class="nav-link dropdown-toggle text-info font-weight-bold" href="#" id="adminDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-shield-alt mr-1"></i> Admin
+                            </a>
+                            <div class="dropdown-menu shadow" aria-labelledby="adminDropdown">
+                                <a class="dropdown-item" href="/dashboard">
+                                    <i class="fas fa-tachometer-alt mr-2 text-info"></i> Dashboard Usuarios
+                                </a>
+                            </div>
+                        </li>
+                        <% } %>
+
+                            <!-- 2. DROPDOWN DE PERFIL (Visible para todos) -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="perfilDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                    <i class="fas fa-user-circle fa-lg mr-2 text-secondary"></i>
+
+                                    <span class="font-weight-bold">
+                                        <%= locals.usuario.nombre || locals.usuario.first_name || locals.usuario.user_name %>
+                                    </span>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="perfilDropdown">
+                                    <a class="dropdown-item" href="/profile">
+                                        <i class="fas fa-user-edit mr-2 text-primary"></i> Mi Perfil
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="/logout">
+                                        <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+                                    </a>
+                                </div>
+                            </li>
+                            <% } else { %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/login">Iniciar sesión</a>
+                                </li>
+                                <% } %>
         </ul>
     </div>
 </nav>

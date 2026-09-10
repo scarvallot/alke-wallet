@@ -106,49 +106,75 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 
 ```markdown
 alke-wallet/
-├── data/                         # Persistencia en archivos y registro de errores
-│   └── log.txt                   # Log de rutas no encontradas (404)
-├── database/                     # Evolución de los modelos y scripts de base de datos
-│   ├── 01_Received/              # Modelo inicial recibido
-│   ├── 02_Approach/              # Modelo con mejoras incrementales
-│   ├── 03_Scalable/              # Modelo normalizado y escalable
-│   └── README.md                 # Documentación de la estrategia de datos
-├── public/                       # Recursos estáticos servidos por Express
+├── .gitignore                             # Archivos y carpetas ignorados por Git
+├── .gitattributes                         # Atributos Git del repositorio
+├── .env                                    # Variables de entorno locales no versionadas
+├── alke-wallet.code-workspace              # Configuración del workspace VS Code
+├── LICENSE                                 # Licencia del proyecto
+├── README.md                               # Documentación principal del proyecto
+├── package.json                            # Dependencias y scripts de ejecución
+├── package-lock.json                       # Lockfile de npm
+├── server.js                               # Punto de entrada del servidor HTTP
+├── tareas.md                               # Tareas y entregas del módulo
+├── data/                                   # Persistencia en archivos y registro de errores
+│   └── log.txt                             # Log de rutas no encontradas (404)
+├── database/                               # Modelos de datos, esquema y documentación SQL
+│   ├── README.md                           # Documentación general de base de datos
+│   ├── alke_wallet_db/                     # Proyecto de base de datos principal
+│   │   └── README.md
+│   └── modelos_db/                         # Versiones y modelos alternativos
+│       ├── 01_Received/
+│       ├── 02_Approach/
+│       └── 03_Scalable/
+├── public/                                 # Recursos estáticos servidos por Express
 │   ├── css/
-│   │   └── app.css               # Estilos de la aplicación
-│   └── js/                       # Lógica de interacción del cliente
-│       ├── deposit.js
-│       ├── login.js
-│       ├── menu.js
-│       ├── sendmoney.js
-│       └── transaction.js
-├── src/                          # Código de la aplicación Node.js/Express
-│   ├── app.js                    # Configuración de Express, EJS y middlewares
+│   │   └── app.css                         # Estilos de la aplicación
+│   └── js/                                 # Lógica de interacción del cliente
+│       ├── dashboard.js                   # Panel principal del usuario
+│       ├── deposit.js                     # Formulario y flujo de depósitos
+│       ├── login.js                        # Login en navegador
+│       ├── menu.js                         # Navegación del menú principal
+│       ├── profile.js                      # Edición y visualización del perfil
+│       ├── register.js                     # Registro de nuevos usuarios
+│       ├── sendmoney.js                    # Envío de fondos entre usuarios
+│       └── transaction.js                  # Historial y gestión de transacciones
+├── src/                                    # Código de la aplicación Node.js/Express
+│   ├── app.js                              # Configuración de Express y EJS
 │   ├── config/
-│   │   └── db.js                 # Pool de conexiones MySQL
+│   │   └── db.js                           # Pool de conexiones MySQL
 │   ├── controllers/
-│   │   └── controller.js         # Controladores de la aplicación
+│   │   ├── admin.controller.js             # Administración de usuarios y panel
+│   │   ├── auth.controller.js              # Login, registro y autenticación
+│   │   ├── views.controller.js             # Render de vistas principales
+│   │   └── wallet.controller.js            # Depósitos, retiros y transferencias
 │   ├── middlewares/
-│   │   └── middlewares.js       # Middlewares personalizados
-│   ├── models/                   # Acceso y persistencia de datos
+│   │   └── middlewares.js                  # Middleware de autenticación y helpers
+│   ├── models/                             # Capas de acceso a datos
 │   ├── routes/
-│   │   └── routes.js             # Definición de rutas
+│   │   └── routes.js                       # Definición de rutas HTTP
 │   ├── services/
-│   │   └── services.js           # Servicios y reglas de negocio
-│   └── views/                    # Plantillas dinámicas EJS
+│   │   ├── transaction.service.js          # Reglas y flujo de transacciones
+│   │   └── user.service.js                 # Reglas de negocio de usuarios
+│   └── views/                              # Plantillas dinámicas EJS
 │       ├── auth/
+│       │   ├── login.ejs
+│       │   ├── profile.ejs
+│       │   └── register.ejs
 │       ├── dashboard/
+│       │   └── dashboard.ejs
 │       ├── deposit/
+│       │   └── deposit.ejs
 │       ├── layouts/
+│       │   ├── auth.ejs
+│       │   └── main.ejs
 │       ├── menu/
+│       │   └── menu.ejs
 │       ├── partials/
 │       ├── sendmoney/
+│       │   └── sendmoney.ejs
 │       └── transaction/
-├── .env                          # Variables de entorno (no se sube a Git)
-├── .gitignore                    # Archivos y carpetas ignorados por Git
-├── package.json                  # Dependencias y scripts de ejecución
-├── server.js                     # Punto de entrada del servidor HTTP
-└── README.md                     # Documentación principal del proyecto
+│           └── transaction.ejs
+└── tests/                                  # Pruebas y validaciones del proyecto
 ```
 
 ## Decisiones técnicas
@@ -188,6 +214,24 @@ Se implementó la conexión entre el servidor Node.js y la base de datos relacio
 2. **Conexión segura y modular:** Se utilizó el paquete `mysql2/promise` para establecer un Pool de conexiones asíncrono en el archivo `src/config/db.js`.
 3. **Variables de entorno:** Todas las credenciales sensibles (host, usuario, contraseña, base de datos) fueron extraídas a un archivo `.env`, protegiendo el acceso al servidor.
 4. **Verificación de estado:** Se implementó una promesa al inicializar el Pool que verifica la disponibilidad del motor MySQL, emitiendo un log de éxito (`console.log`) en la terminal o capturando posibles errores de conexión.
+
+### Acceso a Datos (Lección 2 - Obtención de Información y Paginación)
+
+Se integró la capa de servicios y controladores con la base de datos relacional para la gestión y exposición de los datos de usuarios:
+
+1. **Consulta optimizada y segura:** Se implementó la ruta `GET /usuarios` conectada al controlador para extraer los registros de la base de datos MySQL, excluyendo de manera estricta el campo `password` para salvaguardar la información sensible de los usuarios.
+2. **Manejo de Errores:** Se integraron bloques `try/catch` para capturar fallos de conectividad o de sintaxis en el servidor, retornando respuestas HTTP informativas y ordenadas en formato JSON.
+3. **Tarea PLUS (Filtros y Paginación):** Se desarrolló soporte dinámico mediante parámetros en la URL (`query params`) permitiendo filtrar registros por nombre u alias, además de estructurar un sistema de paginación con límites y offsets escalables.
+
+### Acceso a Datos (Lección 3 - Modificación de datos en una base de datos)
+
+Se incorporó la capacidad de modificar y eliminar de manera controlada los registros de usuarios existentes en la base de datos relacional.
+
+1. **Ruta de actualización:** se implementó la ruta `PUT /usuarios/:id` con el controlador `actualizarUsuario`, que recibe en el cuerpo del request los campos `user_name`, `first_name`, `last_name` e `email`, y valida que los datos esenciales lleguen completos antes de persistir la modificación.
+2. **Ruta de eliminación controlada:** se implementó la ruta `DELETE /usuarios/:id` con el controlador `eliminarUsuario`, que utiliza el `id` recibido por parámetro y ejecuta una baja lógica sobre el registro mediante el cambio de `is_active` a `0`, en lugar de eliminar físicamente el usuario.
+3. **Validación previa de existencia:** el servicio `actualizarUsuarioService()` y el servicio `eliminarUsuarioAdmin()` verifican que el `user_id` exista en `AlkeWallet.Users` antes de ejecutar la actualización o la desactivación.
+4. **Manejo de errores y mensajes útiles:** cuando el `id` no existe o la solicitud llega incompleta, la API responde con mensajes comprensibles y códigos HTTP adecuados (`400`, `404` o `500`) para orientar al cliente y facilitar el diagnóstico del fallo.
+5. **Confirmación de éxito:** las respuestas exitosas se devuelven con `success: true` y mensajes claros como `Usuario actualizado correctamente.` o `Usuario desactivado correctamente.`, cumpliendo el requisito mínimo de confirmación de ambas operaciones.
 
 ---
 

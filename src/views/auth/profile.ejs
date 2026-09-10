@@ -1,0 +1,91 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-10 col-lg-8 col-xl-6">
+        <div id="alertContainer"></div>
+        <div class="card p-4 p-sm-5 shadow-sm my-4 my-md-5 border-0" style="border-radius: 12px;">
+
+            <!-- Cabecera y Foto de Perfil (Futura) -->
+            <div class="card-body text-center p-0 mb-4">
+                <div class="position-relative d-inline-block mb-3 profile-avatar-wrap">
+                    <!-- Ícono de placeholder para la futura foto de perfil (Sólido) -->
+                    <i class="fas fa-user-circle text-secondary profile-avatar-icon"></i>
+                    <!-- Pequeño botón flotante para editar perfil -->
+                    <span class="position-absolute bottom-0 right-0 bg-primary text-white rounded-circle p-2 shadow-sm profile-edit-icon">
+                        <i class="fas fa-pencil-alt fa-sm"></i>
+                    </span>
+                </div>
+                <!-- Mostramos el nombre dinámicamente desde la sesión -->
+                <h2 class="h4 font-weight-bold mb-1">
+                    <%= usuario.first_name %>
+                        <%= usuario.last_name %>
+                </h2>
+                <p class="text-muted mb-0">
+                    <%= usuario.email %>
+                </p>
+            </div>
+
+            <!-- Formulario de Actualización de Datos -->
+            <h3 class="h5 font-weight-bold border-bottom pb-2 mb-3 text-primary">
+                <i class="fas fa-user-edit mr-2"></i>Datos Personales
+            </h3>
+
+            <form id="updateProfileForm" action="/profile/update" method="PUT" class="text-left mb-5">
+                <div class="row">
+                    <div class="col-12 col-sm-6 form-group mb-3">
+                        <label for="firstName" class="font-weight-bold">Nombre</label>
+                        <!-- Usamos value="<%= usuario.campo %>" para pre-cargar los datos -->
+                        <input type="text" class="form-control form-control-lg" id="firstName" name="first_name" value="<%= usuario.first_name %>" required>
+                    </div>
+                    <div class="col-12 col-sm-6 form-group mb-3">
+                        <label for="lastName" class="font-weight-bold">Apellido</label>
+                        <input type="text" class="form-control form-control-lg" id="lastName" name="last_name" value="<%= usuario.last_name %>" required>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="username" class="font-weight-bold">Nombre de Usuario (Alias)</label>
+                    <input type="text" class="form-control form-control-lg" id="username" name="user_name" value="<%= usuario.user_name %>" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="email" class="font-weight-bold">Correo Electrónico</label>
+                    <input type="email" class="form-control form-control-lg" id="email" name="email" value="<%= usuario.email %>" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg btn-auth-style">
+                    <i class="fas fa-save mr-2"></i>Guardar Cambios
+                </button>
+            </form>
+
+            <!-- Formulario de Cambio de Contraseña -->
+            <h3 class="h5 font-weight-bold border-bottom pb-2 mb-3 text-primary">
+                <i class="fas fa-lock mr-2"></i>Seguridad
+            </h3>
+
+            <form id="updatePasswordForm" action="/profile/password" method="PUT" class="text-left">
+                <div class="form-group mb-3">
+                    <label for="current_password" class="font-weight-bold">Contraseña Actual</label>
+                    <input type="password" class="form-control form-control-lg" id="current_password" name="current_password" placeholder="Requerido para cambiar la clave" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="new_password" class="font-weight-bold">Nueva Contraseña</label>
+                    <input type="password" class="form-control form-control-lg" id="new_password" name="new_password" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="confirm_new_password" class="font-weight-bold">Repetir Nueva Contraseña</label>
+                    <input type="password" class="form-control form-control-lg" id="confirm_new_password" name="confirm_new_password" required>
+                </div>
+
+                <button type="submit" class="btn btn-warning btn-block btn-lg btn-auth-style text-dark font-weight-bold">
+                    <i class="fas fa-key mr-2"></i>Actualizar Contraseña
+                </button>
+            </form>
+
+            <div class="mt-4 pt-3 border-top text-center">
+                <a href="/menu" class="text-secondary font-weight-bold">
+                    <i class="fas fa-arrow-left mr-1"></i> Volver al menú
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

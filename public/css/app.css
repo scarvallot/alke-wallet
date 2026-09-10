@@ -63,7 +63,16 @@ body {
   font-size: 0.9rem;
 }
 
-#loginBtn {
+/* #loginBtn {
+  min-width: 200px;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+} */
+
+/* Cambiamos #loginBtn por .btn-auth-style para que sea reutilizable */
+.btn-auth-style {
   min-width: 200px;
   border-radius: 50px;
   padding: 12px 24px;
@@ -379,6 +388,20 @@ body {
 #btnConfirmarEnvio:hover {
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
 }
+/* Perfil */
+.profile-avatar-wrap {
+  display: inline-block;
+}
+
+.profile-avatar-icon {
+  font-size: 6rem;
+}
+
+.profile-edit-icon {
+  cursor: pointer;
+  transform: translate(10%, -10%);
+}
+
 /* Footer personalizado */
 .footer {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);

@@ -50,14 +50,6 @@ const registrarVisita = (req, res, next) => {
   next();
 };
 
-// Función de validación (NO middleware)
-const validarCredenciales = (username, password) => {
-  if (username === "admin" && password === "12345") {
-    return { id: 1, username, nombre: "Usuario Administrador" };
-  }
-  return null;
-};
-
 //  Inyecta variables globales en todas las vistas EJS.
 function variablesGlobales(req, res, next) {
   res.locals.usuario =
@@ -71,7 +63,6 @@ function variablesGlobales(req, res, next) {
 module.exports = {
   protegerRuta,
   registrarVisita,
-  validarCredenciales,
   variablesGlobales,
   requerirAdmin,
 };
