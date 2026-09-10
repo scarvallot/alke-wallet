@@ -107,7 +107,7 @@ const actualizarPerfilUsuario = async (
 // Actualiza un usuario identificado por ID con validación previa de existencia.
 const actualizarUsuarioService = async (
   id,
-  { first_name, last_name, email },
+  { user_name, first_name, last_name, email },
 ) => {
   const [checkRows] = await pool.query(
     "SELECT user_id FROM AlkeWallet.Users WHERE user_id = ?",
@@ -120,11 +120,11 @@ const actualizarUsuarioService = async (
 
   const query = `
     UPDATE AlkeWallet.Users
-    SET first_name = ?, last_name = ?, email = ?
+    SET user_name = ?, first_name = ?, last_name = ?, email = ?
     WHERE user_id = ?
   `;
 
-  await pool.query(query, [first_name, last_name, email, id]);
+  await pool.query(query, [user_name, first_name, last_name, email, id]);
 };
 
 // Comprueba la contraseña actual antes de actualizar la nueva.

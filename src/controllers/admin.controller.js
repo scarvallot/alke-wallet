@@ -29,7 +29,7 @@ const obtenerUsuarios = async (req, res) => {
 const actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { first_name, last_name, email } = req.body;
+    const { user_name, first_name, last_name, email } = req.body;
 
     if (!first_name || !last_name || !email) {
       return res.status(400).json({
@@ -38,7 +38,12 @@ const actualizarUsuario = async (req, res) => {
       });
     }
 
-    await actualizarUsuarioService(id, { first_name, last_name, email });
+    await actualizarUsuarioService(id, {
+      user_name,
+      first_name,
+      last_name,
+      email,
+    });
     return res.status(200).json({
       success: true,
       message: "Usuario actualizado correctamente.",
