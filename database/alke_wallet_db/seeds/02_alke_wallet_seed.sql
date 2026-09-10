@@ -84,6 +84,7 @@ INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance
 (19, 19, 1, 434846.00, 1),
 (20, 20, 1, 302698.00, 1);
 
+
 -- 3.2 Cuentas secundarias (USD y EUR) para algunos usuarios
 -- account_id continuará desde 21 en adelante
 INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
@@ -93,7 +94,8 @@ INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance
 (24, 11, 3, 3500.00, 0),   -- Ana (EUR)
 (25, 14, 3, 2100.00, 0),   -- Isidora (EUR)
 (26, 17, 3, 4200.00, 0),   -- Carlos (EUR)
-(27, 20, 2, 6000.00, 0);   -- Pablo (USD)
+(27, 20, 2, 6000.00, 0),   -- Pablo (USD)
+(28, 21, 1, 0.00, 1);       -- Admin dummy (CLP principal)
 
 -- -----------------------------------------------------
 -- 4. Poblar tabla Transaction (110 transacciones)
