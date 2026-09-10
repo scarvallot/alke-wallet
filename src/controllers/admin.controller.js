@@ -1,13 +1,15 @@
 const {
   obtenerUsuarios: obtenerUsuariosService,
   eliminarUsuarioAdmin,
+  actualizarUsuarioService,
 } = require("../services/user.service");
 
+// Devuelve JSON para búsquedas, filtros y paginación asíncrona
 const obtenerUsuarios = async (req, res) => {
   try {
     const { nombre, page, limit } = req.query;
     const resultado = await obtenerUsuariosService({ nombre, page, limit });
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       message: "Usuarios obtenidos correctamente",
       meta: resultado.meta,
@@ -15,7 +17,7 @@ const obtenerUsuarios = async (req, res) => {
     });
   } catch (error) {
     console.error("Error al consultar la tabla Users:", error);
-    res.status(500).json({
+    return res.status(500).json({
       status: "error",
       message: "Error interno del servidor",
       data: null,
@@ -23,31 +25,37 @@ const obtenerUsuarios = async (req, res) => {
   }
 };
 
-const mostrarDashboardAdmin = async (req, res) => {
+// Modificación y baja lógica
+const actualizarUsuario = async (req, res) => {
   try {
-    const filtroNombre = req.query.nombre || "";
-    const resultado = await obtenerUsuariosService({
-      page: 1,
-      limit: 10,
-      nombre: filtroNombre,
-    });
+    const { id } = req.params;
+    const { first_name, last_name, email } = req.body;
 
-    res.render("dashboard/dashboard", {
-      tituloPagina: "Panel de Administración",
-      usuarios: resultado.data,
-      jsFile: "/js/dashboard.js",
-      nombreFiltro: filtroNombre,
+    if (!first_name || !last_name || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Los campos first_name, last_name y email son obligatorios.",
+      });
+    }
+
+    await actualizarUsuarioService(id, { first_name, last_name, email });
+    return res.status(200).json({
+      success: true,
+      message: "Usuario actualizado correctamente.",
     });
   } catch (error) {
-    console.error("Error al cargar el panel de administración:", error);
-    res.status(500).send("Error al cargar el panel.");
+    console.error("Error al actualizar el usuario:", error);
+    const statusCode = error.message?.includes("no existe") ? 404 : 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Error interno al procesar la actualización.",
+    });
   }
 };
 
-const desactivarUsuario = async (req, res) => {
+const eliminarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    // Llama al servicio que ahora valida la existencia del ID
     await eliminarUsuarioAdmin(id);
 
     return res.status(200).json({
@@ -56,9 +64,7 @@ const desactivarUsuario = async (req, res) => {
     });
   } catch (error) {
     console.error("Error al desactivar el usuario:", error);
-
-    // Si el error proviene de que el usuario no existe, devolvemos 404
-    const statusCode = error.message.includes("no existe") ? 404 : 500;
+    const statusCode = error.message?.includes("no existe") ? 404 : 500;
     return res.status(statusCode).json({
       success: false,
       message: error.message || "Error interno al procesar la desactivación.",
@@ -66,4 +72,13 @@ const desactivarUsuario = async (req, res) => {
   }
 };
 
-module.exports = { obtenerUsuarios, mostrarDashboardAdmin, desactivarUsuario };
+const desactivarUsuario = async (req, res) => {
+  return eliminarUsuario(req, res);
+};
+
+module.exports = {
+  obtenerUsuarios,
+  actualizarUsuario,
+  eliminarUsuario,
+  desactivarUsuario,
+};

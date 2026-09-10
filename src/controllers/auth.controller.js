@@ -58,19 +58,30 @@ const registrarUsuario = async (req, res) => {
 
 const actualizarPerfil = async (req, res) => {
   try {
-    const userId = req.session.usuario.user_id;
-    const { first_name, last_name, email } = req.body;
+    const userId = req.session.usuario?.user_id;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Sesión expirada." });
+    }
 
+    const { first_name, last_name, email } = req.body;
     await actualizarPerfilUsuario(userId, { first_name, last_name, email });
+
+    // Actualizar también los datos en la sesión activa para mantener coherencia en la interfaz
+    req.session.usuario.first_name = first_name;
+    req.session.usuario.last_name = last_name;
+    req.session.usuario.email = email;
 
     return res.status(200).json({
       success: true,
       message: "Perfil actualizado correctamente.",
     });
   } catch (error) {
+    console.error("Error detallado al actualizar perfil:", error);
     return res.status(400).json({
       success: false,
-      message: "No se pudo actualizar el perfil.",
+      message: error.message || "No se pudo actualizar el perfil.",
     });
   }
 };

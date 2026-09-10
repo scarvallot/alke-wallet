@@ -1,4 +1,7 @@
-const { obtenerPerfilUsuario } = require("../services/user.service");
+const {
+  obtenerPerfilUsuario,
+  obtenerUsuarios: obtenerUsuariosService,
+} = require("../services/user.service");
 
 // VISTAS PÚBLICAS / AUTENTICACIÓN
 const redireccionarInicio = (req, res) => {
@@ -12,7 +15,7 @@ const mostrarLogin = (req, res) => {
     tituloPagina: "Iniciar Sesión - Mi Wallet",
     tagline: "Bienvenido a tu billetera virtual",
     layout: "layouts/auth",
-    jsFile: "/js/login.js", 
+    jsFile: "/js/login.js",
   });
 };
 
@@ -22,7 +25,7 @@ const mostrarRegistro = (req, res) => {
     tituloPagina: "Registro - Mi Wallet",
     tagline: "Crea tu cuenta gratis",
     layout: "layouts/auth",
-    jsFile: "/js/register.js", 
+    jsFile: "/js/register.js",
   });
 };
 
@@ -61,7 +64,7 @@ const mostrarProfile = async (req, res) => {
     return res.render("auth/profile", {
       tituloPagina: "Mi Perfil - Mi Wallet",
       jsFile: "/js/profile.js",
-      usuario, 
+      usuario,
     });
   } catch (error) {
     console.error("Error al mostrar perfil:", error);
@@ -69,6 +72,28 @@ const mostrarProfile = async (req, res) => {
   }
 };
 
+const mostrarDashboardAdmin = async (req, res) => {
+  try {
+    const filtroNombre = req.query.nombre || "";
+    const resultado = await obtenerUsuariosService({
+      page: 1,
+      limit: 10,
+      nombre: filtroNombre,
+    });
+
+    return res.render("dashboard/dashboard", {
+      tituloPagina: "Panel de Administración",
+      usuarios: resultado.data,
+      jsFile: "/js/dashboard.js",
+      nombreFiltro: filtroNombre,
+    });
+  } catch (error) {
+    console.error("Error al cargar el panel de administración:", error);
+    return res
+      .status(500)
+      .send("Error interno al cargar el panel de administración.");
+  }
+};
 
 // UTILIDADES
 const verificarStatus = (req, res) => {
@@ -89,4 +114,5 @@ module.exports = {
   mostrarTransaction,
   mostrarProfile,
   verificarStatus,
+  mostrarDashboardAdmin,
 };
