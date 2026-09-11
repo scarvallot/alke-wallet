@@ -2,6 +2,54 @@ const { pool } = require("../config/db");
 const fs = require("fs").promises;
 const path = require("path");
 
+const simularOperacionTransaccional = async ({ forceError = false } = {}) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // Acción 1: registrar el usuario en una tabla de ejemplo
+    await connection.query(
+      "INSERT INTO users (user_name, first_name, last_name, email, password, is_active) VALUES (?, ?, ?, ?, ?, 1)",
+      [
+        `rollback_test_${Date.now()}`,
+        "Rollback",
+        "Test",
+        `rollback_${Date.now()}@alkewallet.test`,
+        "test-pass",
+      ],
+    );
+
+    // Acción 2: crear un historial o línea de auditoría de la operación
+    await connection.query(
+      "INSERT INTO transactions (importe, transaction_date, sender_account_id, receive_account_id) VALUES (?, NOW(), ?, ?)",
+      [1, 1, 2],
+    );
+
+    if (forceError) {
+      throw new Error("Error forzado para validar rollback");
+    }
+
+    await connection.commit();
+    await fs.appendFile(
+      path.join(__dirname, "../../data/log.txt"),
+      `[${new Date().toISOString()}] OPERACIÓN TRANSACCIONAL EXITOSA - usuarios y historial sincronizados\n`,
+    );
+
+    return { success: true, message: "Operación transaccional exitosa." };
+  } catch (error) {
+    await connection.rollback();
+    await fs.appendFile(
+      path.join(__dirname, "../../data/log.txt"),
+      `[${new Date().toISOString()}] OPERACIÓN TRANSACCIONAL FALLIDA - ${
+        error.message
+      } - rollback ejecutado\n`,
+    );
+    throw error;
+  } finally {
+    connection.release();
+  }
+};
+
 const obtenerSaldoUsuario = async (userId) => {
   const query = `
     SELECT a.current_balance, c.currency_symbol
@@ -218,4 +266,5 @@ module.exports = {
   procesarTransferencia,
   procesarDeposito,
   obtenerHistorialUsuario,
+  simularOperacionTransaccional,
 };
