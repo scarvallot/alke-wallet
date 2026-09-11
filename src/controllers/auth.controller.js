@@ -33,7 +33,8 @@ const registrarUsuario = async (req, res) => {
       });
     }
 
-    await registrarUsuarioService({
+    // 1. Ejecutamos el servicio transaccional y capturamos el ID generado
+    const nuevoUserId = await registrarUsuarioService({
       first_name,
       last_name,
       user_name,
@@ -41,10 +42,20 @@ const registrarUsuario = async (req, res) => {
       password,
     });
 
+    // 2. Autenticación automática: Inyectamos los datos en la sesión activa
+    req.session.usuario = {
+      user_id: nuevoUserId,
+      user_name: user_name,
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+    };
+
+    // 3. Redirigimos directamente al dashboard/menú en lugar del login
     return res.status(201).json({
       success: true,
-      message: "Registro exitoso.",
-      redirect: "/login",
+      message: "Registro exitoso. Iniciando sesión...",
+      redirect: "/menu",
     });
   } catch (error) {
     console.error("Error al registrar usuario:", error);
