@@ -50,6 +50,19 @@ ALTER TABLE `payees`
   ADD CONSTRAINT `chk_payees_cbu_length` 
     CHECK (CHAR_LENGTH(`cbu`) >= 10);
 
+USE `AlkeWallet`;
+
+-- 1. Asegurarnos de que la columna CBU en la tabla accounts sea obligatoria (NOT NULL)
+--    y agregamos una restricción de unicidad (UNIQUE) para que jamás existan dos cuentas con el mismo CBU.
+ALTER TABLE `accounts`
+  MODIFY COLUMN `cbu` VARCHAR(50) COLLATE utf8mb3_bin NOT NULL COMMENT 'Número de cuenta o CBU transaccional',
+  ADD UNIQUE INDEX `uq_accounts_cbu` (`cbu` ASC) VISIBLE;
+
+-- 2. (Opcional) Si también deseas reforzar la tabla payees para que el CBU de los contactos sea indexado
+--    y las búsquedas para transferencias sean más rápidas:
+ALTER TABLE `payees`
+  ADD INDEX `idx_payees_cbu` (`cbu` ASC) VISIBLE;
+  
 -- DDL: 3. Alineación de la tabla Accounts con el CBU para transferencias
 ALTER TABLE `accounts`
   ADD COLUMN `cbu` VARCHAR(50) COLLATE utf8mb3_bin NULL COMMENT 'Número de cuenta o CBU' AFTER `user_id`;
