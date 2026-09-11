@@ -18,7 +18,12 @@ const {
   desactivarUsuario,
 } = require("../controllers/admin.controller");
 // Controlador de cartera: consulta del saldo del usuario.
-const { consultarSaldo } = require("../controllers/wallet.controller");
+const {
+  consultarSaldo,
+  realizarTransferencia,
+  realizarDeposito,
+  obtenerHistorial,
+} = require("../controllers/wallet.controller");
 // Controlador de vistas: redirecciones y render de páginas.
 const {
   redireccionarInicio,
@@ -68,12 +73,24 @@ router.put("/profile/password", protegerRuta, actualizarPassword);
 router.get("/menu", protegerRuta, mostrarMenu);
 // Muestra la vista para depositar dinero.
 router.get("/deposit", protegerRuta, mostrarDeposit);
+// Procesa el depósito de dinero para la cuenta principal del usuario autenticado.
+router.post("/deposit", protegerRuta, realizarDeposito);
 // Muestra la vista para enviar dinero.
 router.get("/sendmoney", protegerRuta, mostrarSendMoney);
 // Muestra el historial de transacciones.
 router.get("/transaction", protegerRuta, mostrarTransaction);
 //  Muestra el panel de administración para usuarios con privilegios.
 router.get("/dashboard", protegerRuta, requerirAdmin, mostrarDashboardAdmin);
+
+//! Rutas de API para operaciones de la cartera y transacciones
+// Ruta API para obtener el saldo (protegida)
+router.get("/api/saldo", protegerRuta, consultarSaldo);
+// Ruta API para procesar la transferencia de dinero (protegida)
+router.post("/api/transfer", protegerRuta, realizarTransferencia);
+//  Ruta API para procesar el depósito de dinero (protegida)
+router.get("/api/transactions", protegerRuta, obtenerHistorial);
+
+//! Ruta de verificación de estado del servidor
 // Verifica que el servidor esté funcionando.
 router.get("/status", verificarStatus);
 
@@ -84,7 +101,5 @@ router.post(
   requerirAdmin,
   desactivarUsuario,
 );
-// Ruta API para obtener el saldo (protegida)
-router.get("/api/saldo", protegerRuta, consultarSaldo);
 
 module.exports = router;
