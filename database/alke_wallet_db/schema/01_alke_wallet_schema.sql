@@ -56,6 +56,7 @@ DROP TABLE IF EXISTS `AlkeWallet`.`Accounts` ;
 CREATE TABLE IF NOT EXISTS `AlkeWallet`.`Accounts` (
   `account_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
+  `cbu` VARCHAR(50) COLLATE utf8mb3_bin NULL COMMENT 'Número de cuenta o CBU',
   `currency_id` INT NOT NULL,
   `current_balance` DECIMAL(15,2) NOT NULL DEFAULT 0,
   `is_default` TINYINT(1) NOT NULL DEFAULT 0,

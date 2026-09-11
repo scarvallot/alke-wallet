@@ -6,10 +6,13 @@ $(document).ready(function () {
 
       if (respuesta.ok) {
         const data = await respuesta.json();
-        const saldoNumerico = Number(data.current_balance);
-        $("#balance").text(
-          data.currency_symbol + saldoNumerico.toLocaleString("es-CL"),
-        );
+        const saldoNumerico = Number(data.current_balance ?? data.balance ?? 0);
+        const moneda = data.currency_symbol || "$";
+        const saldoFormateado = Number.isNaN(saldoNumerico)
+          ? "0"
+          : saldoNumerico.toLocaleString("es-CL");
+
+        $("#balance").text(moneda + saldoFormateado);
       } else {
         $("#balance").text("Error al cargar");
       }

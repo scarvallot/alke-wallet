@@ -54,7 +54,7 @@ const obtenerUsuarios = async ({ nombre, page, limit }) => {
   };
 };
 
-// Registra un usuario nuevo y devuelve el ID generado.
+// Registra un usuario nuevo de forma transaccional, genera su CBU y su cuenta en $0.
 const registrarUsuarioService = async ({
   first_name,
   last_name,
@@ -62,22 +62,55 @@ const registrarUsuarioService = async ({
   email,
   password,
 }) => {
-  const query = `
-    INSERT INTO AlkeWallet.Users (first_name, last_name, user_name, email, password)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  // 1. Solicitar conexión exclusiva para la transacción ACID
+  const connection = await pool.getConnection();
 
-  const [result] = await pool.query(query, [
-    first_name,
-    last_name,
-    user_name,
-    email,
-    password,
-  ]);
+  try {
+    // 2. Iniciar la transacción
+    await connection.beginTransaction();
 
-  return result.insertId;
+    // ACCIÓN A: Crear el Usuario
+    // Nota: Mantenemos el guardado de la contraseña tal cual lo tienes estructurado actualmente.
+    const queryUser = `
+      INSERT INTO alkewallet.users (first_name, last_name, user_name, email, password, is_active)
+      VALUES (?, ?, ?, ?, ?, 1)
+    `;
+    const [userResult] = await connection.query(queryUser, [
+      first_name,
+      last_name,
+      user_name,
+      email,
+      password,
+    ]);
+
+    const nuevoUserId = userResult.insertId;
+
+    // ACCIÓN B: Generar un CBU único de exactamente 20 dígitos
+    // Cambiamos el prefijo a "20" para evitar colisiones con el seed original (que usa "10")
+    const cbuGenerado = "20" + String(nuevoUserId).padStart(18, "0");
+
+    // ACCIÓN C: Crear la Cuenta Principal
+    // currency_id = 1 (Peso Chileno), current_balance = 0, is_default = 1
+    const queryAccount = `
+      INSERT INTO alkewallet.accounts (user_id, cbu, currency_id, current_balance, is_default)
+      VALUES (?, ?, 1, 0, 1)
+    `;
+    await connection.query(queryAccount, [nuevoUserId, cbuGenerado]);
+
+    // 3. Confirmar la transacción (Commit)
+    await connection.commit();
+
+    // Retornamos el ID insertado para mantener compatibilidad con tu controlador
+    return nuevoUserId;
+  } catch (error) {
+    // 4. ROLLBACK: Revertir todo si alguna de las acciones falla (ej. email duplicado)
+    await connection.rollback();
+    throw error;
+  } finally {
+    // 5. Liberar la conexión
+    connection.release();
+  }
 };
-
 // Devuelve el perfil público del usuario identificado por su ID.
 const obtenerPerfilUsuario = async (userId) => {
   const query = `

@@ -44,11 +44,14 @@ HAVING COUNT(*) > 1;
 -- 2. Verificar restricciones NOT NULL
 -- -----------------------------------------------------
 
--- 2.1 Campos obligatorios en User
+-- 2.1 Campos obligatorios en User (actualizado con nuevas migraciones)
 SELECT * FROM `Users`
 WHERE user_name IS NULL
    OR email IS NULL
-   OR password IS NULL;
+   OR password IS NULL
+   OR first_name IS NULL
+   OR last_name IS NULL
+   OR is_active IS NULL;
 
 -- 2.2 Campos obligatorios en Currency
 SELECT * FROM `Currencies`

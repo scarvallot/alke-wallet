@@ -1,15 +1,14 @@
 <div class="sendmoney-container">
-  <!-- Encabezado de la página -->
+
+  <!-- Encabezado -->
   <div class="row mb-4">
     <div class="col-12">
       <h1 class="mb-0">Enviar Dinero</h1>
-      <p class="text-muted mt-2">
-        Gestiona tus contactos y realiza transferencias.
-      </p>
+      <p class="text-muted mt-2">Gestiona tus contactos y realiza transferencias.</p>
     </div>
   </div>
 
-  <!-- 1. Inyectamos el componente de la tarjeta de saldo -->
+  <!-- Tarjeta de saldo (EJS) -->
   <%- include('../partials/components/balanceCard') %>
 
     <!-- Formulario de búsqueda -->
@@ -24,12 +23,10 @@
       </div>
     </form>
 
-    <!-- Botón agregar contacto -->
     <button type="button" class="btn btn-success btn-block mb-3 shadow-sm" id="btnAgregarContacto">
       <i class="fas fa-user-plus mr-2"></i>Agregar nuevo contacto
     </button>
 
-    <!-- Formulario agregar contacto (oculto por defecto) -->
     <div id="addContactFormContainer" class="card border-0 shadow-sm mb-3" style="display: none">
       <div class="card-body">
         <h6 class="font-weight-bold mb-3">
@@ -59,20 +56,94 @@
       </div>
     </div>
 
-    <!-- Lista de contactos -->
-    <div class="card border-0 shadow-sm mb-4">
+    <button type="button" class="btn btn-info btn-block mb-3 shadow-sm" id="btnDesplegarContactos">
+      <i class="fas fa-address-book mr-2"></i>Desplegar contactos
+    </button>
+
+    <div id="contactListContainer" class="card border-0 shadow-sm mb-3" style="display: none">
       <div class="card-body">
-        <h6 class="font-weight-bold mb-3">
-          <i class="fas fa-address-book mr-2"></i>Mis Contactos
-        </h6>
-        <div id="contactList">
-          <!-- Tu script sendmoney.js inyectará los contactos aquí -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <h6 class="font-weight-bold mb-0">
+            <i class="fas fa-address-book mr-2"></i>Mis Contactos
+          </h6>
+        </div>
+
+        <div id="contactList" class="payee-list-container" style="max-height: 280px; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">
         </div>
       </div>
     </div>
 
-    <!-- 2. Inyectamos el componente de botones de navegación inferior -->
+
+
+    <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="transferModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+
+          <!-- Encabezado de la tarjeta flotante -->
+          <div class="modal-header bg-primary text-white border-0 py-3">
+            <h5 class="modal-title font-weight-bold" id="transferModalLabel">
+              <i class="fas fa-paper-plane mr-2"></i>Enviar Dinero
+            </h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <!-- Cuerpo de la tarjeta -->
+          <div class="modal-body p-4 bg-light">
+
+            <!-- Resumen del destinatario -->
+            <div class="text-center mb-4 bg-white p-3 rounded shadow-sm">
+              <div class="display-4 text-primary mb-2">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <h5 class="font-weight-bold text-dark mb-0" id="modalDestinatarioNombre">Nombre Destinatario</h5>
+              <p class="text-muted small mb-0">CBU: <span id="modalDestinatarioCbu" class="font-monospace">00000</span></p>
+            </div>
+
+            <!-- Formulario de Monto -->
+            <form id="transferForm">
+              <input type="hidden" id="hiddenCbu" value="">
+              <input type="hidden" id="hiddenNombre" value="">
+
+              <div class="form-group mb-4">
+                <label for="transferAmount" class="font-weight-bold text-secondary">
+                  ¿Cuánto deseas transferir?
+                </label>
+                <div class="input-group input-group-lg shadow-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-white border-right-0 text-success font-weight-bold">$</span>
+                  </div>
+                  <input type="text" inputmode="decimal" class="form-control border-left-0 pl-0 font-weight-bold text-dark" id="transferAmount" placeholder="0" pattern="[0-9]*\.?[0-9]*" required autocomplete="off" />
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex gap-2 mt-2">
+                <button type="button" class="btn btn-secondary flex-grow-1 rounded-pill shadow-sm mr-2" data-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-success flex-grow-1 rounded-pill shadow-sm">
+                  <i class="fas fa-check-circle mr-1"></i> Confirmar
+                </button>
+              </div>
+            </form>
+            <!-- Card de resultado (oculto por defecto) -->
+            <div id="transferResultCard" class="card border-0 shadow-sm mt-3" style="display: none;">
+              <div class="card-body text-center p-3">
+                <div id="transferResultIcon" class="mb-2"></div>
+                <h6 id="transferResultTitle" class="font-weight-bold mb-1"></h6>
+                <p id="transferResultMessage" class="text-muted small mb-0"></p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de navegación inferior (EJS) -->
     <%- include('../partials/components/bottomNav') %>
-      <!-- Botón Cerrar Sesión (Apunta al endpoint del backend) -->
+      <!-- Botón Cerrar Sesión (EJS) -->
       <%- include('../partials/components/logoutBtn') %>
 </div>

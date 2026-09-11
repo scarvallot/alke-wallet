@@ -1,14 +1,22 @@
 ﻿-- =====================================================
 -- Seeds — AlkeWallet Modelo Scalable
--- Sin datos de prueba aún
 -- =====================================================
 
 USE `AlkeWallet`;
 
--- =====================================================
--- AlkeWallet Scalable — Datos de prueba (Seeds)
--- =====================================================
-USE `AlkeWallet`;
+-- -----------------------------------------------------
+-- Limpieza previa de datos
+-- -----------------------------------------------------
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE `Transactions`;
+TRUNCATE TABLE `Accounts`;
+TRUNCATE TABLE `Users`;
+TRUNCATE TABLE `Currencies`;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- -----------------------------------------------------
+-- Datos de prueba (Seeds)
+-- -----------------------------------------------------
 
 -- -----------------------------------------------------
 -- 1. Poblar tabla Currency (5 monedas)
@@ -23,27 +31,28 @@ INSERT INTO `Currencies` (`currency_id`, `currency_name`, `currency_symbol`) VAL
 -- -----------------------------------------------------
 -- 2. Poblar tabla User (20 usuarios — sin saldo)
 -- -----------------------------------------------------
-INSERT INTO `Users` (`user_id`, `user_name`, `email`, `password`) VALUES
-(1, 'Jorge Pérez', 'jorge.perez1@mail.com', 'pass1001'),
-(2, 'Sofía Contreras', 'sofia.contreras2@mail.com', 'pass1002'),
-(3, 'Camila Muñoz', 'camila.munoz3@mail.com', 'pass1003'),
-(4, 'Sebastián Rodríguez', 'sebastian.rodriguez4@mail.com', 'pass1004'),
-(5, 'Nicolás González', 'nicolas.gonzalez5@mail.com', 'pass1005'),
-(6, 'María Fuentes', 'maria.fuentes6@mail.com', 'pass1006'),
-(7, 'Antonia Bravo', 'antonia.bravo7@mail.com', 'pass1007'),
-(8, 'Sebastián Fuentes', 'sebastian.fuentes8@mail.com', 'pass1008'),
-(9, 'Sebastián Núñez', 'sebastian.nunez9@mail.com', 'pass1009'),
-(10, 'Constanza Espinoza', 'constanza.espinoza10@mail.com', 'pass1010'),
-(11, 'Ana Díaz', 'ana.diaz11@mail.com', 'pass1011'),
-(12, 'Nicolás Reyes', 'nicolas.reyes12@mail.com', 'pass1012'),
-(13, 'Camila Fuentes', 'camila.fuentes13@mail.com', 'pass1013'),
-(14, 'Isidora Muñoz', 'isidora.munoz14@mail.com', 'pass1014'),
-(15, 'Javiera Muñoz', 'javiera.munoz15@mail.com', 'pass1015'),
-(16, 'Matías Bravo', 'matias.bravo16@mail.com', 'pass1016'),
-(17, 'Carlos Soto', 'carlos.soto17@mail.com', 'pass1017'),
-(18, 'Jorge Castillo', 'jorge.castillo18@mail.com', 'pass1018'),
-(19, 'Sebastián Torres', 'sebastian.torres19@mail.com', 'pass1019'),
-(20, 'Pablo Vargas', 'pablo.vargas20@mail.com', 'pass1020');
+INSERT INTO `Users` (`user_id`, `user_name`, `first_name`, `last_name`, `email`, `password`, `is_active`) VALUES
+(1, 'Jorge Pérez', 'Jorge', 'Pérez', 'jorge.perez1@mail.com', 'pass1001', 1),
+(2, 'Sofía Contreras', 'Sofía', 'Contreras', 'sofia.contreras2@mail.com', 'pass1002', 1),
+(3, 'Camila Muñoz', 'Camila', 'Muñoz', 'camila.munoz3@mail.com', 'pass1003', 1),
+(4, 'Sebastián Rodríguez', 'Sebastián', 'Rodríguez', 'sebastian.rodriguez4@mail.com', 'pass1004', 1),
+(5, 'Nicolás González', 'Nicolás', 'González', 'nicolas.gonzalez5@mail.com', 'pass1005', 1),
+(6, 'María Fuentes', 'María', 'Fuentes', 'maria.fuentes6@mail.com', 'pass1006', 1),
+(7, 'Antonia Bravo', 'Antonia', 'Bravo', 'antonia.bravo7@mail.com', 'pass1007', 1),
+(8, 'Sebastián Fuentes', 'Sebastián', 'Fuentes', 'sebastian.fuentes8@mail.com', 'pass1008', 1),
+(9, 'Sebastián Núñez', 'Sebastián', 'Núñez', 'sebastian.nunez9@mail.com', 'pass1009', 1),
+(10, 'Constanza Espinoza', 'Constanza', 'Espinoza', 'constanza.espinoza10@mail.com', 'pass1010', 1),
+(11, 'Ana Díaz', 'Ana', 'Díaz', 'ana.diaz11@mail.com', 'pass1011', 1),
+(12, 'Nicolás Reyes', 'Nicolás', 'Reyes', 'nicolas.reyes12@mail.com', 'pass1012', 1),
+(13, 'Camila Fuentes', 'Camila', 'Fuentes', 'camila.fuentes13@mail.com', 'pass1013', 1),
+(14, 'Isidora Muñoz', 'Isidora', 'Muñoz', 'isidora.munoz14@mail.com', 'pass1014', 1),
+(15, 'Javiera Muñoz', 'Javiera', 'Muñoz', 'javiera.munoz15@mail.com', 'pass1015', 1),
+(16, 'Matías Bravo', 'Matías', 'Bravo', 'matias.bravo16@mail.com', 'pass1016', 1),
+(17, 'Carlos Soto', 'Carlos', 'Soto', 'carlos.soto17@mail.com', 'pass1017', 1),
+(18, 'Jorge Castillo', 'Jorge', 'Castillo', 'jorge.castillo18@mail.com', 'pass1018', 1),
+(19, 'Sebastián Torres', 'Sebastián', 'Torres', 'sebastian.torres19@mail.com', 'pass1019', 1),
+(20, 'Pablo Vargas', 'Pablo', 'Vargas', 'pablo.vargas20@mail.com', 'pass1020', 1),
+(21, 'admin', 'Admin', 'System', 'admin@alkewallet.com', '12345', 1);
 
 -- -----------------------------------------------------
 -- 3. Poblar tabla Account (cuentas principales y secundarias)
@@ -53,38 +62,40 @@ INSERT INTO `Users` (`user_id`, `user_name`, `email`, `password`) VALUES
 -- -----------------------------------------------------
 
 -- 3.1 Cuentas principales (CLP) — una por usuario (account_id = user_id)
-INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
-(1, 1, 1, 388786.00, 1),
-(2, 2, 1, 117026.00, 1),
-(3, 3, 1, 354785.00, 1),
-(4, 4, 1, 309588.00, 1),
-(5, 5, 1, 15622.00, 1),
-(6, 6, 1, 121981.00, 1),
-(7, 7, 1, 13912.00, 1),
-(8, 8, 1, 375400.00, 1),
-(9, 9, 1, 115574.00, 1),
-(10, 10, 1, 145852.00, 1),
-(11, 11, 1, 366026.00, 1),
-(12, 12, 1, 145684.00, 1),
-(13, 13, 1, 400290.00, 1),
-(14, 14, 1, 48625.00, 1),
-(15, 15, 1, 188208.00, 1),
-(16, 16, 1, 138685.00, 1),
-(17, 17, 1, 281137.00, 1),
-(18, 18, 1, 41313.00, 1),
-(19, 19, 1, 434846.00, 1),
-(20, 20, 1, 302698.00, 1);
+INSERT INTO `Accounts` (`account_id`, `user_id`, `cbu`, `currency_id`, `current_balance`, `is_default`) VALUES
+(1, 1, '10000000000000000001', 1, 388786.00, 1),
+(2, 2, '10000000000000000002', 1, 117026.00, 1),
+(3, 3, '10000000000000000003', 1, 354785.00, 1),
+(4, 4, '10000000000000000004', 1, 309588.00, 1),
+(5, 5, '10000000000000000005', 1, 15622.00, 1),
+(6, 6, '10000000000000000006', 1, 121981.00, 1),
+(7, 7, '10000000000000000007', 1, 13912.00, 1),
+(8, 8, '10000000000000000008', 1, 375400.00, 1),
+(9, 9, '10000000000000000009', 1, 115574.00, 1),
+(10, 10, '10000000000000000010', 1, 145852.00, 1),
+(11, 11, '10000000000000000011', 1, 366026.00, 1),
+(12, 12, '10000000000000000012', 1, 145684.00, 1),
+(13, 13, '10000000000000000013', 1, 400290.00, 1),
+(14, 14, '10000000000000000014', 1, 48625.00, 1),
+(15, 15, '10000000000000000015', 1, 188208.00, 1),
+(16, 16, '10000000000000000016', 1, 138685.00, 1),
+(17, 17, '10000000000000000017', 1, 281137.00, 1),
+(18, 18, '10000000000000000018', 1, 41313.00, 1),
+(19, 19, '10000000000000000019', 1, 434846.00, 1),
+(20, 20, '10000000000000000020', 1, 302698.00, 1);
+
 
 -- 3.2 Cuentas secundarias (USD y EUR) para algunos usuarios
 -- account_id continuará desde 21 en adelante
-INSERT INTO `Accounts` (`account_id`, `user_id`, `currency_id`, `current_balance`, `is_default`) VALUES
-(21, 2, 2, 5000.00, 0),    -- Sofía (USD)
-(22, 5, 2, 1200.00, 0),    -- Nicolás (USD)
-(23, 8, 2, 7800.00, 0),    -- Sebastián Fuentes (USD)
-(24, 11, 3, 3500.00, 0),   -- Ana (EUR)
-(25, 14, 3, 2100.00, 0),   -- Isidora (EUR)
-(26, 17, 3, 4200.00, 0),   -- Carlos (EUR)
-(27, 20, 2, 6000.00, 0);   -- Pablo (USD)
+INSERT INTO `Accounts` (`account_id`, `user_id`, `cbu`, `currency_id`, `current_balance`, `is_default`) VALUES
+(21, 2, '10000000000000000021', 2, 5000.00, 0),    -- Sofía (USD)
+(22, 5, '10000000000000000022', 2, 1200.00, 0),    -- Nicolás (USD)
+(23, 8, '10000000000000000023', 2, 7800.00, 0),    -- Sebastián Fuentes (USD)
+(24, 11, '10000000000000000024', 3, 3500.00, 0),   -- Ana (EUR)
+(25, 14, '10000000000000000025', 3, 2100.00, 0),   -- Isidora (EUR)
+(26, 17, '10000000000000000026', 3, 4200.00, 0),   -- Carlos (EUR)
+(27, 20, '10000000000000000027', 2, 6000.00, 0),   -- Pablo (USD)
+(28, 21, '10000000000000000028', 1, 0.00, 1);       -- Admin dummy (CLP principal)
 
 -- -----------------------------------------------------
 -- 4. Poblar tabla Transaction (110 transacciones)
