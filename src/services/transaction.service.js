@@ -106,14 +106,14 @@ const procesarTransferencia = async (senderUserId, receiverUserId, monto) => {
     const senderAccountId = senderRows[0].account_id;
 
     const queryCuentaDestino =
-      "SELECT account_id FROM accounts WHERE user_id = ? AND is_default = 1 FOR UPDATE";
+      "SELECT account_id FROM accounts WHERE cbu = ? FOR UPDATE";
     const [receiverRows] = await connection.query(queryCuentaDestino, [
       receiverUserId,
     ]);
 
     if (receiverRows.length === 0) {
       throw new Error(
-        "El usuario destinatario no existe o no tiene una cuenta activa.",
+        "El CBU ingresado no corresponde a ninguna cuenta registrada en el sistema.",
       );
     }
     const receiverAccountId = receiverRows[0].account_id;
