@@ -24,6 +24,11 @@ const {
   realizarDeposito,
   obtenerHistorial,
 } = require("../controllers/wallet.controller");
+// Controlador de beneficiarios/contactos
+const {
+  agregarContacto,
+  obtenerContactos,
+} = require("../controllers/payee.controller");
 // Controlador de vistas: redirecciones y render de páginas.
 const {
   redireccionarInicio,
@@ -89,6 +94,10 @@ router.get("/api/saldo", protegerRuta, consultarSaldo);
 router.post("/api/transfer", protegerRuta, realizarTransferencia);
 //  Ruta API para procesar el depósito de dinero (protegida)
 router.get("/api/transactions", protegerRuta, obtenerHistorial);
+//! Rutas de API para agenda de contactos
+// Ruta API para agregar un nuevo destinatario a la libreta (protegida)
+router.get("/api/contacts", protegerRuta, obtenerContactos);
+router.post("/api/contacts", protegerRuta, agregarContacto);
 
 //! Ruta de verificación de estado del servidor
 // Verifica que el servidor esté funcionando.
