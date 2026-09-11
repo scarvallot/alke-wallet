@@ -1,6 +1,6 @@
 # Alke Wallet: Aplicación de billetera digital.
 
-[![In Progress](https://img.shields.io/badge/In%20Progress-magenta)](https://github.com/scarvallot/alke-wallet.git)
+[![In Progress](<https://img.shields.io/badge/In%20Progress-magenta>)](https://github.com/scarvallot/alke-wallet.git)
 
 ---
 
@@ -26,11 +26,11 @@ El propósito del desafío es entregar una solución **funcional, segura y fáci
 
 El proyecto se desarrolla de forma progresiva, ampliando su alcance en cada etapa:
 
-| Etapa | Alcance |
-|---|---|
-| **Front-end** | Interfaz de usuario con HTML, CSS, JavaScript, Bootstrap y jQuery: login, saldo, envío/recepción de fondos e historial de transacciones. |
-| **Back-end (actual)** | Servidor propio con Node.js y Express: rutas, vistas dinámicas con EJS, y persistencia inicial en archivos mediante el módulo `fs`. |
-| **Base de datos (próxima etapa)** | Integración con base de datos relacional/documental y ORM para reemplazar la persistencia en archivos planos. |
+| Etapa                                    | Alcance                                                                                                                                    |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Front-end**                      | Interfaz de usuario con HTML, CSS, JavaScript, Bootstrap y jQuery: login, saldo, envío/recepción de fondos e historial de transacciones. |
+| **Back-end (actual)**              | Servidor propio con Node.js y Express: rutas, vistas dinámicas con EJS, y persistencia inicial en archivos mediante el módulo`fs`.     |
+| **Base de datos (próxima etapa)** | Integración con base de datos relacional/documental y ORM para reemplazar la persistencia en archivos planos.                             |
 
 ---
 
@@ -38,12 +38,12 @@ El proyecto se desarrolla de forma progresiva, ampliando su alcance en cada etap
 
 ### Generales
 
-| Requerimiento | Descripción |
-|---|---|
-| Registro e inicio de sesión | Se asigna una cuenta a cada usuario, quien accede a la aplicación mediante credenciales seguras. |
-| Administración de fondos | Los usuarios pueden ver su saldo disponible, y realizar depósitos y retiros de fondos. |
+| Requerimiento                 | Descripción                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Registro e inicio de sesión  | Se asigna una cuenta a cada usuario, quien accede a la aplicación mediante credenciales seguras.                  |
+| Administración de fondos     | Los usuarios pueden ver su saldo disponible, y realizar depósitos y retiros de fondos.                            |
 | Envío y recepción de fondos | Los usuarios pueden simular el envío de fondos a otras cuentas dentro de la aplicación y recibir fondos propios. |
-| Historial de transacciones | Se mantiene un registro completo de todas las transacciones realizadas en la aplicación. |
+| Historial de transacciones    | Se mantiene un registro completo de todas las transacciones realizadas en la aplicación.                          |
 
 ---
 
@@ -83,10 +83,10 @@ PORT=3000
 
 ## Scripts disponibles
 
-| Comando | Descripción |
-|---|---|
-| `npm start` | Ejecuta `node server.js`. Pensado para entorno de producción, sin recarga automática. |
-| `npm run dev` | Ejecuta `nodemon server.js`. Pensado para desarrollo: reinicia el servidor automáticamente ante cada cambio de código. |
+| Comando         | Descripción                                                                                                              |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`   | Ejecuta`node server.js`. Pensado para entorno de producción, sin recarga automática.                                  |
+| `npm run dev` | Ejecuta`nodemon server.js`. Pensado para desarrollo: reinicia el servidor automáticamente ante cada cambio de código. |
 
 **Por qué estos scripts:** se mantienen los nombres estándar `start` y `dev` en lugar de nombres personalizados, siguiendo la convención del ecosistema Node.js/npm. Esto permite que cualquier persona que clone el repositorio sepa de antemano cómo levantar el proyecto sin necesidad de leer configuración adicional, y facilita la integración futura con herramientas de despliegue que asumen `npm start` como comando por defecto.
 
@@ -106,82 +106,54 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 
 ```markdown
 alke-wallet/
-├── .gitignore                             # Archivos y carpetas ignorados por Git
-├── .gitattributes                         # Atributos Git del repositorio
+├── data/                                   # Persistencia en archivos y registro de errores
+├── database/                               # Modelos de datos, esquema y documentación SQL
+│   ├── alke_wallet_db/                     # Base de datos SQL del proyecto
+│   └── modelos_db/                         # Modelos conceptuales y relacionales
+├── Docs/                                   # Documentación del proyecto y entregas
+├── public/                                 # Recursos estáticos servidos por Express
+│   ├── css/                                # Hojas de estilo de la interfaz
+│   └── js/                                 # Scripts frontend de la interfaz
+├── src/                                    # Código de la aplicación Node.js/Express
+│   ├── config/                             # Configuración de entorno y conexión a MySQL
+│   ├── controllers/                        # Controladores HTTP y manejo de requests
+│   ├── middlewares/                         # Middleware de autenticación y validación
+│   ├── models/                             # Modelos de acceso a datos y persistencia
+│   ├── routes/                              # Definición de rutas de la aplicación
+│   ├── services/                            # Lógica de negocio y servicios transaccionales
+│   └── views/                               # Plantillas EJS de la interfaz
+├── tests/                                  # Pruebas y validaciones del proyecto
+├── .gitignore                              # Archivos y carpetas ignorados por Git
 ├── .env                                    # Variables de entorno locales no versionadas
-├── alke-wallet.code-workspace              # Configuración del workspace VS Code
 ├── LICENSE                                 # Licencia del proyecto
 ├── README.md                               # Documentación principal del proyecto
 ├── package.json                            # Dependencias y scripts de ejecución
 ├── package-lock.json                       # Lockfile de npm
 ├── server.js                               # Punto de entrada del servidor HTTP
-├── tareas.md                               # Tareas y entregas del módulo
-├── data/                                   # Persistencia en archivos y registro de errores
-│   └── log.txt                             # Log de rutas no encontradas (404)
-├── database/                               # Modelos de datos, esquema y documentación SQL
-│   ├── README.md                           # Documentación general de base de datos
-│   ├── alke_wallet_db/                     # Proyecto de base de datos principal
-│   │   └── README.md
-│   └── modelos_db/                         # Versiones y modelos alternativos
-│       ├── 01_Received/
-│       ├── 02_Approach/
-│       └── 03_Scalable/
-├── public/                                 # Recursos estáticos servidos por Express
-│   ├── css/
-│   │   └── app.css                         # Estilos de la aplicación
-│   └── js/                                 # Lógica de interacción del cliente
-│       ├── dashboard.js                   # Panel principal del usuario
-│       ├── deposit.js                     # Formulario y flujo de depósitos
-│       ├── login.js                        # Login en navegador
-│       ├── menu.js                         # Navegación del menú principal
-│       ├── profile.js                      # Edición y visualización del perfil
-│       ├── register.js                     # Registro de nuevos usuarios
-│       ├── sendmoney.js                    # Envío de fondos entre usuarios
-│       └── transaction.js                  # Historial y gestión de transacciones
-├── src/                                    # Código de la aplicación Node.js/Express
-│   ├── app.js                              # Configuración de Express y EJS
-│   ├── config/
-│   │   └── db.js                           # Pool de conexiones MySQL
-│   ├── controllers/
-│   │   ├── admin.controller.js             # Administración de usuarios y panel
-│   │   ├── auth.controller.js              # Login, registro y autenticación
-│   │   ├── views.controller.js             # Render de vistas principales
-│   │   └── wallet.controller.js            # Depósitos, retiros y transferencias
-│   ├── middlewares/
-│   │   └── middlewares.js                  # Middleware de autenticación y helpers
-│   ├── models/                             # Capas de acceso a datos
-│   ├── routes/
-│   │   └── routes.js                       # Definición de rutas HTTP
-│   ├── services/
-│   │   ├── transaction.service.js          # Reglas y flujo de transacciones
-│   │   └── user.service.js                 # Reglas de negocio de usuarios
-│   └── views/                              # Plantillas dinámicas EJS
-│       ├── auth/
-│       │   ├── login.ejs
-│       │   ├── profile.ejs
-│       │   └── register.ejs
-│       ├── dashboard/
-│       │   └── dashboard.ejs
-│       ├── deposit/
-│       │   └── deposit.ejs
-│       ├── layouts/
-│       │   ├── auth.ejs
-│       │   └── main.ejs
-│       ├── menu/
-│       │   └── menu.ejs
-│       ├── partials/
-│       ├── sendmoney/
-│       │   └── sendmoney.ejs
-│       └── transaction/
-│           └── transaction.ejs
-└── tests/                                  # Pruebas y validaciones del proyecto
+└── tareas.md                               # Tareas y entregas del módulo
 ```
+
+### Descripción de los directorios
+
+- `data/`: almacena archivos de persistencia plana y el archivo `log.txt` para registrar eventos de acceso, errores de rutas y trazas de fallos transaccionales con evidencia de `rollback`.
+- `database/`: contiene el modelo relacional, scripts SQL, migraciones, seeds y documentación de la base de datos del proyecto.
+- `Docs/`: agrupa la documentación de entregas y los materiales del trabajo integrador.
+- `public/`: aloja los recursos estáticos de la interfaz como CSS, JavaScript y otros assets servidos a través de Express.
+- `src/`: concentra la lógica del backend en Express: configuración, rutas, controladores, servicios, middlewares y vistas EJS.
+- `src/config/`: centraliza la conexión y el pool de MySQL mediante `mysql2/promise` y la lectura de variables de entorno.
+- `src/controllers/`: recibe las peticiones HTTP, valida entrada y delega la lógica de negocio hacia el servicio correspondiente.
+- `src/middlewares/`: agrupa los middleware de autenticación, acceso y control de sesión.
+- `src/models/`: encapsula la persistencia de archivos y sirve de base para futuras implementaciones sobre datos relacionales.
+- `src/routes/`: define las rutas públicas y privadas de la API y las vistas de la aplicación.
+- `src/services/`: implementa la lógica de negocio, validaciones y operaciones transaccionales.
+- `src/views/`: contiene las plantillas EJS utilizadas para renderizar páginas y formularios.
+- `tests/`: guarda pruebas y scripts de validación del comportamiento de la aplicación.
 
 ## Decisiones técnicas
 
 **Separación entre `app.js` y `server.js`:** se optó por dividir la configuración de la aplicación (`src/app.js`) del arranque del servidor (`server.js`) en lugar de usar un único `index.js`. `app.js` define y exporta la instancia de Express con sus middlewares, rutas y motor de vistas, mientras que `server.js` es el único responsable de levantar el servidor HTTP en el puerto configurado. Esta separación facilita las pruebas automatizadas (se puede importar `app.js` sin levantar un servidor real) y deja el proyecto preparado para escalar hacia la integración con base de datos sin reestructurar el punto de entrada.
 
-**Persistencia en archivos planos (`data/`):** en esta etapa la persistencia se resuelve con el módulo `fs` de Node.js sobre archivos en `data/`, ya que aún no se integra una base de datos real. Esta capa vive en `src/models/`, de modo que al migrar a base de datos (carpeta `database/`) solo sea necesario reemplazar la implementación interna de los modelos, sin tocar controladores ni rutas.
+**Persistencia en archivos planos (`data/`):** en esta etapa la persistencia se resuelve con el módulo `fs` de Node.js sobre archivos en `data/`, ya que aún no se integra una base de datos real. Además de mantener el archivo de registro de eventos, se incorpora una nueva funcionalidad de **registro de errores** para dejar evidencia de fallos de acceso, rutas no encontradas y resultados de transacciones con `rollback`, con trazas aisladas en `data/log.txt`. Esta capa vive en `src/models/`, de modo que al migrar a base de datos (carpeta `database/`) solo sea necesario reemplazar la implementación interna de los modelos, sin tocar controladores ni rutas.
 
 **Uso de Motor de Plantillas (EJS):** Se optó por implementar EJS en lugar de servir archivos HTML puramente estáticos para las vistas principales. Esta decisión responde a dos motivos: primero, permite inyectar datos dinámicos desde el servidor (como títulos y variables de configuración); segundo, habilita el uso de *partials* (fragmentos modulares como el `<head>` o el footer). Esto evita la duplicación de código y facilitará la renderización de información específica del usuario directamente desde el backend.
 
@@ -192,15 +164,19 @@ alke-wallet/
 El servidor utiliza el middleware `express.static()` apuntando al directorio `/public`. Se eligió esta arquitectura porque permite entregar los recursos del frontend (HTML, CSS, JS, imágenes) directamente al navegador de la forma más optimizada posible sin sobrecargar las rutas del backend. Las rutas API separadas (`/status`) se encargan de la transferencia de datos en formato JSON.
 
 ---
-## Persistencia en archivos planos 
 
-El sistema de registro (logger) se implementó utilizando el módulo nativo `fs` de Node.js, específicamente el método `fs.appendFile()`. 
+## Persistencia en archivos planos
+
+El sistema de registro (logger) se implementó utilizando el módulo nativo `fs` de Node.js, específicamente el método `fs.appendFile()`. La nueva funcionalidad de **registro de errores** se persistirá en `data/log.txt` para dejar evidencia de fallos de acceso, rutas no encontradas y errores de transacción con `rollback`, además de conservar el historial de eventos de la aplicación.
 
 **Justificación del evento registrado:**
 Se decidió registrar el evento de **"acceso a rutas"** (HTTP requests) para todas las peticiones entrantes. Se eligió este evento por sobre otras alternativas (como registro de errores o inicios de sesión) porque permite monitorear el tráfico real de la aplicación, auditar qué endpoints son los más consultados (ej. `/` vs `/status`) y proporcionar una base para futuras métricas de uso de la billetera digital.
 
 **Justificación del evento registrado (Manejo de Errores - 404):**
-Para el sistema de logs (`log.txt`), se eligió registrar el evento de **errores de acceso (rutas no encontradas / 404)**. Desde la perspectiva de la arquitectura y seguridad del backend, registrar los intentos de acceso a endpoints inexistentes aporta mayor valor operativo que registrar simples visitas exitosas. Esto permite identificar rápidamente enlaces rotos en la aplicación, comportamientos inusuales o posibles escaneos de vulnerabilidades. 
+Para el sistema de logs (`log.txt`), se eligió registrar el evento de **errores de acceso (rutas no encontradas / 404)**. Desde la perspectiva de la arquitectura y seguridad del backend, registrar los intentos de acceso a endpoints inexistentes aporta mayor valor operativo que registrar simples visitas exitosas. Esto permite identificar rápidamente enlaces rotos en la aplicación, comportamientos inusuales o posibles escaneos de vulnerabilidades.
+
+**Registro de errores transaccionales:**
+Además del registro de rutas y accesos, el flujo de transacciones ahora escribe entradas de error en `data/log.txt` con el formato de fallo y motivo, dejando evidencia física para auditoría y facilitando el diagnóstico cuando un `rollback` se dispara por validaciones, saldo insuficiente o una excepción forzada en pruebas.
 
 ---
 
@@ -232,6 +208,15 @@ Se incorporó la capacidad de modificar y eliminar de manera controlada los regi
 3. **Validación previa de existencia:** el servicio `actualizarUsuarioService()` y el servicio `eliminarUsuarioAdmin()` verifican que el `user_id` exista en `AlkeWallet.Users` antes de ejecutar la actualización o la desactivación.
 4. **Manejo de errores y mensajes útiles:** cuando el `id` no existe o la solicitud llega incompleta, la API responde con mensajes comprensibles y códigos HTTP adecuados (`400`, `404` o `500`) para orientar al cliente y facilitar el diagnóstico del fallo.
 5. **Confirmación de éxito:** las respuestas exitosas se devuelven con `success: true` y mensajes claros como `Usuario actualizado correctamente.` o `Usuario desactivado correctamente.`, cumpliendo el requisito mínimo de confirmación de ambas operaciones.
+
+### Acceso a Datos (Lección 4 - Transaccionalidad)
+
+Se incorporó una capa de transaccionalidad para proteger operaciones sensibles y asegurar consistencia de datos en la base de datos relacional.
+
+1. **Registro transaccional de usuario y cuenta:** el servicio `registrarUsuarioService()` ejecuta una secuencia atómica con dos acciones consecutivas: primero inserta el usuario en `Users` y, luego, usando `insertId` del registro recién creado, crea la cuenta principal en `Accounts` con el `cbu` generado y el `current_balance` inicial en `0`. Si cualquiera de las dos acciones falla, el bloque `catch` ejecuta `rollback()` para dejar la base sin datos parciales.
+2. **Transferencia transaccional:** el servicio `procesarTransferencia()` trabaja sobre la misma conexión y ejecuta tres acciones consecutivas protegidas por `beginTransaction()`: descuenta el saldo del remitente, acredita el saldo al destinatario y registra el movimiento en `transactions`. Si el monto es insuficiente o alguna validación falla, el flujo se aborta y se reutiliza `rollback()`.
+3. **Registro de errores y evidencia de rollback:** en el `catch` del flujo transaccional se capturan los mensajes de error y se escribe una traza estructurada en `data/log.txt` con el formato `FALLO TRANSACCIÓN - Remitente ID, Destinatario ID, Monto, Motivo`, mostrando el motivo claro del fallo y dejando evidencia física para auditoría.
+4. **Evidencia de operación con rollback forzado:** disponible en la prueba de regresión `tests/transaccionalidad.test.js`, donde la ejecución de `simularOperacionTransaccional({ forceError: true })` fuerza la excepción y el servicio responde con la misma causa de error dejando la base de datos sin registros parciales gracias al rollback.
 
 ---
 
