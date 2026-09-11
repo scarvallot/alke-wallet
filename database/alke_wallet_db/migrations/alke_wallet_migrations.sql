@@ -50,10 +50,21 @@ ALTER TABLE `payees`
   ADD CONSTRAINT `chk_payees_cbu_length` 
     CHECK (CHAR_LENGTH(`cbu`) >= 10);
 
+-- DDL: 3. Alineación de la tabla Accounts con el CBU para transferencias
+ALTER TABLE `accounts`
+  ADD COLUMN `cbu` VARCHAR(50) COLLATE utf8mb3_bin NULL COMMENT 'Número de cuenta o CBU' AFTER `user_id`;
+
+-- DML: Detección de CBU inicial para cuentas existentes
+SET SQL_SAFE_UPDATES = 0;
+UPDATE `accounts`
+SET `cbu` = CONCAT('100000000000000000', LPAD(account_id, 2, '0'))
+WHERE `account_id` > 0 AND `cbu` IS NULL;
+SET SQL_SAFE_UPDATES = 1;
+
 -- DML: Migración e inserción inicial
 INSERT INTO `payees` (`user_id`, `full_name`, `cbu`, `alias`, `currency_id`) 
 VALUES 
-(21, 'Carlos Silva', '1234567890123456789012', 'carlos.silva.peso', 1),
-(21, 'Carlos Silva', '0987654321098765432109', 'carlos.silva.usd', 2),
-(21, 'María Rojas', '1122334455', 'maria.rojas', 1),
-(22, 'Empresa de Servicios SPA', '5555444433332222111100', 'pago.servicios', 1);
+(21, 'Carlos Silva', '10000000000000000001', 'carlos.silva.peso', 1),
+(21, 'Carlos Silva', '10000000000000000002', 'carlos.silva.usd', 2),
+(21, 'María Rojas', '10000000000000000003', 'maria.rojas', 1),
+(21, 'Empresa de Servicios SPA', '10000000000000000004', 'pago.servicios', 1);
