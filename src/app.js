@@ -4,6 +4,8 @@ const fs = require("fs");
 const session = require("express-session");
 const expressLayouts = require("express-ejs-layouts");
 const indexRouter = require("./routes/routes");
+// Importa el archivo de rutas ORM desde el directorio de rutas real de la app
+const ormRoutes = require("./routes/user.routes");
 
 // Importar middlewares globales
 const {
@@ -24,7 +26,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 
-// 3. CONFIGURACIÓN DE SESIONES
+//  3. RUTAS ORM
+app.use(ormRoutes);
+
+// 3.1. Configuración de la sesión
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "mi-secreto-super-seguro",
