@@ -1,6 +1,6 @@
 # Alke Wallet: Aplicación de billetera digital.
 
-[![In Progress](<https://img.shields.io/badge/In%20Progress-magenta>)](https://github.com/scarvallot/alke-wallet.git)
+[![In Progress](https://img.shields.io/badge/In%20Progress-magenta)](https://github.com/scarvallot/alke-wallet.git)
 
 ---
 
@@ -29,8 +29,9 @@ El proyecto se desarrolla de forma progresiva, ampliando su alcance en cada etap
 | Etapa                                    | Alcance                                                                                                                                    |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Front-end**                      | Interfaz de usuario con HTML, CSS, JavaScript, Bootstrap y jQuery: login, saldo, envío/recepción de fondos e historial de transacciones. |
-| **Back-end (actual)**              | Servidor propio con Node.js y Express: rutas, vistas dinámicas con EJS, y persistencia inicial en archivos mediante el módulo`fs`.     |
-| **Base de datos (próxima etapa)** | Integración con base de datos relacional/documental y ORM para reemplazar la persistencia en archivos planos.                             |
+| **Back-end**              | Servidor propio con Node.js y Express: rutas, vistas dinámicas con EJS, y persistencia en archivos mediante el módulo `fs` para registro de eventos y errores.     |
+| **Base de datos (actual)** | Conexión a MySQL con `mysql2/promise`, CRUD completo, transaccionalidad con `rollback` y capa ORM con Sequelize (relaciones `User`/`Account`). |
+| **API REST + autenticación (próxima etapa)** | Exposición de una API RESTful segura con rutas protegidas mediante JWT y subida de archivos. |
 
 ---
 
@@ -51,6 +52,7 @@ El proyecto se desarrolla de forma progresiva, ampliando su alcance en cada etap
 
 - Node.js v18 o superior
 - npm v9 o superior
+- MySQL Server 8 (o instancia compatible) accesible desde el entorno de desarrollo
 
 ## Instalación y ejecución
 
@@ -64,7 +66,10 @@ cd alke-wallet
 # 3. Instalar dependencias
 npm install
 
-# 4. Levantar el servidor en modo desarrollo (con recarga automática)
+# 4. Crear la base de datos ejecutando el script SQL de database/alke_wallet_db
+#    (crea el esquema AlkeWallet y sus tablas, incluyendo Users y Accounts)
+
+# 5. Levantar el servidor en modo desarrollo (con recarga automática)
 npm run dev
 
 # Alternativa: levantar el servidor en modo producción
@@ -75,10 +80,15 @@ Por defecto la aplicación queda disponible en `http://localhost:3000` (o el pue
 
 ### Variables de entorno
 
-Crear un archivo `.env` en la raíz del proyecto:
+Crear un archivo `.env` en la raíz del proyecto con el puerto del servidor y las credenciales de la base de datos (usadas tanto por el pool de `mysql2/promise` como por Sequelize):
 
 ```
 PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=AlkeWallet
+DB_PORT=3306
 ```
 
 ## Scripts disponibles
@@ -98,7 +108,7 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 
 ## Stack
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white) ![jQuery](https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white) ![EJS](https://img.shields.io/badge/EJS-B4CA65?style=for-the-badge&logo=ejs&logoColor=black)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white) ![jQuery](https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white) ![EJS](https://img.shields.io/badge/EJS-B4CA65?style=for-the-badge&logo=ejs&logoColor=black) ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white)
 
 ---
 
@@ -117,11 +127,12 @@ alke-wallet/
 ├── src/                                    # Código de la aplicación Node.js/Express
 │   ├── config/                             # Configuración de entorno y conexión a MySQL
 │   ├── controllers/                        # Controladores HTTP y manejo de requests
-│   ├── middlewares/                         # Middleware de autenticación y validación
+│   ├── middlewares/                        # Middleware de autenticación y validación
 │   ├── models/                             # Modelos de acceso a datos y persistencia
-│   ├── routes/                              # Definición de rutas de la aplicación
-│   ├── services/                            # Lógica de negocio y servicios transaccionales
-│   └── views/                               # Plantillas EJS de la interfaz
+│   ├── routes/                             # Definición de rutas de la aplicación
+│   ├── services/                           # Lógica de negocio y servicios transaccionales
+│   ├── views/                              # Plantillas EJS de la interfaz
+│   └── app.js                              # Configuración de la aplicación Express (middlewares, rutas, vistas)
 ├── tests/                                  # Pruebas y validaciones del proyecto
 ├── .gitignore                              # Archivos y carpetas ignorados por Git
 ├── .env                                    # Variables de entorno locales no versionadas
@@ -159,7 +170,16 @@ alke-wallet/
 
 **Proyección futura (Diseño MVC):** La estructura actual de directorios (`/routes`, `/controllers`, `/models`) sienta las bases de un patrón de arquitectura MVC (Modelo-Vista-Controlador) escalable. La decisión de aislar la persistencia actual basada en `fs` dentro de `/models` asegura que, durante la próxima etapa del proyecto, la integración de una base de datos real se realizará sin afectar ni modificar las rutas ni la lógica de las vistas.
 
-## Servidor y Contenido Estático
+**Reflexión breve sobre decisiones técnicas:**
+
+- **Conexión a base de datos:** se eligió `mysql2/promise` por su compatibilidad con MySQL y su capacidad para operar con un pool de conexiones asíncrono. La configuración se centralizó en `src/config/db.js`, usando variables de entorno para alojar credenciales sensibles y evitar exponerlas en el código fuente.
+- **Obtención de información:** se diseñó una capa de servicios y controladores para consultar usuarios sin filtrar ni revelar el campo `password`. Además, se incorporó soporte para filtros y paginación mediante `query params` como `?nombre=Juan`, manteniendo la salida ordenada y escalable.
+- **Modificación de datos:** se decidió actualizar solo los campos necesarios (`user_name`, `first_name`, `last_name`, `email`) para evitar sobrescribir información no solicitada. Antes de persistir, la validación comprueba existencia del usuario y exige datos mínimos para evitar errores de integridad.
+- **Transaccionalidad:** la lógica de transacciones se protegió con `beginTransaction()` y `rollback()` para que una operación sensible no deje registros parciales. Cuando llega un error, se deja evidencia en `data/log.txt` para auditar el motivo del fallo y conservar una traza del rollback.
+- **ORM con Sequelize:** se incorporó Sequelize para comparar el acceso declarativo y mantenible del ORM frente a consultas SQL manuales, reduciendo la concatenación de sentencias y trabajando con modelos y asociaciones de manera más legible.
+- **Relaciones en ORM:** la relación entre `User` y `Account` se modeló con `hasMany`/`belongsTo` y se expuso con `include` para obtener un arreglo anidado de cuentas por usuario, generando una estructura jerárquica clara y ordenada.
+
+## Servidor y contenido estático
 
 El servidor utiliza el middleware `express.static()` apuntando al directorio `/public`. Se eligió esta arquitectura porque permite entregar los recursos del frontend (HTML, CSS, JS, imágenes) directamente al navegador de la forma más optimizada posible sin sobrecargar las rutas del backend. Las rutas API separadas (`/status`) se encargan de la transferencia de datos en formato JSON.
 
@@ -182,7 +202,7 @@ Además del registro de rutas y accesos, el flujo de transacciones ahora escribe
 
 ## Módulo 7
 
-### Acceso a Datos (Lección 1 - Conexión a Base de Datos)
+### Acceso a datos (Lección 1 - Conexión a base de datos)
 
 Se implementó la conexión entre el servidor Node.js y la base de datos relacional cumpliendo con los estándares de seguridad:
 
@@ -191,15 +211,15 @@ Se implementó la conexión entre el servidor Node.js y la base de datos relacio
 3. **Variables de entorno:** Todas las credenciales sensibles (host, usuario, contraseña, base de datos) fueron extraídas a un archivo `.env`, protegiendo el acceso al servidor.
 4. **Verificación de estado:** Se implementó una promesa al inicializar el Pool que verifica la disponibilidad del motor MySQL, emitiendo un log de éxito (`console.log`) en la terminal o capturando posibles errores de conexión.
 
-### Acceso a Datos (Lección 2 - Obtención de Información y Paginación)
+### Acceso a datos (Lección 2 - Obtención de información y paginación)
 
 Se integró la capa de servicios y controladores con la base de datos relacional para la gestión y exposición de los datos de usuarios:
 
 1. **Consulta optimizada y segura:** Se implementó la ruta `GET /usuarios` conectada al controlador para extraer los registros de la base de datos MySQL, excluyendo de manera estricta el campo `password` para salvaguardar la información sensible de los usuarios.
 2. **Manejo de Errores:** Se integraron bloques `try/catch` para capturar fallos de conectividad o de sintaxis en el servidor, retornando respuestas HTTP informativas y ordenadas en formato JSON.
-3. **Tarea PLUS (Filtros y Paginación):** Se desarrolló soporte dinámico mediante parámetros en la URL (`query params`) permitiendo filtrar registros por nombre u alias, además de estructurar un sistema de paginación con límites y offsets escalables.
+3. **Tarea PLUS opcional — Filtros y paginación por query params:** Se desarrolló soporte dinámico mediante parámetros en la URL (`query params`) permitiendo filtrar registros por nombre u alias, además de estructurar un sistema de paginación con límites y offsets escalables.
 
-### Acceso a Datos (Lección 3 - Modificación de datos en una base de datos)
+### Acceso a datos (Lección 3 - Modificación de datos en una base de datos)
 
 Se incorporó la capacidad de modificar y eliminar de manera controlada los registros de usuarios existentes en la base de datos relacional.
 
@@ -209,14 +229,34 @@ Se incorporó la capacidad de modificar y eliminar de manera controlada los regi
 4. **Manejo de errores y mensajes útiles:** cuando el `id` no existe o la solicitud llega incompleta, la API responde con mensajes comprensibles y códigos HTTP adecuados (`400`, `404` o `500`) para orientar al cliente y facilitar el diagnóstico del fallo.
 5. **Confirmación de éxito:** las respuestas exitosas se devuelven con `success: true` y mensajes claros como `Usuario actualizado correctamente.` o `Usuario desactivado correctamente.`, cumpliendo el requisito mínimo de confirmación de ambas operaciones.
 
-### Acceso a Datos (Lección 4 - Transaccionalidad)
+### Acceso a datos (Lección 4 - Transaccionalidad)
 
 Se incorporó una capa de transaccionalidad para proteger operaciones sensibles y asegurar consistencia de datos en la base de datos relacional.
 
 1. **Registro transaccional de usuario y cuenta:** el servicio `registrarUsuarioService()` ejecuta una secuencia atómica con dos acciones consecutivas: primero inserta el usuario en `Users` y, luego, usando `insertId` del registro recién creado, crea la cuenta principal en `Accounts` con el `cbu` generado y el `current_balance` inicial en `0`. Si cualquiera de las dos acciones falla, el bloque `catch` ejecuta `rollback()` para dejar la base sin datos parciales.
 2. **Transferencia transaccional:** el servicio `procesarTransferencia()` trabaja sobre la misma conexión y ejecuta tres acciones consecutivas protegidas por `beginTransaction()`: descuenta el saldo del remitente, acredita el saldo al destinatario y registra el movimiento en `transactions`. Si el monto es insuficiente o alguna validación falla, el flujo se aborta y se reutiliza `rollback()`.
-3. **Registro de errores y evidencia de rollback:** en el `catch` del flujo transaccional se capturan los mensajes de error y se escribe una traza estructurada en `data/log.txt` con el formato `FALLO TRANSACCIÓN - Remitente ID, Destinatario ID, Monto, Motivo`, mostrando el motivo claro del fallo y dejando evidencia física para auditoría.
+3. **Tarea PLUS opcional — Registro de fallos transaccionales en archivo de log:** en el `catch` del flujo transaccional se capturan los mensajes de error y se escribe una traza estructurada en `data/log.txt` con el formato `FALLO TRANSACCIÓN - Remitente ID, Destinatario ID, Monto, Motivo`, mostrando el motivo claro del fallo y dejando evidencia física para auditoría.
 4. **Evidencia de operación con rollback forzado:** disponible en la prueba de regresión `tests/transaccionalidad.test.js`, donde la ejecución de `simularOperacionTransaccional({ forceError: true })` fuerza la excepción y el servicio responde con la misma causa de error dejando la base de datos sin registros parciales gracias al rollback.
+
+### Acceso a datos (Lección 5 - ORM con Sequelize)
+
+Se complementó el acceso manual a SQL con una capa de abstracción basada en ORM para explorar una alternativa más declarativa y mantenible para consultar usuarios.
+
+1. **Inicialización e instalación del ORM:** se configuró la instancia de `Sequelize` en `src/config/sequelize.js`, usando `dotenv` para cargar el contexto de entorno y conectarse a la base `AlkeWallet` mediante el dialecto `mysql`.
+2. **Definición del modelo `User`:** se incorporó el modelo `src/models/User.js` con el esquema de la tabla `Users`, definiendo campos como `user_name`, `first_name`, `last_name`, `email`, `password`, `is_active` y los timestamps de creación/actualización.
+3. **Ruta ORM para listar usuarios:** se agregó una ruta `GET /api/orm/users` en `src/routes/user.routes.js` conectada al servicio `obtenerUsuariosORM()` en `src/services/user.orm.service.js`, cuyo flujo se apoya en `User.findAll({ attributes: { exclude: ['password'] }, where: { is_active: 1 }, order: [['created_at', 'DESC']] })`.
+4. **Comparación de resultados:** la salida entregada por el servicio ORM se compara de manera funcional con la vista obtenida por consultas SQL manuales, verificando que la lista de usuarios excluya la contraseña y muestre el mismo conjunto de registros activos, ordenados por fecha de creación.
+5. **Justificación esperada:** el uso de ORM aporta una ventaja clara frente a SQL tradicional porque reduce el acoplamiento con sentencias literales, permite reutilizar modelos de dominio y hace más legible el acceso a datos al trabajar con objetos y atributos en vez de manejar consultas concatenadas y cadenas de texto.
+
+### Acceso a datos (Lección 6 - Manejo de relaciones en un ORM)
+
+Se extendió la capa ORM para modelar relaciones entre entidades y responder con datos anidados en una sola consulta.
+
+1. **Relación principal entre modelos:** se definieron relaciones sobre los modelos `User` y `Account`, donde un usuario puede tener muchas cuentas y cada cuenta pertenece a un usuario. La asociación se expresa con `hasMany` y `belongsTo`, usando el alias `cuentas` para mantener la estructura de acceso legible dentro del JSON de respuesta.
+2. **Ruta de relación con include:** se incorporó la ruta `GET /api/orm/users/:id/accounts`, conectada al servicio `User.findByPk(id, { attributes: ['user_id', 'first_name', 'last_name', 'email'], include: [{ model: Account, as: 'cuentas', attributes: ['account_id', 'cbu', 'current_balance', 'is_default'] }] })`.
+3. **Consulta única y anidada:** la respuesta entrega el objeto del usuario con el arreglo `cuentas` dentro de la estructura principal, permitiendo recuperar el perfil del usuario y sus cuentas relacionadas mediante una sola operación de lectura.
+4. **Requisito mínimo de include:** el flujo usa `include` de Sequelize para traer relaciones desde el modelo `Account` y mantener la salida ordenada para análisis y depuración.
+5. **Tarea PLUS opcional — JSON/HTML con relaciones anidadas:** el JSON ordenado de la ruta permite visualizar el contenido anidado como un objeto estructurado, o bien renderizarlo en una tabla HTML cuando la capa de vistas se enlaza con el servicio ORM.
 
 ---
 
