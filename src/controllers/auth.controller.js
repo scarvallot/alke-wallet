@@ -5,6 +5,7 @@ const {
   actualizarPasswordUsuario,
 } = require("../services/user.service");
 
+// Inicia sesión validando usuario y contraseña y guardando datos en sesión.
 const procesarLogin = async (req, res) => {
   const { username, password } = req.body;
   const usuario = await validarCredenciales(username, password);
@@ -22,6 +23,7 @@ const procesarLogin = async (req, res) => {
   });
 };
 
+// Registra al usuario y lo deja autenticado de forma inmediata.
 const registrarUsuario = async (req, res) => {
   try {
     const { first_name, last_name, user_name, email, password } = req.body;
@@ -67,6 +69,7 @@ const registrarUsuario = async (req, res) => {
   }
 };
 
+// Actualiza el perfil y sincroniza el estado visible de la sesión.
 const actualizarPerfil = async (req, res) => {
   try {
     const userId = req.session.usuario?.user_id;
@@ -97,6 +100,7 @@ const actualizarPerfil = async (req, res) => {
   }
 };
 
+// Cambia la contraseña del usuario autenticado.
 const actualizarPassword = async (req, res) => {
   try {
     const userId = req.session.usuario.user_id;
@@ -116,6 +120,7 @@ const actualizarPassword = async (req, res) => {
   }
 };
 
+// Cierra la sesión y redirige al login.
 const cerrarSesion = (req, res) => {
   req.session.destroy(() => {
     res.redirect("/login");

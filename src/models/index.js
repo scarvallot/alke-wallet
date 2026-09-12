@@ -1,6 +1,7 @@
 const User = require("./User");
 const Account = require("./Account");
 
+// Establecer relaciones entre modelos
 // Relación 1:N -> Un Usuario tiene muchas Cuentas
 User.hasMany(Account, {
   foreignKey: "user_id",

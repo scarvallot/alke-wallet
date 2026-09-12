@@ -3,17 +3,21 @@ const express = require("express");
 const router = express.Router();
 const { User, Account } = require("../models"); // Importamos los modelos relacionados
 
-// Tarea PLUS: Ruta que devuelve el usuario y sus cuentas en un JSON anidado
+//! Tarea PLUS: Ruta que devuelve el usuario y sus cuentas en un JSON anidado.
+// La consulta usa findByPk para buscar un usuario por su ID y, además,
+// incluye explícitamente el modelo Account con el alias "cuentas".
 router.get("/api/orm/users/:id/accounts", async (req, res) => {
   try {
     const { id } = req.params;
 
+    // findByPk recupera el usuario principal por su clave primaria.
+    // El objeto include define la relación de cuentas asociadas al usuario.
     const usuarioConCuentas = await User.findByPk(id, {
       attributes: ["user_id", "first_name", "last_name", "email"],
       include: [
         {
           model: Account,
-          as: "cuentas",
+          as: "cuentas", // Alias de la relación del modelo Account hacia User.
           attributes: ["account_id", "cbu", "current_balance", "is_default"],
         },
       ],

@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
-
+//  Definición del modelo Account
 const Account = sequelize.define(
   "Account",
   {

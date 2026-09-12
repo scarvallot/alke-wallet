@@ -5,6 +5,7 @@ const {
   obtenerHistorialUsuario,
 } = require("../services/transaction.service");
 
+// Consulta el saldo del usuario autenticado en sesión.
 const consultarSaldo = async (req, res) => {
   try {
     const userId = req.session.usuario.user_id;
@@ -16,6 +17,7 @@ const consultarSaldo = async (req, res) => {
   }
 };
 
+// Procesa un depósito con validaciones mínimas de entrada.
 const realizarDeposito = async (req, res) => {
   try {
     const userId = req.session.usuario.user_id;
@@ -46,6 +48,7 @@ const realizarDeposito = async (req, res) => {
   }
 };
 
+// Ejecuta una transferencia entre el usuario activo y un destinatario válido.
 const realizarTransferencia = async (req, res) => {
   try {
     // El senderId se obtiene de forma segura desde la sesión activa
@@ -81,6 +84,7 @@ const realizarTransferencia = async (req, res) => {
   }
 };
 
+// Devuelve el historial de transacciones del usuario en sesión.
 const obtenerHistorial = async (req, res) => {
   try {
     const userId = req.session.usuario.user_id;
@@ -98,5 +102,5 @@ module.exports = {
   consultarSaldo,
   realizarTransferencia,
   realizarDeposito,
-  obtenerHistorial, // <-- Exportar aquí
+  obtenerHistorial,
 };
