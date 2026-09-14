@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/sequelize");
-//  Definición del modelo Account
+const sequelize = require("../config/database");
+
 const Account = sequelize.define(
   "Account",
   {
@@ -9,31 +9,23 @@ const Account = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    cbu: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      unique: true,
-    },
-    currency_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    cbu: { type: DataTypes.STRING(50), allowNull: false, unique: true },
+    currency_id: { type: DataTypes.INTEGER, allowNull: false },
     current_balance: {
       type: DataTypes.DECIMAL(15, 2),
-      defaultValue: 0,
+      allowNull: false,
+      defaultValue: 0.0,
     },
     is_default: {
-      type: DataTypes.TINYINT,
-      defaultValue: 0,
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {
-    tableName: "Accounts",
-    timestamps: false,
+    tableName: "accounts",
+    indexes: [{ unique: true, fields: ["user_id", "currency_id"] }],
   },
 );
 
