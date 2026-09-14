@@ -31,39 +31,49 @@ El proyecto cubre desde el **modelado conceptual** (diagrama Entidad-Relación) 
 
 ## Estructura del proyecto
 
-El repositorio está organizado en tres modelos que representan la evolución del diseño:
+La carpeta de base de datos está organizada en dos grandes áreas:
 
 ```
 database/
-├── 01_Received/                # Modelo inicial (sin mejoras)
-│   └── alke_wallet_modelo_received/
-│       ├── README.md
-│       ├── docs/
-│       ├── schema/
-│       ├── seeds/
-│       ├── migrations/
-│       ├── diagrams/
-│       └── tests/
-│
-├── 02_Approach/                # Modelo mejorado (tipos, FKs, índices)
-│   └── alke_wallet_modelo_approach/
-│       ├── README.md
-│       ├── docs/
-│       ├── schema/
-│       ├── seeds/
-│       ├── migrations/
-│       ├── diagrams/
-│       └── tests/
-│
-└── 03_Scalable/                # Modelo final normalizado (3FN + multi‑moneda)
-    └── alke_wallet_modelo_scalable/
-        ├── README.md
-        ├── docs/
-        ├── schema/
-        ├── seeds/
-        ├── migrations/
-        ├── diagrams/
-        └── tests/
+├── docs/                               # Documentación común del modelo y recursos de referencia
+├── alke_wallet_db/                     # Scripts SQL del proyecto y documentación del esquema final
+│   ├── README.md
+│   ├── docs/
+│   ├── schema/
+│   ├── seeds/
+│   ├── migrations/
+│   ├── diagrams/
+│   └── tests/
+└── modelos_db/                         # Modelos de evolución del diseño: received, approach y scalable
+    ├── README.md
+    ├── docs/
+    ├── 01_Received/
+    │   └── alke_wallet_modelo_received/
+    │       ├── README.md
+    │       ├── docs/
+    │       ├── schema/
+    │       ├── seeds/
+    │       ├── migrations/
+    │       ├── diagrams/
+    │       └── tests/
+    ├── 02_Approach/
+    │   └── alke_wallet_modelo_approach/
+    │       ├── README.md
+    │       ├── docs/
+    │       ├── schema/
+    │       ├── seeds/
+    │       ├── migrations/
+    │       ├── diagrams/
+    │       └── tests/
+    └── 03_Scalable/
+        └── alke_wallet_modelo_scalable/
+            ├── README.md
+            ├── docs/
+            ├── schema/
+            ├── seeds/
+            ├── migrations/
+            ├── diagrams/
+            └── tests/
 ```
 
 Cada modelo contiene:

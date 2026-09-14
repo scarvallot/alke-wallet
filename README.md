@@ -118,6 +118,7 @@ Para ingresar a la aplicación, utiliza las credenciales de prueba disponibles e
 alke-wallet/
 ├── data/                                   # Persistencia en archivos y registro de errores
 ├── database/                               # Modelos de datos, esquema y documentación SQL
+│   ├── docs/                               # Documentación general del modelo de datos
 │   ├── alke_wallet_db/                     # Base de datos SQL del proyecto
 │   └── modelos_db/                         # Modelos conceptuales y relacionales
 ├── Docs/                                   # Documentación del proyecto y entregas
@@ -127,12 +128,12 @@ alke-wallet/
 ├── src/                                    # Código de la aplicación Node.js/Express
 │   ├── config/                             # Configuración de entorno y conexión a MySQL
 │   ├── controllers/                        # Controladores HTTP y manejo de requests
-│   ├── middlewares/                        # Middleware de autenticación y validación
-│   ├── models/                             # Modelos de acceso a datos y persistencia
-│   ├── routes/                             # Definición de rutas de la aplicación
-│   ├── services/                           # Lógica de negocio y servicios transaccionales
-│   ├── views/                              # Plantillas EJS de la interfaz
-│   └── app.js                              # Configuración de la aplicación Express (middlewares, rutas, vistas)
+│   ├── middlewares/                         # Middleware de autenticación y validación
+│   ├── models/                              # Modelos de acceso a datos y persistencia
+│   ├── routes/                              # Definición de rutas de la aplicación
+│   ├── services/                            # Lógica de negocio y servicios transaccionales
+│   ├── views/                               # Plantillas EJS de la interfaz
+│   └── app.js                               # Configuración de la aplicación Express (middlewares, rutas, vistas)
 ├── tests/                                  # Pruebas y validaciones del proyecto
 ├── .gitignore                              # Archivos y carpetas ignorados por Git
 ├── .env                                    # Variables de entorno locales no versionadas
@@ -182,6 +183,111 @@ alke-wallet/
 ## Servidor y contenido estático
 
 El servidor utiliza el middleware `express.static()` apuntando al directorio `/public`. Se eligió esta arquitectura porque permite entregar los recursos del frontend (HTML, CSS, JS, imágenes) directamente al navegador de la forma más optimizada posible sin sobrecargar las rutas del backend. Las rutas API separadas (`/status`) se encargan de la transferencia de datos en formato JSON.
+
+---
+
+## Modelo final de base de datos (Scalable)
+
+El modelo final del proyecto se despliega siguiendo la estructura del esquema SQL provisto en la carpeta de base de datos.
+
+### Pasos para desplegar el modelo final
+
+1. **Clonar el repositorio**:
+
+   ```bash
+   git clone https://github.com/tu-usuario/alke-wallet.git
+   cd alke-wallet/database/03_Scalable/alke_wallet_modelo_scalable
+   ```
+
+2. **Crear el esquema y las tablas**:
+
+   ```bash
+   mysql -u root -p < schema/01_alke_wallet_schema.sql
+   ```
+
+3. **Aplicar las migraciones** (agrega auditoría, `first_name`/`last_name`/`is_active` en `Users`, `cbu` único en `Accounts` y la tabla `payees`):
+
+   ```bash
+   mysql -u root -p < migrations/alke_wallet_migrations.sql
+   ```
+
+   > ⚠️ **Importante:** el script de esquema crea la base de datos como `AlkeWallet`, mientras que el de migraciones hace `USE alkewallet` (en minúsculas). En sistemas donde MySQL distingue mayúsculas y minúsculas en los nombres de base de datos, esto puede fallar con `Unknown database 'alkewallet'`. Verifica el nombre real de la base antes de encadenar ambos scripts, o ejecuta manualmente `USE AlkeWallet;` antes de lanzar migraciones.
+
+4. **Poblar con datos de prueba**:
+
+   ```bash
+   mysql -u root -p < seeds/02_alke_wallet_seed.sql
+   ```
+
+5. **(Opcional) Ejecutar validaciones**:
+
+   ```bash
+   mysql -u root -p < tests/validaciones.sql
+   ```
+
+### Diagrama Entidad-Relación (modelo final)
+
+```mermaid
+erDiagram
+    Users {
+        int user_id PK
+        string user_name
+        string first_name
+        string last_name
+        string email UK
+        string password
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    Currencies {
+        int currency_id PK
+        string currency_name UK
+        string currency_symbol UK
+        datetime created_at
+        datetime updated_at
+    }
+
+    Accounts {
+        int account_id PK
+        int user_id FK
+        int currency_id FK
+        string cbu UK
+        decimal current_balance
+        boolean is_default
+        datetime created_at
+        datetime updated_at
+    }
+
+    Transactions {
+        int transaction_id PK
+        decimal importe
+        datetime transaction_date
+        int sender_account_id FK
+        int receive_account_id FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    Payees {
+        int payee_id PK
+        int user_id FK
+        string full_name
+        string cbu
+        string alias
+        int currency_id FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    Users ||--o{ Accounts : "tiene"
+    Currencies ||--o{ Accounts : "se usa en"
+    Accounts ||--o{ Transactions : "envía (sender)"
+    Accounts ||--o{ Transactions : "recibe (receiver)"
+    Users ||--o{ Payees : "agenda"
+    Currencies ||--o{ Payees : "se usa en"
+```
 
 ---
 
