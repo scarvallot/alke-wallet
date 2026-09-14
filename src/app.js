@@ -5,6 +5,13 @@ const session = require("express-session");
 const expressLayouts = require("express-ejs-layouts");
 const indexRouter = require("./routes/routes");
 
+// ==========================================
+// 1. IMPORTACIONES DE SWAGGER (Automático)
+// ==========================================
+const swaggerUi = require("swagger-ui-express");
+// Importamos el archivo JSON generado automáticamente en la raíz
+const swaggerDocument = require("../swagger-output.json");
+
 // Importar middlewares globales
 const {
   variablesGlobales,
@@ -13,18 +20,18 @@ const {
 
 const app = express();
 
-// 1. CONFIGURACIÓN DEL MOTOR DE PLANTILLAS (EJS + Layouts)
+// CONFIGURACIÓN DEL MOTOR DE PLANTILLAS (EJS + Layouts)
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(expressLayouts);
 app.set("layout", "layouts/main");
 
-// 2. MIDDLEWARES BÁSICOS Y DE FORMULARIOS
+// MIDDLEWARES BÁSICOS Y DE FORMULARIOS
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 
-// 3. Configuración de la sesión
+// Configuración de la sesión
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "mi-secreto-super-seguro",
@@ -33,11 +40,16 @@ app.use(
   }),
 );
 
-// 4. MIDDLEWARES GLOBALES (inyección de variables y logging)
+// MIDDLEWARES GLOBALES (inyección de variables y logging)
 app.use(variablesGlobales);
 app.use(registrarVisita);
 
-// 5. RUTAS
+// ==========================================
+// 2. ACTIVAR LA INTERFAZ DE SWAGGER
+// ==========================================
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// RUTAS
 app.use("/", indexRouter);
 
 module.exports = app;
