@@ -6,13 +6,23 @@
             <!-- Cabecera y Foto de Perfil (Futura) -->
             <div class="card-body text-center p-0 mb-4">
                 <div class="position-relative d-inline-block mb-3 profile-avatar-wrap">
-                    <!-- Ícono de placeholder para la futura foto de perfil (Sólido) -->
-                    <i class="fas fa-user-circle text-secondary profile-avatar-icon"></i>
-                    <!-- Pequeño botón flotante para editar perfil -->
-                    <span class="position-absolute bottom-0 right-0 bg-primary text-white rounded-circle p-2 shadow-sm profile-edit-icon">
-                        <i class="fas fa-pencil-alt fa-sm"></i>
-                    </span>
+                    <!-- Muestra el avatar si existe, o un ícono genérico si no hay -->
+                    <% if (usuario.avatar) { %>
+                        <img src="<%= usuario.avatar %>" alt="Foto de perfil" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid white;">
+                        <% } else { %>
+                            <i class="fas fa-user-circle text-secondary profile-avatar-icon" style="font-size: 120px;"></i>
+                            <% } %>
+                                <!-- Pequeño botón flotante para editar perfil (Versión reducida) -->
+                                <span class="position-absolute bg-primary text-white rounded-circle shadow profile-edit-icon d-flex align-items-center justify-content-center" style="cursor: pointer; width: 28px; height: 28px; bottom: 5px; right: 5px; border: 2px solid white; transition: all 0.2s;" onclick="document.getElementById('avatarInput').click();" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                    <i class="fas fa-pencil-alt fa-sm"></i>
+                                </span>
                 </div>
+
+                <!-- Formulario oculto que envía el archivo al backend -->
+                <form id="avatarForm" enctype="multipart/form-data" class="d-none">
+                    <input type="file" id="avatarInput" name="avatar" accept="image/jpeg, image/png, image/webp" onchange="document.getElementById('avatarForm').dispatchEvent(new Event('submit'));">
+                </form>
+
                 <!-- Mostramos el nombre dinámicamente desde la sesión -->
                 <h2 class="h4 font-weight-bold mb-1">
                     <%= usuario.first_name %>
