@@ -233,3 +233,16 @@ INSERT INTO `Transactions` (`sender_account_id`, `receive_account_id`, `importe`
 (21, 27, 300.00, '2026-07-27 08:45:00'),   -- Sofía → Pablo (USD)
 (24, 26, 110.00, '2026-07-28 13:10:00'),   -- Ana → Carlos (EUR)
 (22, 23, 60.00, '2026-07-29 17:30:00');    -- Nicolás → Sebastián F. (USD)
+
+
+-- =====================================================
+-- 5. Datos iniciales de payees
+--    Verificar antes que user_id = 21 exista realmente en users,
+--    o el INSERT fallara con el mismo error 1452 (FK) ya visto.
+-- =====================================================
+INSERT INTO `payees` (`user_id`, `full_name`, `cbu`, `alias`, `currency_id`)
+VALUES
+    (21, 'Carlos Silva', '10000000000000000001', 'carlos.silva.peso', 1),
+    (21, 'Carlos Silva', '10000000000000000002', 'carlos.silva.usd', 2),
+    (21, 'Maria Rojas',  '10000000000000000003', 'maria.rojas', 1),
+    (21, 'Empresa de Servicios SPA', '10000000000000000004', 'pago.servicios', 1);

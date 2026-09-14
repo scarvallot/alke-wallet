@@ -1,83 +1,108 @@
---- =====================================================
--- Migraciones — alke_wallet_db
--- Vacío: CHECK y restricciones están en schema/01_alke_wallet_schema.sql
+-- =====================================================
+-- Migraciones — alkewallet
+-- Nombre de base de datos unificado a "alkewallet" (todo en minuscula)
+-- para evitar el error "Unknown database" visto anteriormente.
 -- =====================================================
 
- -- Alkawallet DB
-USE alkewallet; /* Se selecciona la base de datos alkewallet para realizar las migraciones. */
+USE `alkewallet`; -- Se selecciona la base de datos alkewallet para realizar las migraciones.
 
-ALTER TABLE alkewallet.users ADD COLUMN first_name VARCHAR(255) NOT NULL;   /* Se agrega la columna first_name a la tabla users para almacenar el primer nombre del usuario.*/  
-ALTER TABLE alkewallet.users ADD COLUMN last_name VARCHAR(255) NOT NULL;    /* Se agrega la columna last_name a la tabla users para almacenar el apellido del usuario.*/
-ALTER TABLE alkewallet.users ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1;    /* Se agrega la columna is_active a la tabla users para indicar si el usuario está activo o no. Por defecto, se establece en 1 (activo).*/
-ALTER TABLE alkewallet.users MODIFY COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP; /* Se modifica la columna created_at de la tabla users para establecer un valor predeterminado de CURRENT_TIMESTAMP, lo que significa que se registrará automáticamente la fecha y hora de creación del registro. */
-ALTER TABLE alkewallet.users ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;    /* Se agrega la columna updated_at a la tabla users para almacenar la fecha y hora de la última actualización del registro. Se establece un valor predeterminado de CURRENT_TIMESTAMP y se actualiza automáticamente cada vez que se modifica el registro. */
+-- -----------------------------------------------------
+-- 1. Columnas de auditoria (created_at / updated_at)
+-- -----------------------------------------------------
+ALTER TABLE `alkewallet`.`transactions` ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `alkewallet`.`transactions` ADD COLUMN `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-#	Modificación de la tabla users para cambiar el orden de las columnas y establecer restricciones NOT NULL en first_name y last_name.
-ALTER TABLE alkewallet.users MODIFY COLUMN first_name VARCHAR(255) NOT NULL AFTER user_name;
-ALTER TABLE alkewallet.users MODIFY COLUMN last_name VARCHAR(255) NOT NULL AFTER first_name;
-ALTER TABLE users MODIFY COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER is_active;
+ALTER TABLE `alkewallet`.`accounts` ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `alkewallet`.`accounts` ADD COLUMN `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE `alkewallet`.`currencies` ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `alkewallet`.`currencies` ADD COLUMN `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+-- -----------------------------------------------------
+-- 2. Tabla users: nuevas columnas
+--    first_name / last_name se agregan con DEFAULT '' porque la tabla
+--    ya tiene filas: un ADD COLUMN ... NOT NULL sin DEFAULT falla en
+--    modo estricto (ERROR 1364) si existen registros previos.
+-- -----------------------------------------------------
+ALTER TABLE `alkewallet`.`users` ADD COLUMN `first_name` VARCHAR(255) NOT NULL DEFAULT ''
+    COMMENT 'Primer nombre del usuario';
+ALTER TABLE `alkewallet`.`users` ADD COLUMN `last_name` VARCHAR(255) NOT NULL DEFAULT ''
+    COMMENT 'Apellido del usuario';
+ALTER TABLE `alkewallet`.`users` ADD COLUMN `is_active` TINYINT(1) NOT NULL DEFAULT 1
+    COMMENT 'Indica si el usuario esta activo (1) o no (0)';
+ALTER TABLE `alkewallet`.`users` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    COMMENT 'Fecha y hora de creacion del registro';
+ALTER TABLE `alkewallet`.`users` ADD COLUMN `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    COMMENT 'Fecha y hora de la ultima actualizacion del registro';
 
-INSERT INTO alkewallet.users (user_name, first_name, last_name, email, password, is_active) 
-VALUES('admin', 'system', 'Administrator', 'admin@alkewallet.com',12345,1); /* Se inserta un registro en la tabla users con los valores especificados para user_name, first_name, last_name, email, password e is_active. Esto crea un usuario administrador con los datos proporcionados. */
+-- -----------------------------------------------------
+-- 3. Reordenar columnas de users (cosmetico, no afecta datos)
+-- -----------------------------------------------------
+ALTER TABLE `alkewallet`.`users` MODIFY COLUMN `first_name` VARCHAR(255) NOT NULL DEFAULT '' AFTER `user_name`;
+ALTER TABLE `alkewallet`.`users` MODIFY COLUMN `last_name`  VARCHAR(255) NOT NULL DEFAULT '' AFTER `first_name`;
+ALTER TABLE `alkewallet`.`users` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `is_active`;
 
--- DDL: 1. Creación de la estructura base de la tabla
+-- -----------------------------------------------------
+-- 4. Usuario administrador inicial
+--    NOTA: 'password' debe almacenar un HASH (bcrypt/argon2), nunca
+--    texto plano. Aqui se deja el placeholder entre comillas como
+--    recordatorio explicito de que se debe reemplazar por el hash real
+--    antes de correr esto en un ambiente real.
+-- -----------------------------------------------------
+INSERT INTO `alkewallet`.`users` (`user_name`, `first_name`, `last_name`, `email`, `password`, `is_active`)
+VALUES ('admin', 'system', 'Administrator', 'admin@alkewallet.com', '$2b$REEMPLAZAR_POR_HASH_REAL', 1);
+
+-- =====================================================
+-- 5. Tabla payees (agenda de contactos/beneficiarios)
+-- =====================================================
+
+-- DDL: creacion de la estructura base
 CREATE TABLE `payees` (
-  `payee_id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NOT NULL COMMENT 'ID del usuario dueño de la agenda',
-  `full_name` VARCHAR(255) COLLATE utf8mb3_bin NOT NULL COMMENT 'Nombre y apellido en una sola fila',
-  `cbu` VARCHAR(50) COLLATE utf8mb3_bin NOT NULL COMMENT 'Número de cuenta o CBU',
-  `alias` VARCHAR(100) COLLATE utf8mb3_bin DEFAULT NULL COMMENT 'Alias bancario',
+  `payee_id`    INT NOT NULL AUTO_INCREMENT,
+  `user_id`     INT NOT NULL COMMENT 'ID del usuario dueno de la agenda',
+  `full_name`   VARCHAR(255) COLLATE utf8mb3_bin NOT NULL COMMENT 'Nombre y apellido en una sola fila',
+  `cbu`         VARCHAR(50)  COLLATE utf8mb3_bin NOT NULL COMMENT 'Numero de cuenta o CBU',
+  `alias`       VARCHAR(100) COLLATE utf8mb3_bin DEFAULT NULL COMMENT 'Alias bancario',
   `currency_id` INT NOT NULL COMMENT 'Divisa de la cuenta del beneficiario',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- corregido: era "update_at"
   PRIMARY KEY (`payee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 
--- DDL: 2. Migración mediante ALTER TABLE (Relaciones y Reglas)
+-- DDL: relaciones y reglas de negocio
 ALTER TABLE `payees`
-  -- Relación con el usuario
-  ADD CONSTRAINT `fk_payees_user_id` 
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) 
+  ADD CONSTRAINT `fk_payees_user_id`
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
-    
-  -- Relación con la divisa
-  ADD CONSTRAINT `fk_payees_currency_id` 
-    FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`currency_id`) 
+
+  ADD CONSTRAINT `fk_payees_currency_id`
+    FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`currency_id`)
     ON DELETE RESTRICT ON UPDATE RESTRICT,
-    
-  -- Validación de longitud del CBU
-  ADD CONSTRAINT `chk_payees_cbu_length` 
+
+  ADD CONSTRAINT `chk_payees_cbu_length`
     CHECK (CHAR_LENGTH(`cbu`) >= 10);
 
-USE `AlkeWallet`;
-
--- 1. Asegurarnos de que la columna CBU en la tabla accounts sea obligatoria (NOT NULL)
---    y agregamos una restricción de unicidad (UNIQUE) para que jamás existan dos cuentas con el mismo CBU.
-ALTER TABLE `accounts`
-  MODIFY COLUMN `cbu` VARCHAR(50) COLLATE utf8mb3_bin NOT NULL COMMENT 'Número de cuenta o CBU transaccional',
-  ADD UNIQUE INDEX `uq_accounts_cbu` (`cbu` ASC) VISIBLE;
-
--- 2. (Opcional) Si también deseas reforzar la tabla payees para que el CBU de los contactos sea indexado
---    y las búsquedas para transferencias sean más rápidas:
 ALTER TABLE `payees`
   ADD INDEX `idx_payees_cbu` (`cbu` ASC) VISIBLE;
-  
--- DDL: 3. Alineación de la tabla Accounts con el CBU para transferencias
-ALTER TABLE `accounts`
-  ADD COLUMN `cbu` VARCHAR(50) COLLATE utf8mb3_bin NULL COMMENT 'Número de cuenta o CBU' AFTER `user_id`;
 
--- DML: Detección de CBU inicial para cuentas existentes
+-- =====================================================
+-- 6. Tabla accounts: CBU obligatorio y unico
+--    Orden corregido: primero se rellenan los CBU existentes
+--    (mientras la columna aun admite NULL), y RECIEN DESPUES se
+--    aplica NOT NULL + UNIQUE. El orden original lo tenia invertido
+--    y habria fallado con ERROR 1138 (Invalid use of NULL value).
+-- =====================================================
+
+-- 6.1 Backfill de CBU para cuentas existentes que aun no lo tengan
 SET SQL_SAFE_UPDATES = 0;
 UPDATE `accounts`
 SET `cbu` = CONCAT('100000000000000000', LPAD(account_id, 2, '0'))
 WHERE `account_id` > 0 AND `cbu` IS NULL;
 SET SQL_SAFE_UPDATES = 1;
 
--- DML: Migración e inserción inicial
-INSERT INTO `payees` (`user_id`, `full_name`, `cbu`, `alias`, `currency_id`) 
-VALUES 
-(21, 'Carlos Silva', '10000000000000000001', 'carlos.silva.peso', 1),
-(21, 'Carlos Silva', '10000000000000000002', 'carlos.silva.usd', 2),
-(21, 'María Rojas', '10000000000000000003', 'maria.rojas', 1),
-(21, 'Empresa de Servicios SPA', '10000000000000000004', 'pago.servicios', 1);
+-- 6.2 Recien ahora se puede forzar NOT NULL + UNIQUE sin filas nulas restantes
+ALTER TABLE `accounts`
+  MODIFY COLUMN `cbu` VARCHAR(50) COLLATE utf8mb3_bin NOT NULL
+    COMMENT 'Numero de cuenta o CBU transaccional'
+    AFTER `user_id`,
+  ADD UNIQUE INDEX `uq_accounts_cbu` (`cbu` ASC) VISIBLE;
