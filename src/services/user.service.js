@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const sequelize = require("../config/sequelize"); // Tu instancia de conexión
+const sequelize = require("../config/db"); // Tu instancia de conexión
 const { User, Account } = require("../models");
 
 const obtenerUsuarios = async ({ nombre, page, limit }) => {

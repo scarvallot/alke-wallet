@@ -4,9 +4,6 @@ const { testConnection } = require("./src/config/db"); // Importa la función pa
 
 const PORT = process.env.PORT || 3000;
 
-// Verifica la conexión antes de iniciar el servidor.
-testConnection();
-
 // Inicia el servidor en el puerto definido.
 const server = () => {
   app.listen(PORT, () => {
