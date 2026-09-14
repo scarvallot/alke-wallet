@@ -103,7 +103,7 @@ router.post("/api/contacts", protegerRuta, agregarContacto);
 // Verifica que el servidor esté funcionando.
 router.get("/status", verificarStatus);
 
-// Ruta para Gestion de usuarios
+// Ruta para Gestion de usuariosS
 router.post(
   "/admin/usuarios/:id/delete",
   protegerRuta,

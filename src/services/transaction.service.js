@@ -153,15 +153,26 @@ const procesarTransferencia = async (senderUserId, receiverUserId, monto) => {
     }
     const senderAccountId = senderRows[0].account_id;
 
-    const queryCuentaDestino =
-      "SELECT account_id FROM accounts WHERE cbu = ? FOR UPDATE";
-    const [receiverRows] = await connection.query(queryCuentaDestino, [
-      receiverUserId,
-    ]);
+    // Aceptar receptor por CBU o por user_id del destinatario.
+    // Esto mantiene compatibilidad con formulario web (CBU) y pruebas de Postman (user_id).
+    const receptor = String(receiverUserId).trim();
+    let receiverRows;
+
+    if (/^\d+$/.test(receptor)) {
+      const queryCuentaDestino =
+        "SELECT account_id FROM accounts WHERE user_id = ? AND is_default = 1 FOR UPDATE";
+      [receiverRows] = await connection.query(queryCuentaDestino, [
+        Number(receptor),
+      ]);
+    } else {
+      const queryCuentaDestino =
+        "SELECT account_id FROM accounts WHERE cbu = ? FOR UPDATE";
+      [receiverRows] = await connection.query(queryCuentaDestino, [receptor]);
+    }
 
     if (receiverRows.length === 0) {
       throw new Error(
-        "El CBU ingresado no corresponde a ninguna cuenta registrada en el sistema.",
+        "El destinatario indicado no corresponde a ninguna cuenta registrada en el sistema.",
       );
     }
     const receiverAccountId = receiverRows[0].account_id;
