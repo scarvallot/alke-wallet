@@ -1,17 +1,40 @@
 const User = require("./User");
+const Currency = require("./Currency");
 const Account = require("./Account");
+const Payee = require("./Payee");
+const Transaction = require("./Transaction");
 
-// Establecer relaciones entre modelos
-// Relación 1:N -> Un Usuario tiene muchas Cuentas
-User.hasMany(Account, {
-  foreignKey: "user_id",
-  as: "cuentas", // Este alias es la clave para anidar el JSON
+// Relaciones User -> Accounts y Payees
+User.hasMany(Account, { foreignKey: "user_id" });
+Account.belongsTo(User, { foreignKey: "user_id" });
+
+User.hasMany(Payee, { foreignKey: "user_id", onDelete: "CASCADE" });
+Payee.belongsTo(User, { foreignKey: "user_id" });
+
+// Relaciones Currency -> Accounts y Payees
+Currency.hasMany(Account, { foreignKey: "currency_id" });
+Account.belongsTo(Currency, { foreignKey: "currency_id" });
+
+Currency.hasMany(Payee, { foreignKey: "currency_id" });
+Payee.belongsTo(Currency, { foreignKey: "currency_id" });
+
+// Relaciones Transaction -> Accounts (Sender y Receiver)
+Account.hasMany(Transaction, {
+  foreignKey: "sender_account_id",
+  as: "SentTransactions",
+});
+Transaction.belongsTo(Account, {
+  foreignKey: "sender_account_id",
+  as: "SenderAccount",
 });
 
-// Relación 1:1 -> Una Cuenta pertenece a un solo Usuario
-Account.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "propietario",
+Account.hasMany(Transaction, {
+  foreignKey: "receive_account_id",
+  as: "ReceivedTransactions",
+});
+Transaction.belongsTo(Account, {
+  foreignKey: "receive_account_id",
+  as: "ReceiverAccount",
 });
 
-module.exports = { User, Account };
+module.exports = { User, Currency, Account, Payee, Transaction };

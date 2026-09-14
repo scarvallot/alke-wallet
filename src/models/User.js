@@ -1,49 +1,30 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/sequelize");
-//  Definición del modelo User
+const sequelize = require("../config/db");
+
 const User = sequelize.define(
   "User",
   {
-    user_id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    user_name: {
-      type: DataTypes.STRING(150),
-      allowNull: false,
-    },
+    user_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    user_name: { type: DataTypes.STRING(150), allowNull: false },
     first_name: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      defaultValue: "",
     },
     last_name: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      defaultValue: "",
     },
-    email: {
-      type: DataTypes.STRING(150),
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true, // Validación automática a nivel de aplicación
-      },
-    },
-    password: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
+    email: { type: DataTypes.STRING(150), allowNull: false, unique: true },
+    password: { type: DataTypes.STRING(255), allowNull: false },
     is_active: {
-      type: DataTypes.TINYINT,
-      defaultValue: 1,
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
-  {
-    tableName: "Users",
-    timestamps: true, // Maneja created_at y updated_at automáticamente
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-  },
+  { tableName: "users" },
 );
 
 module.exports = User;
