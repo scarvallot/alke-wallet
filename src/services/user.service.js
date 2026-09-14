@@ -1,60 +1,37 @@
-const { pool } = require("../config/db");
+const { Op } = require("sequelize");
+const sequelize = require("../config/sequelize"); // Tu instancia de conexión
+const { User, Account } = require("../models");
 
-// Obtiene usuarios con filtro opcional por nombre y paginación.
 const obtenerUsuarios = async ({ nombre, page, limit }) => {
-  // 1) Normaliza los valores de página y límite para evitar errores de entrada.
   const parsedPage = parseInt(page) || 1;
   const parsedLimit = parseInt(limit) || 10;
-
-  // 2) Calcula el desplazamiento de la paginación a partir de la página actual.
   const offset = (parsedPage - 1) * parsedLimit;
 
-  // 3) Define la consulta base y la consulta de conteo, además de un array de parámetros.
-  let query = "SELECT * FROM alkewallet.users";
-  let countQuery = "SELECT COUNT(*) as total FROM alkewallet.users";
-  const queryParams = [];
-
-  // 4) Si el usuario indicó un filtro por nombre, se agrega la condición WHERE.
+  // Construcción dinámica de la condición WHERE[cite: 15]
+  const whereClause = {};
   if (nombre) {
-    const whereClause = " WHERE user_name LIKE ?";
-    query += whereClause;
-    countQuery += whereClause;
-    queryParams.push(`%${nombre}%`);
+    whereClause.user_name = { [Op.like]: `%${nombre}%` };
   }
 
-  // 5) Agrega el límite y el desplazamiento para devolver solo una página de resultados.
-  query += " LIMIT ? OFFSET ?";
-  const mainQueryParams = [...queryParams, parsedLimit, offset];
-
-  // 6) Ejecuta la consulta de conteo para saber la cantidad total de registros.
-  const [countResult] = await pool.query(countQuery, queryParams);
-  const totalRecords = countResult[0].total;
-
-  // 7) Ejecuta la consulta principal con la paginación y el filtro aplicado.
-  const [rows] = await pool.query(query, mainQueryParams);
-
-  // 8) Elimina la contraseña antes de devolver datos al cliente, manteniendo solo información segura.
-  const usuariosSeguros = rows.map((usuario) => {
-    const { password, ...restoDelUsuario } = usuario;
-    return restoDelUsuario;
+  // Sequelize ejecuta el COUNT y el SELECT simultáneamente
+  const { count, rows } = await User.findAndCountAll({
+    where: whereClause,
+    limit: parsedLimit,
+    offset: offset,
+    attributes: { exclude: ["password"] }, // Elimina la contraseña de los resultados[cite: 15]
   });
 
-  // 9) Calcula cuántas páginas tendrá la paginación según el total de registros.
-  const totalPages = Math.ceil(totalRecords / parsedLimit);
-
-  // 10) Devuelve la respuesta estructurada con metadatos y usuarios seguros.
   return {
     meta: {
-      total_records: totalRecords,
+      total_records: count,
       current_page: parsedPage,
-      total_pages: totalPages,
+      total_pages: Math.ceil(count / parsedLimit),
       limit: parsedLimit,
     },
-    data: usuariosSeguros,
+    data: rows,
   };
 };
 
-// Registra un usuario nuevo de forma transaccional, genera su CBU y su cuenta en $0.
 const registrarUsuarioService = async ({
   first_name,
   last_name,
@@ -62,171 +39,124 @@ const registrarUsuarioService = async ({
   email,
   password,
 }) => {
-  // 1. Solicitar conexión exclusiva para la transacción ACID
-  const connection = await pool.getConnection();
+  // 1. Solicitar conexión exclusiva para la transacción ACID[cite: 15]
+  const t = await sequelize.transaction();
 
   try {
-    // 2. Iniciar la transacción
-    await connection.beginTransaction();
+    // ACCIÓN A: Crear el Usuario[cite: 15]
+    const nuevoUsuario = await User.create(
+      {
+        first_name,
+        last_name,
+        user_name,
+        email,
+        password,
+        is_active: 1,
+      },
+      { transaction: t },
+    );
 
-    // ACCIÓN A: Crear el Usuario
-    // Nota: Mantenemos el guardado de la contraseña tal cual lo tienes estructurado actualmente.
-    const queryUser = `
-      INSERT INTO alkewallet.users (first_name, last_name, user_name, email, password, is_active)
-      VALUES (?, ?, ?, ?, ?, 1)
-    `;
-    const [userResult] = await connection.query(queryUser, [
-      first_name,
-      last_name,
-      user_name,
-      email,
-      password,
-    ]);
+    // ACCIÓN B: Generar un CBU único[cite: 15]
+    const cbuGenerado = "20" + String(nuevoUsuario.user_id).padStart(18, "0");
 
-    const nuevoUserId = userResult.insertId;
+    // ACCIÓN C: Crear la Cuenta Principal[cite: 15]
+    await Account.create(
+      {
+        user_id: nuevoUsuario.user_id,
+        cbu: cbuGenerado,
+        currency_id: 1, // Peso Chileno[cite: 15]
+        current_balance: 0,
+        is_default: 1,
+      },
+      { transaction: t },
+    );
 
-    // ACCIÓN B: Generar un CBU único de exactamente 20 dígitos
-    // Cambiamos el prefijo a "20" para evitar colisiones con el seed original (que usa "10")
-    const cbuGenerado = "20" + String(nuevoUserId).padStart(18, "0");
-
-    // ACCIÓN C: Crear la Cuenta Principal
-    // currency_id = 1 (Peso Chileno), current_balance = 0, is_default = 1
-    const queryAccount = `
-      INSERT INTO alkewallet.accounts (user_id, cbu, currency_id, current_balance, is_default)
-      VALUES (?, ?, 1, 0, 1)
-    `;
-    await connection.query(queryAccount, [nuevoUserId, cbuGenerado]);
-
-    // 3. Confirmar la transacción (Commit)
-    await connection.commit();
-
-    // Retornamos el ID insertado para mantener compatibilidad con tu controlador
-    return nuevoUserId;
+    // 3. Confirmar la transacción[cite: 15]
+    await t.commit();
+    return nuevoUsuario.user_id;
   } catch (error) {
-    // 4. ROLLBACK: Revertir todo si alguna de las acciones falla (ej. email duplicado)
-    await connection.rollback();
+    // 4. ROLLBACK en caso de fallo[cite: 15]
+    await t.rollback();
     throw error;
-  } finally {
-    // 5. Liberar la conexión
-    connection.release();
   }
 };
-// Devuelve el perfil público del usuario identificado por su ID.
-const obtenerPerfilUsuario = async (userId) => {
-  const query = `
-    SELECT user_id, user_name, first_name, last_name, email
-    FROM AlkeWallet.Users
-    WHERE user_id = ?
-  `;
 
-  const [rows] = await pool.query(query, [userId]);
-  return rows[0] || null;
+// Devuelve el perfil público del usuario[cite: 15]
+const obtenerPerfilUsuario = async (userId) => {
+  const usuario = await User.findByPk(userId, {
+    attributes: ["user_id", "user_name", "first_name", "last_name", "email"],
+  });
+  return usuario ? usuario.toJSON() : null;
 };
 
-// Actualiza los datos básicos del perfil del usuario.
+// Actualiza los datos básicos del perfil[cite: 15]
 const actualizarPerfilUsuario = async (
   userId,
   { first_name, last_name, email },
 ) => {
-  const query = `
-    UPDATE AlkeWallet.Users
-    SET first_name = ?, last_name = ?, email = ?
-    WHERE user_id = ?
-  `;
-
-  await pool.query(query, [first_name, last_name, email, userId]);
+  await User.update(
+    { first_name, last_name, email },
+    { where: { user_id: userId } },
+  );
 };
 
-// Actualiza un usuario identificado por ID con validación previa de existencia.
+// Actualiza un usuario con validación previa de existencia[cite: 15]
 const actualizarUsuarioService = async (
   id,
   { user_name, first_name, last_name, email },
 ) => {
-  const [checkRows] = await pool.query(
-    "SELECT user_id FROM AlkeWallet.Users WHERE user_id = ?",
-    [id],
-  );
+  const usuarioExistente = await User.findByPk(id, { attributes: ["user_id"] });
 
-  if (checkRows.length === 0) {
+  if (!usuarioExistente) {
     throw new Error("El ID de usuario proporcionado no existe en el sistema.");
   }
 
-  const query = `
-    UPDATE AlkeWallet.Users
-    SET user_name = ?, first_name = ?, last_name = ?, email = ?
-    WHERE user_id = ?
-  `;
-
-  await pool.query(query, [user_name, first_name, last_name, email, id]);
+  await User.update(
+    { user_name, first_name, last_name, email },
+    { where: { user_id: id } },
+  );
 };
 
-// Comprueba la contraseña actual antes de actualizar la nueva.
+// Comprueba la contraseña actual antes de actualizar[cite: 15]
 const actualizarPasswordUsuario = async (
   userId,
   current_password,
   new_password,
 ) => {
-  const checkQuery = `
-    SELECT user_id FROM AlkeWallet.Users
-    WHERE user_id = ? AND password = ?
-  `;
+  const usuario = await User.findOne({
+    where: { user_id: userId, password: current_password },
+    attributes: ["user_id"],
+  });
 
-  const [checkRows] = await pool.query(checkQuery, [userId, current_password]);
-
-  if (checkRows.length === 0) {
+  if (!usuario) {
     throw new Error("La contraseña actual no coincide.");
   }
 
-  const updateQuery = `
-    UPDATE AlkeWallet.Users
-    SET password = ?
-    WHERE user_id = ?
-  `;
-
-  await pool.query(updateQuery, [new_password, userId]);
+  await User.update({ password: new_password }, { where: { user_id: userId } });
 };
 
-// Valida al usuario mediante nombre o correo electrónico y contraseña.
+// Valida al usuario mediante nombre o correo electrónico[cite: 15]
 const validarCredenciales = async (identificador, password) => {
-  const query = `
-    SELECT user_id, user_name, first_name, email
-    FROM AlkeWallet.Users
-    WHERE (user_name = ? OR email = ?) AND password = ?
-  `;
+  const usuario = await User.findOne({
+    where: {
+      [Op.or]: [{ user_name: identificador }, { email: identificador }],
+      password: password,
+    },
+    attributes: ["user_id", "user_name", "first_name", "email"],
+  });
 
-  const [rows] = await pool.query(query, [
-    identificador,
-    identificador,
-    password,
-  ]);
-
-  if (rows.length > 0) {
-    return rows[0];
-  }
-
-  return null;
+  return usuario ? usuario.toJSON() : null;
 };
 
-// Eliminación lógica controlada con validación previa de existencia
+// Eliminación lógica controlada (is_active = 0)[cite: 15]
 const eliminarUsuarioAdmin = async (id) => {
-  // 1. Validar que el ID exista físicamente en la base de datos
-  const [rows] = await pool.query(
-    "SELECT user_id FROM AlkeWallet.Users WHERE user_id = ?",
-    [id],
-  );
+  const usuario = await User.findByPk(id, { attributes: ["user_id"] });
 
-  if (rows.length === 0) {
+  if (!usuario) {
     throw new Error("El ID de usuario proporcionado no existe en el sistema.");
   }
 
-  // Opcional: Consulta para eliminación física (hard delete) en caso de requerirse
-  // const queryHard = "DELETE FROM AlkeWallet.Users WHERE user_id = ?";
-
-  // 2. Ejecutar la desactivación lógica si el registro existe
-  const querySoft =
-    "UPDATE AlkeWallet.Users SET is_active = 0 WHERE user_id = ?";
-
-  await pool.query(querySoft, [id]);
+  await User.update({ is_active: 0 }, { where: { user_id: id } });
 };
 
 module.exports = {

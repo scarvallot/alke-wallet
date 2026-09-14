@@ -1,40 +1,39 @@
-const { pool } = require("../config/db");
+const { Payee } = require("../models");
 
 const agregarPayeeService = async (userId, payeeData) => {
   const { full_name, cbu, alias, currency_id } = payeeData;
 
-  // 1. Validar que el CBU no esté ya registrado para este mismo usuario
-  const queryCheck =
-    "SELECT payee_id FROM payees WHERE user_id = ? AND cbu = ?";
-  const [existentes] = await pool.query(queryCheck, [userId, cbu]);
+  // 1. Validar que el CBU no esté registrado utilizando findOne[cite: 9]
+  const existente = await Payee.findOne({
+    where: { user_id: userId, cbu },
+  });
 
-  if (existentes.length > 0) {
+  if (existente) {
     throw new Error(
       "Este CBU ya se encuentra registrado en tu libreta de contactos.",
     );
   }
 
-  // 2. Insertar el nuevo destinatario
-  const queryInsert = `
-    INSERT INTO payees (user_id, full_name, cbu, alias, currency_id)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-
-  const [resultado] = await pool.query(queryInsert, [
-    userId,
+  // 2. Insertar el nuevo destinatario utilizando create[cite: 9]
+  const nuevoPayee = await Payee.create({
+    user_id: userId,
     full_name,
     cbu,
-    alias || null,
+    alias: alias || null,
     currency_id,
-  ]);
+  });
 
-  return { payee_id: resultado.insertId };
+  return { payee_id: nuevoPayee.payee_id };
 };
 
 const obtenerPayeesService = async (userId) => {
-  const query =
-    "SELECT payee_id, full_name, cbu, alias, currency_id FROM payees WHERE user_id = ? ORDER BY full_name ASC";
-  const [contactos] = await pool.query(query, [userId]);
+  // Reemplaza la consulta SELECT con ORDER BY[cite: 9]
+  const contactos = await Payee.findAll({
+    where: { user_id: userId },
+    order: [["full_name", "ASC"]],
+    attributes: ["payee_id", "full_name", "cbu", "alias", "currency_id"],
+  });
+
   return contactos;
 };
 
