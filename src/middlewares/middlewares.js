@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const multer = require("multer"); // <-- NUEVO
+const multer = require("multer");
+const jwt = require("jsonwebtoken");
 
 // Protege rutas exigiendo sesión activa.
 function protegerRuta(req, res, next) {
@@ -87,11 +88,39 @@ const upload = multer({
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
 });
 
-// Exportamos upload junto con el resto
+const verificarToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+
+  // CONSIGNA: 401 Token ausente
+  if (!authHeader) {
+    return res.status(401).json({
+      error: "No autorizado",
+      message: "Token ausente en la cabecera Authorization.",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.usuario_jwt = decoded; // Guardamos los datos decodificados
+
+    // CONSIGNA: En caso de éxito, permita continuar
+    next();
+  } catch (error) {
+    // CONSIGNA: 403 Token inválido
+    return res.status(403).json({
+      error: "Prohibido",
+      message: "Token inválido o expirado.",
+    });
+  }
+};
+
 module.exports = {
   protegerRuta,
   registrarVisita,
   variablesGlobales,
   requerirAdmin,
   upload,
+  verificarToken,
 };

@@ -4,6 +4,7 @@ const {
   protegerRuta,
   requerirAdmin,
   upload,
+  verificarToken,
 } = require("../middlewares/middlewares");
 
 // Importaciones modulares desde los nuevos controladores
@@ -70,10 +71,28 @@ router.get("/logout", cerrarSesion);
 router.get("/register", mostrarRegistro);
 router.post("/register", registrarUsuario);
 
-//! Rutas de perfil y actualización de datos
+//! 1. Ruta para la Interfaz Web (Lo que ve el usuario en su navegador)
+// Utiliza "protegerRuta" (que revisa la sesión de cookies) y renderiza el HTML
 router.get("/profile", protegerRuta, mostrarProfile);
+
+//! 2. Ruta para la API y la Consigna de Evaluación (Lo que pruebas en Postman)
+// Utiliza "verificarToken" (que revisa el JWT) y devuelve un JSON
+router.get("/perfil", verificarToken, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Acceso concedido a la ruta protegida.",
+    perfil: req.usuario_jwt, // Mostramos los datos que venían dentro del token
+  });
+});
+
+//! Resto de rutas de actualización...
 router.put("/profile/update", protegerRuta, actualizarPerfil);
-router.put("/profile/password", protegerRuta, actualizarPassword);
+router.put(
+  "/profile/password",
+  protegerRuta,
+  verificarToken,
+  actualizarPassword,
+);
 
 //! Rutas de operaciones de la cartera y transacciones
 router.get("/menu", protegerRuta, mostrarMenu);
@@ -85,7 +104,12 @@ router.get("/dashboard", protegerRuta, requerirAdmin, mostrarDashboardAdmin);
 
 //! Rutas de API para operaciones de la cartera y transacciones
 router.get("/api/saldo", protegerRuta, consultarSaldo);
-router.post("/api/transfer", protegerRuta, realizarTransferencia);
+router.post(
+  "/api/transfer",
+  protegerRuta,
+  verificarToken,
+  realizarTransferencia,
+);
 router.get("/api/transactions", protegerRuta, obtenerHistorial);
 
 //! Rutas de API para agenda de contactos
@@ -105,6 +129,7 @@ router.post(
   upload.single("avatar"), // Multer procesa el archivo del campo "avatar"
   subirAvatar, // Nuestro controlador guarda en DB
 );
+
 //! Ruta de verificación de estado del servidor
 router.get("/status", verificarStatus);
 

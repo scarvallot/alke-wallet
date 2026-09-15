@@ -224,58 +224,85 @@ $(document).ready(function () {
     const $title = $("#transferResultTitle");
     const $message = $("#transferResultMessage");
 
+    // Ocultamos para evitar pestañeo
+    $resultCard.hide();
+
     try {
+      // 1. RECUPERAR EL TOKEN DEL NAVEGADOR
+      const token = localStorage.getItem("token");
+
+      // 2. INYECTARLO EN LA CABECERA (HEADERS)
       const response = await fetch("/api/transfer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // <--- AQUÍ VA EL JWT
+        },
         body: JSON.stringify({
           receiverId: cbuDestino,
           amount: monto,
         }),
       });
 
+      // 3. Manejo de sesión/token expirado
+      if (response.status === 401) {
+        $icon.html('<i class="fas fa-user-lock fa-3x text-danger"></i>');
+        $title
+          .text("Sesión expirada")
+          .removeClass("text-success")
+          .addClass("text-danger");
+        $message.text("Vuelve a iniciar sesión para continuar.");
+        $resultCard.slideDown(300);
+
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2500);
+        return;
+      }
+
       const data = await response.json();
 
-      // Desplegamos la tarjeta de resultado que agregaste en el HTML
-      $resultCard.slideDown();
-
       if (data.success) {
-        // Renderizado de Éxito
         $icon.html('<i class="fas fa-check-circle fa-3x text-success"></i>');
-        $title.text("¡Transferencia Exitosa!");
-        $title.removeClass("text-danger").addClass("text-success");
+        $title
+          .text("¡Transferencia Exitosa!")
+          .removeClass("text-danger")
+          .addClass("text-success");
         $message.text(
           `Has enviado $${monto.toLocaleString("es-CL")} a ${nombre}.`,
         );
 
-        // Recargamos después de 2.5 segundos para reflejar el nuevo saldo
+        $resultCard.slideDown(300);
         setTimeout(() => window.location.reload(), 2500);
       } else {
-        // Renderizado de Error (Ej: Saldo insuficiente)
         $icon.html('<i class="fas fa-times-circle fa-3x text-danger"></i>');
-        $title.text("Transferencia Rechazada");
-        $title.removeClass("text-success").addClass("text-danger");
-        $message.text(data.message || "Saldo insuficiente o cuenta inválida.");
+        $title
+          .text("Transferencia Rechazada")
+          .removeClass("text-success")
+          .addClass("text-danger");
+        $message.text(
+          data.message || "Saldo insuficiente, cuenta o token inválido.",
+        );
 
-        // Damos 3 segundos para leer el error, luego volvemos a mostrar el formulario
+        $resultCard.slideDown(300);
         setTimeout(() => {
-          $resultCard.slideUp(300, () => $("#transferForm").slideDown());
+          $resultCard.slideUp(300, () => $("#transferForm").slideDown(300));
         }, 3000);
       }
     } catch (error) {
       console.error("Error de red:", error);
-
-      // Renderizado de Error Crítico (Caída de red)
-      $resultCard.slideDown();
       $icon.html(
         '<i class="fas fa-exclamation-triangle fa-3x text-warning"></i>',
       );
-      $title.text("Error de Sistema");
-      $title.removeClass("text-success").addClass("text-danger");
+      $title
+        .text("Error de Sistema")
+        .removeClass("text-success")
+        .addClass("text-danger");
       $message.text("Ocurrió un problema de red. Intenta nuevamente.");
 
+      $resultCard.slideDown(300);
       setTimeout(() => {
-        $resultCard.slideUp(300, () => $("#transferForm").slideDown());
+        $resultCard.slideUp(300, () => $("#transferForm").slideDown(300));
       }, 3000);
     }
   }

@@ -12,7 +12,7 @@ const server = async () => {
     // await testConnection();
 
     // 2. SEQUELIZE: Alterar la tabla para agregar la columna avatar
-    await User.sync({ alter: true });
+    //  await User.sync({ alter: true });
     console.log("Tabla 'users' verificada y actualizada en la base de datos.");
 
     // 3. Levantar el servidor
