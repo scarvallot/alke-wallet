@@ -61,7 +61,7 @@ const subirAvatar = async (req, res) => {
       // Verificar si el archivo viejo existe físicamente y borrarlo
       if (fs.existsSync(rutaAvatarViejo)) {
         fs.unlinkSync(rutaAvatarViejo);
-        console.log("Avatar anterior eliminado del servidor:", rutaAvatarViejo);
+        //console.log("Avatar anterior eliminado del servidor:", rutaAvatarViejo);
       }
     }
 
