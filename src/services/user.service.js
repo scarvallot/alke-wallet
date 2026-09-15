@@ -84,7 +84,15 @@ const registrarUsuarioService = async ({
 // Devuelve el perfil público del usuario[cite: 15]
 const obtenerPerfilUsuario = async (userId) => {
   const usuario = await User.findByPk(userId, {
-    attributes: ["user_id", "user_name", "first_name", "last_name", "email"],
+    // ¡AQUÍ ESTÁ EL TRUCO! Agregamos "avatar" al final de la lista
+    attributes: [
+      "user_id",
+      "user_name",
+      "first_name",
+      "last_name",
+      "email",
+      "avatar",
+    ],
   });
   return usuario ? usuario.toJSON() : null;
 };
@@ -142,7 +150,8 @@ const validarCredenciales = async (identificador, password) => {
       [Op.or]: [{ user_name: identificador }, { email: identificador }],
       password: password,
     },
-    attributes: ["user_id", "user_name", "first_name", "email"],
+    // ¡AQUÍ TAMBIÉN! Agregamos "avatar"
+    attributes: ["user_id", "user_name", "first_name", "email", "avatar"],
   });
 
   return usuario ? usuario.toJSON() : null;

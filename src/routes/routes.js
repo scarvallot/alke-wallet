@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { protegerRuta, requerirAdmin } = require("../middlewares/middlewares");
+const {
+  protegerRuta,
+  requerirAdmin,
+  upload,
+} = require("../middlewares/middlewares");
 
 // Importaciones modulares desde los nuevos controladores
 const {
@@ -44,7 +48,10 @@ const {
 } = require("../controllers/views.controller");
 
 // NUEVA IMPORTACIÓN: Controlador de Usuarios (ORM)
-const { obtenerCuentasUsuarioORM } = require("../controllers/user.controller");
+const {
+  obtenerCuentasUsuarioORM,
+  subirAvatar,
+} = require("../controllers/user.controller");
 
 //! Rutas de administración de usuarios
 router.get("/usuarios", obtenerUsuarios);
@@ -91,7 +98,13 @@ router.get(
   protegerRuta,
   obtenerCuentasUsuarioORM,
 );
-
+//! Ruta de API carga de Avatar
+router.post(
+  "/upload",
+  protegerRuta, // Verificamos sesión
+  upload.single("avatar"), // Multer procesa el archivo del campo "avatar"
+  subirAvatar, // Nuestro controlador guarda en DB
+);
 //! Ruta de verificación de estado del servidor
 router.get("/status", verificarStatus);
 

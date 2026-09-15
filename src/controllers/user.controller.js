@@ -34,6 +34,46 @@ const obtenerCuentasUsuarioORM = async (req, res) => {
   }
 };
 
+const subirAvatar = async (req, res) => {
+  try {
+    // 1. Validar que multer haya procesado un archivo
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Por favor, selecciona una imagen para subir.",
+      });
+    }
+
+    // 2. Definimos las variables de forma global dentro del try
+    const avatarUrl = `/uploads/${req.file.filename}`;
+    const userId = req.session.usuario.user_id;
+
+    // 3. Guardar la ruta en la base de datos (Modelo User)
+    await User.update({ avatar: avatarUrl }, { where: { user_id: userId } });
+
+    // 4. Actualizar la memoria de la sesión
+    req.session.usuario.avatar = avatarUrl;
+
+    // 5. Forzar el guardado físico de la sesión antes de responder
+    req.session.save((err) => {
+      if (err) console.error("Error al guardar sesión:", err);
+
+      return res.status(200).json({
+        success: true,
+        message: "Imagen de perfil actualizada correctamente.",
+        url: avatarUrl,
+      });
+    });
+  } catch (error) {
+    console.error("Error al subir archivo:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error interno al procesar la imagen.",
+    });
+  }
+};
+
 module.exports = {
   obtenerCuentasUsuarioORM,
+  subirAvatar,
 };
