@@ -4,8 +4,8 @@ const {
   actualizarPerfilUsuario,
   actualizarPasswordUsuario,
 } = require("../services/user.service");
+const jwt = require("jsonwebtoken"); // Agregar arriba
 
-// Inicia sesión validando usuario y contraseña y guardando datos en sesión.
 const procesarLogin = async (req, res) => {
   const { username, password } = req.body;
   const usuario = await validarCredenciales(username, password);
@@ -13,13 +13,21 @@ const procesarLogin = async (req, res) => {
   if (!usuario) {
     return res.status(401).json({
       success: false,
-      message: "Credenciales incorrectas. Por favor, intenta de nuevo.",
+      message: "Credenciales incorrectas.",
     });
   }
+  // Sesión tradicional para las vistas
   req.session.usuario = usuario;
+  //  Generamos el JWT (Expira en 1 hora)
+  const token = jwt.sign({ user_id: usuario.user_id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  // Enviamos el token al frontend
   return res.status(200).json({
     success: true,
     redirect: "/menu",
+    token: token,
   });
 };
 

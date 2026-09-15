@@ -35,9 +35,12 @@ $(document).ready(function () {
       });
 
       const data = await response.json();
-
       if (data.success) {
-        // Redirección manejada por el frontend
+        // 1. ¡NUEVO! Guardamos el token en el navegador
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        // 2. Redirigimos al menú
         window.location.href = data.redirect;
       } else {
         mostrarAlerta(data.message, "danger");

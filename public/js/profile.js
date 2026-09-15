@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  // Función global para mostrar alertas en esta vista
   function mostrarAlerta(mensaje, tipo) {
     $("#alertContainer").html(
       `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
@@ -7,6 +8,7 @@ $(document).ready(function () {
       </div>`,
     );
   }
+
   $("#updateProfileForm").submit(async function (event) {
     event.preventDefault();
 
@@ -80,6 +82,86 @@ $(document).ready(function () {
     } catch (error) {
       console.error("Error al actualizar contraseña:", error);
       mostrarAlerta("Error al intentar actualizar la contraseña.", "danger");
+    }
+  });
+
+  // A. Mostrar la previsualización y revelar el botón "Guardar Foto"
+  $("#avatarInput").on("change", function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar formato
+      const tiposValidos = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!tiposValidos.includes(file.type)) {
+        mostrarAlerta(
+          "Formato no válido. Solo se permiten imágenes JPG, PNG o WEBP.",
+          "warning",
+        );
+        return;
+      }
+
+      // Validar tamaño (Máximo 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        mostrarAlerta(
+          "La imagen es muy pesada. El tamaño máximo es 2MB.",
+          "warning",
+        );
+        return;
+      }
+
+      // Previsualizar la imagen
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        $("#avatarPreview").attr("src", e.target.result);
+        $("#btnGuardarFoto").removeClass("d-none");
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // B. Manejar el clic en "Guardar Foto" y enviar al backend
+  $("#avatarForm").submit(async function (event) {
+    event.preventDefault();
+
+    const fileInput = document.getElementById("avatarInput");
+    if (fileInput.files.length === 0) return;
+
+    const btnGuardar = $("#btnGuardarFoto");
+    btnGuardar
+      .prop("disabled", true)
+      .html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+
+    const formData = new FormData();
+    formData.append("avatar", fileInput.files[0]);
+
+    try {
+      const response = await fetch("/upload", {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        mostrarAlerta("¡Foto de perfil actualizada exitosamente!", "success");
+        setTimeout(() => window.location.reload(true), 1200);
+      } else {
+        mostrarAlerta(data.message, "danger");
+        btnGuardar
+          .prop("disabled", false)
+          .html('<i class="fas fa-save mr-1"></i> Guardar Foto');
+      }
+    } catch (error) {
+      console.error("Error al subir avatar:", error);
+      mostrarAlerta("Error al intentar subir la imagen.", "danger");
+      btnGuardar
+        .prop("disabled", false)
+        .html('<i class="fas fa-save mr-1"></i> Guardar Foto');
     }
   });
 });
