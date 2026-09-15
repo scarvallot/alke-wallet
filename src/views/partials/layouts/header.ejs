@@ -31,11 +31,17 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="perfilDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-                                    <i class="fas fa-user-circle fa-lg mr-2 text-secondary"></i>
+                                    <!-- INICIO DE CAMBIO: Avatar dinámico -->
+                                    <% if (locals.usuario.avatar) { %>
+                                        <img src="<%= locals.usuario.avatar %>" alt="Avatar" class="rounded-circle mr-2 shadow-sm" style="width: 32px; height: 32px; object-fit: cover; border: 1px solid #dee2e6;">
+                                        <% } else { %>
+                                            <i class="fas fa-user-circle fa-lg mr-2 text-secondary"></i>
+                                            <% } %>
+                                                <!-- FIN DE CAMBIO -->
 
-                                    <span class="font-weight-bold">
-                                        <%= locals.usuario.nombre || locals.usuario.first_name || locals.usuario.user_name %>
-                                    </span>
+                                                <span class="font-weight-bold">
+                                                    <%= locals.usuario.nombre || locals.usuario.first_name || locals.usuario.user_name %>
+                                                </span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="perfilDropdown">

@@ -6,23 +6,26 @@
             <!-- Cabecera y Foto de Perfil (Futura) -->
             <div class="card-body text-center p-0 mb-4">
                 <div class="position-relative d-inline-block mb-3 profile-avatar-wrap">
-                    <!-- Muestra el avatar si existe, o un ícono genérico si no hay -->
-                    <% if (usuario.avatar) { %>
-                        <img src="<%= usuario.avatar %>" alt="Foto de perfil" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid white;">
-                        <% } else { %>
-                            <i class="fas fa-user-circle text-secondary profile-avatar-icon" style="font-size: 120px;"></i>
-                            <% } %>
-                                <!-- Pequeño botón flotante para editar perfil (Versión reducida) -->
-                                <span class="position-absolute bg-primary text-white rounded-circle shadow profile-edit-icon d-flex align-items-center justify-content-center" style="cursor: pointer; width: 28px; height: 28px; bottom: 5px; right: 5px; border: 2px solid white; transition: all 0.2s;" onclick="document.getElementById('avatarInput').click();" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                    <i class="fas fa-pencil-alt fa-sm"></i>
-                                </span>
+                    <!-- ID avatarPreview agregado para cambiar la imagen con JS antes de subirla -->
+                    <!-- object-fit: cover garantiza que la imagen se ajuste sin deformarse -->
+                    <img id="avatarPreview" src="<%= usuario.avatar ? usuario.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>" alt="Foto de perfil" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid white; background-color: #f8f9fa;">
+
+                    <!-- Botón flotante del lápiz -->
+                    <span class="position-absolute bg-primary text-white rounded-circle shadow profile-edit-icon d-flex align-items-center justify-content-center" style="cursor: pointer; width: 28px; height: 28px; bottom: 5px; right: 5px; border: 2px solid white; transition: all 0.2s;" onclick="document.getElementById('avatarInput').click();" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-pencil-alt fa-sm"></i>
+                    </span>
                 </div>
 
-                <!-- Formulario oculto que envía el archivo al backend -->
-                <form id="avatarForm" enctype="multipart/form-data" class="d-none">
-                    <input type="file" id="avatarInput" name="avatar" accept="image/jpeg, image/png, image/webp" onchange="document.getElementById('avatarForm').dispatchEvent(new Event('submit'));">
-                </form>
+                <!-- Formulario modificado: sin onchange automático -->
+                <form id="avatarForm" enctype="multipart/form-data" class="text-center mb-4">
+                    <!-- El input está oculto -->
+                    <input type="file" id="avatarInput" name="avatar" class="d-none" accept="image/jpeg, image/png, image/webp">
 
+                    <!-- Nuevo botón: Solo aparecerá cuando el usuario elija una foto -->
+                    <button type="submit" id="btnGuardarFoto" class="btn btn-sm btn-success d-none shadow-sm mt-2">
+                        <i class="fas fa-save mr-1"></i> Guardar Foto
+                    </button>
+                </form>
                 <!-- Mostramos el nombre dinámicamente desde la sesión -->
                 <h2 class="h4 font-weight-bold mb-1">
                     <%= usuario.first_name %>
