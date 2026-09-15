@@ -12,7 +12,6 @@ $(document).ready(function () {
     event.preventDefault(); // Detenemos el envío clásico de HTML
 
     var monto = parseInt($("#depositAmount").val());
-
     // Validaciones preventivas de UX
     if (!monto || monto <= 0) {
       mostrarAlerta("Por favor, ingresa un monto válido.", "danger");

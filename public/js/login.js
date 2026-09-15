@@ -25,7 +25,6 @@ $(document).ready(function () {
       $("#password").focus();
       return;
     }
-
     try {
       // Envío asíncrono vía Fetch API
       const response = await fetch("/login", {
