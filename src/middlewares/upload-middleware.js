@@ -4,12 +4,16 @@ const path = require("path");
 // 1. Configuración de almacenamiento
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // CORREGIDO: ../../public/uploads/
-    cb(null, path.join(__dirname, "../../public/uploads/"));
+    // Usamos path.resolve o una ruta absoluta basada en process.cwd()
+    // para evitar errores de rutas relativas dependiendo de dónde se inicie el servidor.
+    const uploadPath = path.join(process.cwd(), "public", "uploads");
+    cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
+    // Limpiamos el nombre original opcionalmente o mantenemos tu estructura única segura
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "avatar-" + uniqueSuffix + path.extname(file.originalname));
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `avatar-${uniqueSuffix}${ext}`);
   },
 });
 
