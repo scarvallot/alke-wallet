@@ -11,31 +11,66 @@
 
   <!-- 1. Inyectamos la tarjeta de saldo -->
   <%- include('../partials/components/balanceCard') %>
+    <!-- Botón para desplegar Datos de la Cuenta -->
+    <button type="button" class="btn btn-outline-info btn-block mb-4 shadow-sm" id="btnDesplegarCuenta">
+      <i class="fas fa-university mr-2"></i>Ver mis datos de cuenta
+    </button>
 
-    <!-- Formulario de depósito -->
-    <form id="depositForm" class="mb-4">
-      <div class="form-group">
-        <label for="depositAmount" class="font-weight-bold">Monto a depositar:</label>
-        <div class="input-group mb-2">
-          <div class="input-group-prepend">
-            <span class="input-group-text bg-white">$</span>
-          </div>
-          <input type="number" class="form-control form-control-lg" id="depositAmount" placeholder="0" min="1000" required />
+    <!-- Contenedor oculto por defecto (Slide Toggle) -->
+    <div id="datosCuentaContainer" class="bg-light p-3 rounded border text-left mb-4" style="display: none;">
+      <h6 class="text-muted mb-3 border-bottom pb-2">Datos para recibir transferencias</h6>
+
+      <!-- CBU (Único dato mostrado) -->
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <small class="text-muted d-block" style="font-size: 0.75rem;">CBU</small>
+          <span class="font-weight-bold text-monospace text-dark" id="cuenta-cbu">
+            <i class="fas fa-ellipsis-h text-muted"></i>
+          </span>
         </div>
-        <small class="form-text text-muted">Monto mínimo: $1.000.- CLP</small>
-      </div>
-
-      <!-- Botón Confirmar Depósito -->
-      <div class="text-center mt-4">
-        <button type="submit" class="btn btn-success px-5 py-3 w-100 shadow-sm" id="depositBtn">
-          <i class="fa-solid fa-circle-check mr-2"></i>
-          <span class="font-weight-bold">Confirmar Depósito</span>
+        <button class="btn btn-sm btn-outline-secondary border-0" id="btn-copiar-cbu" disabled title="Copiar CBU">
+          <i class="fas fa-copy"></i>
         </button>
       </div>
-    </form>
-
-    <!-- 2. Inyectamos el componente de botones de navegación inferior -->
-    <%- include('../partials/components/bottomNav') %>
-      <!-- Botón Cerrar Sesión (Apunta al endpoint del backend) -->
-      <%- include('../partials/components/logoutBtn') %>
+    </div>
+    <!-- Número de Cuenta
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <small class="text-muted d-block" style="font-size: 0.75rem;">N° de Cuenta</small>
+          <span class="font-weight-bold text-monospace text-dark" id="cuenta-numero">
+            <i class="fas fa-ellipsis-h text-muted"></i>
+          </span>
+        </div>
+    <button class="btn btn-sm btn-outline-secondary border-0" id="btn-copiar-cuenta" disabled title="Copiar Cuenta">
+      <i class="fas fa-copy"></i>
+    </button> -->
 </div>
+</div>
+<!-- Formulario de depósito -->
+<form id="depositForm" class="mb-4">
+  <div class="form-group">
+    <label for="depositAmount" class="font-weight-bold">Monto a depositar:</label>
+    <div class="input-group mb-2">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-white">$</span>
+      </div>
+      <input type="number" class="form-control form-control-lg" id="depositAmount" placeholder="0" min="1000" required />
+    </div>
+    <small class="form-text text-muted">Monto mínimo: $1.000.- CLP</small>
+  </div>
+
+  <!-- Botón Confirmar Depósito -->
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-success px-5 py-3 w-100 shadow-sm" id="depositBtn">
+      <i class="fa-solid fa-circle-check mr-2"></i>
+      <span class="font-weight-bold">Confirmar Depósito</span>
+    </button>
+  </div>
+</form>
+
+<!-- 2. Inyectamos el componente de botones de navegación inferior -->
+<%- include('../partials/components/bottomNav') %>
+
+  <!-- Botón Cerrar Sesión (Apunta al endpoint del backend) -->
+  <%- include('../partials/components/logoutBtn') %>
+    </div>

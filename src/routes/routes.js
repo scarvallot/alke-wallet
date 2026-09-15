@@ -28,6 +28,7 @@ const {
   realizarTransferencia,
   realizarDeposito,
   obtenerHistorial,
+  obtenerDatosCuenta,
 } = require("../controllers/wallet.controller");
 
 const {
@@ -84,8 +85,6 @@ router.get("/perfil", verificarToken, (req, res) => {
     perfil: req.usuario_jwt, // Mostramos los datos que venían dentro del token
   });
 });
-
-//! Resto de rutas de actualización...
 router.put("/profile/update", protegerRuta, actualizarPerfil);
 router.put(
   "/profile/password",
@@ -93,6 +92,8 @@ router.put(
   verificarToken,
   actualizarPassword,
 );
+//! Obtener el CBU de las cuentas de usuario
+router.get("/api/cuenta", protegerRuta, obtenerDatosCuenta);
 
 //! Rutas de operaciones de la cartera y transacciones
 router.get("/menu", protegerRuta, mostrarMenu);
