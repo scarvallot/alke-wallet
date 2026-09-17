@@ -74,66 +74,74 @@ const procesarTransferencia = async (senderUserId, receiverCbu, amount) => {
   const sequelize = Account.sequelize;
 
   const resultado = await sequelize.transaction(async (t) => {
-    // 1. Bloquear cuenta origen...
+    // 1. Bloquear y validar cuenta origen
     const cuentaOrigen = await Account.findOne({
       where: { user_id: senderUserId, is_default: 1 },
       lock: t.LOCK.UPDATE,
       transaction: t,
     });
-
     if (!cuentaOrigen) {
       throw new Error("No se encontro la cuenta origen del emisor.");
     }
 
-    // 2. Validar saldo suficiente...
     const saldoActual = Number(cuentaOrigen.current_balance);
     const montoNumerico = Number(amount);
-
     if (saldoActual < montoNumerico) {
       throw new Error(
         `Saldo insuficiente. Disponible: ${saldoActual}, solicitado: ${montoNumerico}.`,
       );
     }
-
-    // 3. Bloquear cuenta destino (¡AQUÍ ESTÁ EL CAMBIO!)
-    const cuentaDestino = await Account.findOne({
-      where: { cbu: receiverCbu }, // Buscamos por CBU, no por user_id
+    // 2. Buscar si el destinatario es INTERNO (existe en accounts)
+    const cuentaDestinoInterna = await Account.findOne({
+      where: { cbu: receiverCbu },
       lock: t.LOCK.UPDATE,
       transaction: t,
     });
 
-    if (!cuentaDestino) {
-      throw new Error("No se encontro el CBU del destinatario.");
+    let receiveAccountId;
+
+    if (cuentaDestinoInterna) {
+      // REGLA A: Transferencia Interna (Alke Wallet a Alke Wallet)
+      await cuentaDestinoInterna.update(
+        {
+          current_balance:
+            Number(cuentaDestinoInterna.current_balance) + montoNumerico,
+        },
+        { transaction: t },
+      );
+      receiveAccountId = cuentaDestinoInterna.account_id;
+    } else {
+      // REGLA B: Transferencia Externa (El CBU es de otro banco / solo está en Payees)
+      // No sumamos saldo a nadie, pero usamos la cuenta del sistema (ID 1) para cumplir
+      // con la restricción de llave foránea en la tabla transactions.
+      receiveAccountId = 1;
     }
 
-    // 4. Debito en cuenta origen
+    // 3. Debito en cuenta origen (Ocurre en AMBOS casos)
     await cuentaOrigen.update(
       { current_balance: saldoActual - montoNumerico },
       { transaction: t },
     );
 
-    // 5. Credito en cuenta destino
-    await cuentaDestino.update(
-      {
-        current_balance: Number(cuentaDestino.current_balance) + montoNumerico,
-      },
-      { transaction: t },
-    );
-
-    // 6. Registrar la transaccion (atomico dentro del mismo transaction)
+    // 4. Registrar la transaccion
     const nuevaTransaccion = await Transaction.create(
       {
         importe: montoNumerico,
         sender_account_id: cuentaOrigen.account_id,
-        receive_account_id: cuentaDestino.account_id,
+        receive_account_id: receiveAccountId,
         transaction_date: new Date(),
       },
       { transaction: t },
     );
 
+    // Determinar el mensaje de éxito según el tipo de transferencia
+    const mensajeExito = cuentaDestinoInterna
+      ? "Transferencia interna realizada con éxito."
+      : "Transferencia a banco externo realizada (saldo descontado).";
+
     return {
       success: true,
-      message: "Transferencia realizada con exito.",
+      message: mensajeExito,
       transaction_id: nuevaTransaccion.transaction_id,
       importe: montoNumerico,
       saldo_restante: saldoActual - montoNumerico,

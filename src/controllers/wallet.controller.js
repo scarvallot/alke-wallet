@@ -49,42 +49,48 @@ const realizarDeposito = async (req, res) => {
   }
 };
 
-// Ejecuta una transferencia entre el usuario activo y un destinatario válido.
 const realizarTransferencia = async (req, res) => {
   try {
-    // El senderId se obtiene de forma segura desde la sesión activa
     const senderId = req.session.usuario.user_id;
-    const { receiverId, amount } = req.body;
+
+    // === AGREGA ESTA LÍNEA PARA DIAGNOSTICAR ===
+    console.log("Datos recibidos desde el Frontend:", req.body);
+
+    const cbuDestino = req.body.cbu || req.body.receiverId;
+    const { amount } = req.body;
 
     // Validación de entrada
-    if (!receiverId || !amount || amount <= 0) {
+    if (!cbuDestino || !amount || amount <= 0) {
       return res.status(400).json({
         success: false,
         message:
-          "Datos inválidos para la transferencia. Verifica el destinatario y el monto.",
+          "Datos inválidos para la transferencia. Verifica el CBU del destinatario y el monto.",
       });
     }
 
-    if (senderId === parseInt(receiverId)) {
-      return res.status(400).json({
-        success: false,
-        message: "No puedes transferir dinero a ti mismo.",
-      });
-    }
+    // Nota: Eliminamos la antigua validación "senderId === parseInt(receiverId)"
+    // porque ahora estamos trabajando con CBUs, no con IDs de usuario directos.
 
-    // Llamada al servicio transaccional
-    const resultado = await procesarTransferencia(senderId, receiverId, amount);
+    // Llamada al servicio transaccional (pasándole el CBU correctamente)
+    const resultado = await procesarTransferencia(senderId, cbuDestino, amount);
     return res.status(200).json(resultado);
   } catch (error) {
     console.error("Error en el controlador de transferencia:", error);
-    return res.status(500).json({
+
+    // Si el error es de negocio (ej. "No se encontró el CBU" o "Saldo insuficiente"), enviamos 400
+    const statusCode =
+      error.message.includes("No se encontro") ||
+      error.message.includes("Saldo")
+        ? 400
+        : 500;
+
+    return res.status(statusCode).json({
       success: false,
       message:
         error.message || "Ocurrió un error al procesar la transferencia.",
     });
   }
 };
-
 // Devuelve el historial de transacciones del usuario en sesión.
 const obtenerHistorial = async (req, res) => {
   try {

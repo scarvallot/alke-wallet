@@ -133,29 +133,48 @@ async function runTests() {
   });
 
   // ── 3. Rollback: CBU destino inexistente ────────────────────────────────
-  console.log(SEC("3. Rollback - CBU destino no registrado"));
+  // console.log(SEC("3. Rollback - CBU destino no registrado"));
 
-  await test("Lanza error por CBU inexistente", async () => {
-    await assert.rejects(
-      () => procesarTransferencia(cA.user_id, "CBU_FALSO_99999", 100),
-      /CBU del destinatario/,
-    );
+  // await test("Lanza error por CBU inexistente", async () => {
+  //   await assert.rejects(
+  //     () => procesarTransferencia(cA.user_id, "CBU_FALSO_99999", 100),
+  //     /CBU del destinatario/,
+  //   );
+  // });
+
+  // await test("NO modifica saldo ni inserta transaccion si el CBU no existe", async () => {
+  //   const sAntes = await getSaldo(cA.account_id);
+  //   const txAntes = await countTx();
+  //   await procesarTransferencia(cA.user_id, "CBU_FALSO_99999", 100).catch(
+  //     () => {},
+  //   );
+  //   assert.equal(
+  //     await getSaldo(cA.account_id),
+  //     sAntes,
+  //     "Saldo no debe cambiar",
+  //   );
+  //   assert.equal(await countTx(), txAntes, "Transactions no debe cambiar");
+  // });
+  // ── 3. Transferencia Externa: CBU a otro banco ──────────────────────────
+  console.log(SEC("3. Transferencia Externa - CBU a otro banco"));
+
+  await test("No lanza error, procesa la salida y debita el monto", async () => {
+    const antes = await getSaldo(cA.account_id);
+    await procesarTransferencia(cA.user_id, "CBU_EXTERNO_999", 100);
+    assert.equal(await getSaldo(cA.account_id), antes - 100);
   });
 
-  await test("NO modifica saldo ni inserta transaccion si el CBU no existe", async () => {
-    const sAntes = await getSaldo(cA.account_id);
+  await test("Registra la tx hacia la cuenta puente (receive_account_id=1)", async () => {
     const txAntes = await countTx();
-    await procesarTransferencia(cA.user_id, "CBU_FALSO_99999", 100).catch(
-      () => {},
-    );
-    assert.equal(
-      await getSaldo(cA.account_id),
-      sAntes,
-      "Saldo no debe cambiar",
-    );
-    assert.equal(await countTx(), txAntes, "Transactions no debe cambiar");
-  });
+    await procesarTransferencia(cA.user_id, "CBU_EXTERNO_888", 100);
 
+    assert.equal(await countTx(), txAntes + 1);
+
+    const ultima = await Transaction.findOne({
+      order: [["transaction_id", "DESC"]],
+    });
+    assert.equal(ultima.receive_account_id, 1);
+  });
   // ── 4. Deposito exitoso ──────────────────────────────────────────────────
   console.log(SEC("4. Deposito exitoso"));
 
