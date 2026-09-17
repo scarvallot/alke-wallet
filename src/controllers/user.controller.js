@@ -38,7 +38,6 @@ const obtenerCuentasUsuarioORM = async (req, res) => {
 
 const subirAvatar = async (req, res) => {
   try {
-    // 1. Validar que multer haya procesado un archivo
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -48,31 +47,34 @@ const subirAvatar = async (req, res) => {
     const userId = req.session.usuario.user_id;
     const nuevoAvatarUrl = `/uploads/${req.file.filename}`;
 
-    // 2. Buscar el avatar anterior en la Base de Datos ANTES de sobrescribirlo
     const usuario = await User.findByPk(userId, { attributes: ["avatar"] });
-    if (usuario && usuario.avatar) {
-      // Construir la ruta física completa del archivo viejo
-      const rutaAvatarViejo = path.join(
-        process.cwd(),
-        "public",
-        usuario.avatar,
-      );
 
-      // Verificar si el archivo viejo existe físicamente y borrarlo
+    if (usuario && usuario.avatar) {
+      // 1. Le quitamos el "/" inicial a la URL si lo tiene (para que no rompa el path.join en Windows)
+      const rutaRelativa = usuario.avatar.startsWith("/")
+        ? usuario.avatar.substring(1)
+        : usuario.avatar;
+      // 2. Construimos la ruta física absoluta de forma segura
+      const rutaAvatarViejo = path.join(process.cwd(), "public", rutaRelativa);
+
+      console.log("Buscando imagen antigua en:", rutaAvatarViejo);
+      // 3. Verificamos y eliminamos
       if (fs.existsSync(rutaAvatarViejo)) {
         fs.unlinkSync(rutaAvatarViejo);
-        //console.log("Avatar anterior eliminado del servidor:", rutaAvatarViejo);
+        //  console.log("Avatar anterior eliminado del disco duro.");
+      } else {
+        //  console.log("La imagen antigua no se encontró físicamente.");
       }
     }
 
-    // 3. Guardar la nueva ruta en la base de datos (Modelo User)
+    // Guardar la nueva ruta en la BD
     await User.update(
       { avatar: nuevoAvatarUrl },
       { where: { user_id: userId } },
     );
-    // 4. Actualizar la memoria de la sesión
+    // Actualizar la sesión
     req.session.usuario.avatar = nuevoAvatarUrl;
-    // 5. Forzar el guardado físico de la sesión antes de responder
+
     req.session.save((err) => {
       if (err) console.error("Error al guardar sesión:", err);
 
