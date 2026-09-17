@@ -33,7 +33,7 @@
 
                                     <!-- INICIO DE CAMBIO: Avatar dinámico -->
                                     <% if (locals.usuario.avatar) { %>
-                                        <img src="<%= locals.usuario.avatar %>" alt="Avatar" class="rounded-circle mr-2 shadow-sm" style="width: 32px; height: 32px; object-fit: cover; border: 1px solid #dee2e6;">
+                                        <img src="<%= usuario.avatar ? usuario.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png';" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                         <% } else { %>
                                             <i class="fas fa-user-circle fa-lg mr-2 text-secondary"></i>
                                             <% } %>

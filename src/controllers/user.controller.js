@@ -57,7 +57,7 @@ const subirAvatar = async (req, res) => {
       // 2. Construimos la ruta física absoluta de forma segura
       const rutaAvatarViejo = path.join(process.cwd(), "public", rutaRelativa);
 
-      console.log("Buscando imagen antigua en:", rutaAvatarViejo);
+      //  console.log("Buscando imagen antigua en:", rutaAvatarViejo);
       // 3. Verificamos y eliminamos
       if (fs.existsSync(rutaAvatarViejo)) {
         fs.unlinkSync(rutaAvatarViejo);
