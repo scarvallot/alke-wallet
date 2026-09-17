@@ -9,24 +9,26 @@ $(document).ready(function () {
   }
 
   $("#loginForm").submit(async function (event) {
-    event.preventDefault(); // Siempre detenemos el envío clásico
+    event.preventDefault(); // Evita la recarga de la página
 
     const username = $("#username").val().trim();
     const password = $("#password").val().trim();
 
-    // Validaciones
-    if (username === "") {
-      mostrarAlerta("Por favor, ingresa tu usuario.", "warning");
-      $("#username").focus();
+    if (!username || !password) {
+      mostrarAlerta(
+        "Falta rellenar datos. Ingresa usuario y contraseña.",
+        "warning",
+      );
       return;
     }
-    if (password === "") {
-      mostrarAlerta("Por favor, ingresa tu contraseña.", "warning");
-      $("#password").focus();
-      return;
-    }
+
+    // Deshabilitar botón mientras carga
+    const btnSubmit = $("#loginSubmitBtn");
+    btnSubmit
+      .prop("disabled", true)
+      .html('<i class="fas fa-spinner fa-spin mr-2"></i>Verificando...');
+
     try {
-      // Envío asíncrono vía Fetch API
       const response = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,18 +36,34 @@ $(document).ready(function () {
       });
 
       const data = await response.json();
+
+      // Dependemos estrictamente del boolean que envía tu backend
       if (data.success) {
-        // 1. ¡NUEVO! Guardamos el token en el navegador
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-        }
-        // 2. Redirigimos al menú
-        window.location.href = data.redirect;
+        mostrarAlerta("¡Login exitoso! Redirigiendo...", "success");
+
+        // Guardamos el token JWT que manda tu backend en el almacenamiento local
+        if (data.token) localStorage.setItem("token", data.token);
+
+        // Redirigimos usando la ruta que dictó el backend (data.redirect)
+        setTimeout(
+          () => (window.location.href = data.redirect || "/menu"),
+          1500,
+        );
       } else {
-        mostrarAlerta(data.message, "danger");
+        mostrarAlerta(
+          data.message || "Usuario o contraseña incorrectos.",
+          "danger",
+        );
+        btnSubmit
+          .prop("disabled", false)
+          .html('<i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión');
       }
     } catch (error) {
-      mostrarAlerta("Error de conexión con el servidor", "danger");
+      console.error(error);
+      mostrarAlerta("Error al conectar con el servidor.", "danger");
+      btnSubmit
+        .prop("disabled", false)
+        .html('<i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión');
     }
   });
 });

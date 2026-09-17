@@ -1,9 +1,8 @@
-const { Payee } = require("../models");
+const { Payee, Account } = require("../models");
 
 const agregarPayeeService = async (userId, payeeData) => {
   const { full_name, cbu, alias, currency_id } = payeeData;
-
-  // 1. Validar que el CBU no esté registrado utilizando findOne[cite: 9]
+  // 1. Validar que el CBU no esté ya registrado en SU libreta de contactos
   const existente = await Payee.findOne({
     where: { user_id: userId, cbu },
   });
@@ -13,8 +12,7 @@ const agregarPayeeService = async (userId, payeeData) => {
       "Este CBU ya se encuentra registrado en tu libreta de contactos.",
     );
   }
-
-  // 2. Insertar el nuevo destinatario utilizando create[cite: 9]
+  // 2. Guardar el contacto (interno o externo)
   const nuevoPayee = await Payee.create({
     user_id: userId,
     full_name,
@@ -27,7 +25,6 @@ const agregarPayeeService = async (userId, payeeData) => {
 };
 
 const obtenerPayeesService = async (userId) => {
-  // Reemplaza la consulta SELECT con ORDER BY[cite: 9]
   const contactos = await Payee.findAll({
     where: { user_id: userId },
     order: [["full_name", "ASC"]],

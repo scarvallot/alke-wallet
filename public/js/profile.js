@@ -85,9 +85,13 @@ $(document).ready(function () {
     }
   });
 
+  // Guardamos la imagen original al cargar la página
+  const imagenOriginal = $("#avatarPreview").attr("src");
+
   // A. Mostrar la previsualización y revelar el botón "Guardar Foto"
   $("#avatarInput").on("change", function (event) {
     const file = event.target.files[0];
+
     if (file) {
       // Validar formato
       const tiposValidos = [
@@ -101,6 +105,7 @@ $(document).ready(function () {
           "Formato no válido. Solo se permiten imágenes JPG, PNG o WEBP.",
           "warning",
         );
+        $(this).val(""); // Limpiar el input oculto
         return;
       }
 
@@ -110,6 +115,7 @@ $(document).ready(function () {
           "La imagen es muy pesada. El tamaño máximo es 2MB.",
           "warning",
         );
+        $(this).val(""); // Limpiar el input oculto
         return;
       }
 
@@ -120,6 +126,10 @@ $(document).ready(function () {
         $("#btnGuardarFoto").removeClass("d-none");
       };
       reader.readAsDataURL(file);
+    } else {
+      // Si el usuario presiona "Cancelar" en la ventana de archivos
+      $("#avatarPreview").attr("src", imagenOriginal);
+      $("#btnGuardarFoto").addClass("d-none");
     }
   });
 
